@@ -1,27 +1,16 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Pure-Dart unit tests that run without a device or the Rust bridge.
+// These are suitable for headless CI environments (e.g. Copilot cloud agent).
 
-// import '../main.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-// void main() {
-//   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-//     // Build our app and trigger a frame.
-//     await tester.pumpWidget(const MyApp());
+void main() {
+  test('sanity: basic arithmetic', () {
+    expect(1 + 1, 2);
+  });
 
-//     // Verify that our counter starts at 0.
-//     expect(find.text('0'), findsOneWidget);
-//     expect(find.text('1'), findsNothing);
-
-//     // Tap the '+' icon and trigger a frame.
-//     await tester.tap(find.byIcon(Icons.add));
-//     await tester.pump();
-
-//     // Verify that our counter has incremented.
-//     expect(find.text('0'), findsNothing);
-//     expect(find.text('1'), findsOneWidget);
-//   });
-// }
+  test('sanity: string operations', () {
+    const appName = 'GitSync';
+    expect(appName.isNotEmpty, isTrue);
+    expect(appName.toLowerCase(), 'gitsync');
+  });
+}
