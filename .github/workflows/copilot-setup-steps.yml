@@ -62,3 +62,6 @@ jobs:
 
             - name: Get Flutter packages
               run: flutter pub get
+
+            - name: Run unit tests
+              run: flutter test test/
