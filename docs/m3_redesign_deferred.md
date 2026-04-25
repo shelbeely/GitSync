@@ -103,9 +103,10 @@ phase/step numbering.
 
 A manually-triggered GitHub Actions workflow,
 [`.github/workflows/screenshot-harness.yml`](../.github/workflows/screenshot-harness.yml),
-boots phone (`pixel_6`) and tablet (`pixel_tablet`) AVDs, installs a debug
-build of the app, and uploads launch-state screenshots as workflow
-artifacts. This is the rig the deferred Steps 4 and 5 below are blocked on:
+boots phone (`pixel_6`) and tablet (`pixel_tablet`) AVDs using the
+[Android CLI](https://developer.android.com/tools/agents/android-cli) —
+Google's agent-first, unified binary that replaces the fragmented
+`sdkmanager` / `avdmanager` / `emulator` / `adb` pipeline. The workflow:
 
 - Trigger via *Actions → Screenshot Harness (Android) → Run workflow*.
 - Defaults to API 34 / `google_apis`; both are workflow inputs.
@@ -117,8 +118,8 @@ artifacts. This is the rig the deferred Steps 4 and 5 below are blocked on:
 - To exercise the home tab, the existing Maestro flows under
   `.maestro/generate_screenshots/` need GitHub auth credentials
   (`MAESTRO_GITHUB_*` — see `.maestro/README.md`). Once those are added as
-  repository secrets, extend the workflow's `script:` block to invoke
-  Maestro after the screencap step.
+  repository secrets, extend the workflow's `run:` block (in the *Boot
+  emulator* step) to invoke Maestro after the screencap.
 
 ## Summary of remaining work
 
