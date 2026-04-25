@@ -108,13 +108,111 @@ fvm flutter pub get
 
 ### 3. OAuth secrets
 
-OAuth providers (GitHub, GitLab, Gitea) need client IDs/secrets. The repo ships a template:
+OAuth providers (GitHub, GitLab, Gitea, Codeberg) need client IDs/secrets. The repo ships a template:
 
 ```bash
 cp lib/constant/secrets.dart.template lib/constant/secrets.dart
 ```
 
-Set `oauthRedirectUrl = "gitsync://auth"`. Without these the OAuth sign-in flows won't work, but HTTPS Basic and SSH still do.
+Open the newly created `lib/constant/secrets.dart` and fill in the values as described below. Without these the OAuth sign-in flows won't work, but HTTPS Basic and SSH still do.
+
+#### `oauthRedirectUrl`
+
+Always set this to:
+
+```dart
+const oauthRedirectUrl = "gitsync://auth";
+```
+
+#### GitHub OAuth App (`gitHubClientId` / `gitHubClientSecret`)
+
+Used for the standard GitHub "Sign in with GitHub" flow.
+
+1. Go to **GitHub → Settings → Developer settings → OAuth Apps → New OAuth App** (direct link: <https://github.com/settings/applications/new>).
+2. Fill in the form:
+   - **Application name**: anything (e.g. `GitSync Dev`)
+   - **Homepage URL**: anything (e.g. `https://github.com/ViscousPot/GitSync`)
+   - **Authorization callback URL**: `gitsync://auth`
+3. Click **Register application**.
+4. Copy the **Client ID** → `gitHubClientId`.
+5. Click **Generate a new client secret**, copy the value → `gitHubClientSecret`.
+
+#### GitHub App (`gitHubAppClientId` / `gitHubAppClientSecret`)
+
+Used for the GitHub App OAuth flow (elevated permissions / org access).
+
+1. Go to **GitHub → Settings → Developer settings → GitHub Apps → New GitHub App** (direct link: <https://github.com/settings/apps/new>).
+2. Fill in the form:
+   - **GitHub App name**: anything (e.g. `GitSync Dev App`)
+   - **Homepage URL**: anything
+   - **Callback URL**: `gitsync://auth`
+   - **Webhook**: uncheck *Active* (not needed for mobile OAuth)
+   - Grant any repository/account permissions you need, then click **Create GitHub App**.
+3. On the app's settings page, copy the **Client ID** → `gitHubAppClientId`.
+4. Under **Client secrets**, click **Generate a new client secret**, copy the value → `gitHubAppClientSecret`.
+
+#### GitLab (`gitlabClientId`)
+
+1. Sign in to GitLab (gitlab.com or your self-hosted instance).
+2. Go to **User menu → Preferences → Applications** (direct link: <https://gitlab.com/-/profile/applications>).
+3. Fill in the form:
+   - **Name**: anything
+   - **Redirect URI**: `gitsync://auth`
+   - **Scopes**: `read_user`, `api`
+4. Click **Save application**.
+5. Copy the **Application ID** → `gitlabClientId`.
+
+> GitLab public OAuth apps are client-ID-only for mobile; no secret is stored in this app.
+
+#### Gitea (`giteaClientId`)
+
+The value here is used as a *default* client ID for gitea.com. Each user can also supply their own instance's credentials inside the app.
+
+1. Sign in to your Gitea instance (or <https://gitea.com>).
+2. Go to **User menu → Settings → Applications → Manage OAuth2 Applications**.
+3. Fill in:
+   - **Application Name**: anything
+   - **Redirect URIs**: `gitsync://auth`
+4. Click **Create Application**.
+5. Copy the **Client ID** → `giteaClientId`.
+
+> The client secret is not stored in this file; Gitea's PKCE flow is used instead.
+
+#### Codeberg (`codebergClientId`)
+
+Codeberg runs Gitea, so the steps are identical to the Gitea section above, performed on <https://codeberg.org>.
+
+1. Go to <https://codeberg.org/user/settings/applications>.
+2. Under **Manage OAuth2 Applications**, create a new app with redirect URI `gitsync://auth`.
+3. Copy the **Client ID** → `codebergClientId`.
+
+#### Completed `secrets.dart` example
+
+```dart
+const oauthRedirectUrl = "gitsync://auth";
+const gitHubClientId = "Iv1.xxxxxxxxxxxx";
+const gitHubClientSecret = "your_github_oauth_app_secret";
+const gitHubAppClientId = "Iv23.xxxxxxxxxxxx";
+const gitHubAppClientSecret = "your_github_app_secret";
+const giteaClientId = "your-gitea-client-id";
+const gitlabClientId = "your-gitlab-application-id";
+const codebergClientId = "your-codeberg-client-id";
+```
+
+> **Security**: `secrets.dart` is listed in `.gitignore` and must never be committed.
+
+---
+
+### CI / GitHub Actions secrets
+
+The build and release workflows read several repository secrets. Set these under **Repository → Settings → Secrets and variables → Actions → New repository secret**.
+
+| Secret | Required by | How to obtain |
+|---|---|---|
+| `SECRETS` | `build.yml` | The full text content of your completed `secrets.dart` file (see above). Copy-paste the entire file into the secret value. |
+| `RELEASE_KEYSTORE_BASE64` | `generate-apk-release.yml` | Your Android release keystore encoded as Base64: `base64 -w 0 release.keystore`. Create a keystore with `keytool -genkey -v -keystore release.keystore -alias <alias> -keyalg RSA -keysize 2048 -validity 10000`. |
+| `RELEASE_SIGNING_ALIAS` | `generate-apk-release.yml` | The alias you chose when creating the keystore (the `-alias` value above). |
+| `RELEASE_SIGNING_PASSWORD` | `generate-apk-release.yml` | The password you set for both the keystore and the key. |
 
 ### 4. Generate the Rust ↔ Dart bindings
 
