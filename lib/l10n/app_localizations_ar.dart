@@ -2284,4 +2284,58 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aiSetupMsg => 'قم بتهيئة مزود خدمة ذكاء اصطناعي لاستخدام هذه الميزة. هل تذهب للإعدادات؟';
+
+  @override
+  String get tabAgent => 'Copilot';
+
+  @override
+  String get agentFilterAll => 'الكل';
+
+  @override
+  String get agentFilterActive => 'نشط';
+
+  @override
+  String get agentFilterCompleted => 'مكتمل';
+
+  @override
+  String get agentNotAvailableTitle => 'مطلوب OAuth من GitHub';
+
+  @override
+  String get agentNotAvailableSubtitle => 'اتصل بـ GitHub OAuth لإدارة جلسات وكيل Copilot.';
+
+  @override
+  String get agentNoSessionsTitle => 'لا توجد جلسات';
+
+  @override
+  String get agentNoSessionsSubtitle => 'أنشئ جلسة لطلب من Copilot العمل على مهمة.';
+
+  @override
+  String get agentSessions => 'جلسات';
+
+  @override
+  String get agentPremiumRequests => 'طلبات مميزة';
+
+  @override
+  String get agentActions => 'إجراءات';
+
+  @override
+  String get agentCreateTitle => 'اسأل Copilot';
+
+  @override
+  String get agentCreateTitleHint => 'صف المهمة…';
+
+  @override
+  String get agentCreateBodyHint => 'تفاصيل إضافية (اختياري)';
+
+  @override
+  String get agentAskCopilot => 'اسأل Copilot';
+
+  @override
+  String get agentFollowUpHint => 'متابعة';
+
+  @override
+  String get agentFollowUpFailed => 'فشل إرسال المتابعة';
+
+  @override
+  String get agentNoMessages => 'لا توجد رسائل بعد';
 }

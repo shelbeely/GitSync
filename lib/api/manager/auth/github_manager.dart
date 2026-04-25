@@ -4,6 +4,8 @@ import 'package:GitSync/api/logger.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:GitSync/constant/reactions.dart';
 import 'package:GitSync/type/action_run.dart';
+import 'package:GitSync/type/agent_message.dart';
+import 'package:GitSync/type/agent_session.dart';
 import 'package:GitSync/type/issue.dart';
 import 'package:GitSync/type/issue_detail.dart';
 import 'package:GitSync/type/issue_template.dart';
@@ -1864,6 +1866,140 @@ query(\$owner: String!, \$repo: String!, \$number: Int!) {
       Logger.logError(LogType.GetRepoBranches, e, st);
       return (<String>[], null);
     }
+  }
+
+  @override
+  Future<List<AgentSession>> getCopilotAgentSessions(String accessToken, String owner, String repo) async {
+    try {
+      final response = await httpGet(
+        Uri.parse("https://api.$_domain/repos/$owner/$repo/issues?assignee=app/github-copilot&state=all&per_page=30"),
+        headers: {"Authorization": "token $accessToken", "Accept": "application/vnd.github+json"},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonArray = json.decode(utf8.decode(response.bodyBytes));
+        return jsonArray.map((item) {
+          final prLinks = item["pull_request"] as Map<String, dynamic>?;
+          return AgentSession(
+            issueNumber: item["number"] as int? ?? 0,
+            title: item["title"] as String? ?? "",
+            isOpen: item["state"] == "open",
+            createdAt: DateTime.tryParse(item["created_at"] as String? ?? "") ?? DateTime.now(),
+            linkedPrNumber: prLinks != null ? (item["number"] as int?) : null,
+          );
+        }).toList();
+      }
+    } catch (e, st) {
+      Logger.logError(LogType.GetIssues, e, st);
+    }
+    return [];
+  }
+
+  @override
+  Future<List<AgentMessage>> getAgentSessionMessages(String accessToken, String owner, String repo, int issueNumber) async {
+    try {
+      final issueResp = await httpGet(
+        Uri.parse("https://api.$_domain/repos/$owner/$repo/issues/$issueNumber"),
+        headers: {"Authorization": "token $accessToken", "Accept": "application/vnd.github+json"},
+      );
+      final commentsResp = await httpGet(
+        Uri.parse("https://api.$_domain/repos/$owner/$repo/issues/$issueNumber/comments?per_page=100"),
+        headers: {"Authorization": "token $accessToken", "Accept": "application/vnd.github+json"},
+      );
+
+      final messages = <AgentMessage>[];
+
+      if (issueResp.statusCode == 200) {
+        final issue = json.decode(utf8.decode(issueResp.bodyBytes));
+        final login = (issue["user"]?["login"] as String?) ?? "";
+        final body = (issue["body"] as String?) ?? "";
+        if (body.isNotEmpty) {
+          messages.add(AgentMessage(
+            id: issue["id"] as int? ?? 0,
+            body: body,
+            authorLogin: login,
+            isAgent: _isCopilotLogin(login),
+            createdAt: DateTime.tryParse(issue["created_at"] as String? ?? "") ?? DateTime.now(),
+          ));
+        }
+      }
+
+      if (commentsResp.statusCode == 200) {
+        final List<dynamic> comments = json.decode(utf8.decode(commentsResp.bodyBytes));
+        for (final c in comments) {
+          final login = (c["user"]?["login"] as String?) ?? "";
+          messages.add(AgentMessage(
+            id: c["id"] as int? ?? 0,
+            body: (c["body"] as String?) ?? "",
+            authorLogin: login,
+            isAgent: _isCopilotLogin(login),
+            createdAt: DateTime.tryParse(c["created_at"] as String? ?? "") ?? DateTime.now(),
+          ));
+        }
+      }
+
+      return messages;
+    } catch (e, st) {
+      Logger.logError(LogType.GetIssues, e, st);
+    }
+    return [];
+  }
+
+  static bool _isCopilotLogin(String login) {
+    final lower = login.toLowerCase();
+    return lower == 'copilot' || lower == 'github-copilot' || lower.contains('copilot');
+  }
+
+  @override
+  Future<AgentMessage?> postAgentFollowUp(String accessToken, String owner, String repo, int issueNumber, String body) async {
+    try {
+      final response = await httpPost(
+        Uri.parse("https://api.$_domain/repos/$owner/$repo/issues/$issueNumber/comments"),
+        headers: {"Authorization": "token $accessToken", "Accept": "application/vnd.github+json", "Content-Type": "application/json"},
+        body: json.encode({"body": body}),
+      );
+      if (response.statusCode == 201) {
+        final c = json.decode(utf8.decode(response.bodyBytes));
+        final login = (c["user"]?["login"] as String?) ?? "";
+        return AgentMessage(
+          id: c["id"] as int? ?? 0,
+          body: (c["body"] as String?) ?? "",
+          authorLogin: login,
+          isAgent: false,
+          createdAt: DateTime.tryParse(c["created_at"] as String? ?? "") ?? DateTime.now(),
+        );
+      }
+    } catch (e, st) {
+      Logger.logError(LogType.GetIssues, e, st);
+    }
+    return null;
+  }
+
+  @override
+  Future<AgentSession?> createAgentSession(String accessToken, String owner, String repo, String title, String body) async {
+    try {
+      final issueBody = body.isNotEmpty ? body : title;
+      final response = await httpPost(
+        Uri.parse("https://api.$_domain/repos/$owner/$repo/issues"),
+        headers: {"Authorization": "token $accessToken", "Accept": "application/vnd.github+json", "Content-Type": "application/json"},
+        body: json.encode({
+          "title": title,
+          "body": issueBody,
+          "assignees": ["copilot"],
+        }),
+      );
+      if (response.statusCode == 201) {
+        final item = json.decode(utf8.decode(response.bodyBytes));
+        return AgentSession(
+          issueNumber: item["number"] as int? ?? 0,
+          title: item["title"] as String? ?? "",
+          isOpen: item["state"] == "open",
+          createdAt: DateTime.tryParse(item["created_at"] as String? ?? "") ?? DateTime.now(),
+        );
+      }
+    } catch (e, st) {
+      Logger.logError(LogType.GetIssues, e, st);
+    }
+    return null;
   }
 
   @override

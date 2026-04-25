@@ -797,6 +797,7 @@
     "@@x-BOTTOM_NAV": "التنقل السفلي",
     "tabChat": "دردشة",
     "tabFiles": "الملفات",
+    "tabAgent": "Copilot",
     "chatComingSoon": "ميزات الدردشة قريباً",
     "chatComingSoonSubtitle": "تفاعل مع ملفاتك باستخدام Claude Code",
     "noRepoSetup": "قم بإعداد مستودع أولاً",

@@ -21,6 +21,7 @@ import 'package:GitSync/ui/dialog/merge_conflict.dart' as MergeConflictDialog;
 import 'package:GitSync/ui/dialog/rename_remote.dart' as RenameRemoteDialog;
 import 'package:GitSync/ui/page/file_explorer.dart';
 import 'package:GitSync/ui/page/ai_features_page.dart';
+import 'package:GitSync/ui/page/agent_sessions_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:GitSync/providers/riverpod_providers.dart';
 import 'package:GitSync/ui/component/provider_builder.dart';
@@ -771,6 +772,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
   final ValueNotifier<bool> _homeCanPop = ValueNotifier(false);
   final GlobalKey<NavigatorState> _filesNavigatorKey = GlobalKey<NavigatorState>();
   final ValueNotifier<bool> _filesCanPop = ValueNotifier(false);
+  final GlobalKey<NavigatorState> _agentNavigatorKey = GlobalKey<NavigatorState>();
+  final ValueNotifier<bool> _agentCanPop = ValueNotifier(false);
   final GlobalKey<FileExplorerState> _fileExplorerKey = GlobalKey<FileExplorerState>();
   late ValueNotifier<List<String>> queueValue = ValueNotifier([]);
   Timer? queueTimer;
@@ -953,6 +956,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     ref.invalidate(featureCountsProvider);
     ref.invalidate(gitDirPathProvider);
     if (token != _reloadToken) return;
+    final gitProvider = ref.read(gitProviderProvider).valueOrNull;
+    if (gitProvider != null) agentFeaturesEnabled.value = gitProvider == GitProvider.GITHUB;
     await updateSyncOptions();
     if (mounted) setState(() {});
   }
@@ -1122,9 +1127,15 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     });
 
     aiFeaturesEnabled.addListener(_onAiFeaturesEnabledChanged);
+    agentFeaturesEnabled.addListener(_onAgentFeaturesEnabledChanged);
 
     initAsync(() async {
       aiFeaturesEnabled.value = await repoManager.getBool(StorageKey.repoman_aiFeaturesEnabled);
+    });
+
+    initAsync(() async {
+      final provider = await uiSettingsManager.getGitProvider();
+      agentFeaturesEnabled.value = provider == GitProvider.GITHUB;
     });
 
     switchToAiTab = () {
@@ -1187,10 +1198,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     final oldIndex = _tabIndex.value;
     final int newIndex;
     if (aiFeaturesEnabled.value) {
-      // 2 → 3 children. Old: 0=Home, 1=Files. New: 0=AI, 1=Home, 2=Files.
+      // Agent tab (if enabled) stays at end; adding AI tab shifts everything up by 1.
       newIndex = oldIndex + 1;
     } else {
-      // 3 → 2 children. Old: 0=AI, 1=Home, 2=Files. New: 0=Home, 1=Files.
+      // Removing AI tab shifts indices down by 1. If on AI tab (0), go to Home.
       newIndex = oldIndex == 0 ? 0 : oldIndex - 1;
     }
     if (newIndex != oldIndex) {
@@ -1202,6 +1213,29 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
         _pageController.jumpToPage(newIndex);
       }
     });
+  }
+
+  void _onAgentFeaturesEnabledChanged() {
+    if (!agentFeaturesEnabled.value) {
+      // If the agent tab was selected, jump to Home tab.
+      final homeIndex = aiFeaturesEnabled.value ? 1 : 0;
+      if (_tabIndex.value == _agentTabIndex) {
+        _tabIndex.value = homeIndex;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !_pageController.hasClients) return;
+          _pageController.jumpToPage(homeIndex);
+        });
+      }
+    }
+    // Adding agent tab doesn't shift existing indices, just appends.
+    setState(() {});
+  }
+
+  int get _agentTabIndex {
+    int idx = aiFeaturesEnabled.value ? 1 : 0; // home tab index
+    idx += 1; // files tab
+    idx += 1; // agent tab = home + 2
+    return idx;
   }
 
   Future<void> launchWidgetManualSync() async {
@@ -1555,11 +1589,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
 
     switchToAiTab = null;
     aiFeaturesEnabled.removeListener(_onAiFeaturesEnabledChanged);
+    agentFeaturesEnabled.removeListener(_onAgentFeaturesEnabledChanged);
     autoRefreshTimer?.cancel();
     networkSubscription?.cancel();
     _tabIndex.dispose();
     _pageController.dispose();
     _homeCanPop.dispose();
+    _agentCanPop.dispose();
     for (var key in debounceTimers.keys) {
       if (key.startsWith(iosFolderAccessDebounceReference)) {
         cancelDebounce(key, true);
@@ -2057,27 +2093,29 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
           ),
           body: ValueListenableBuilder<bool>(
             valueListenable: aiFeaturesEnabled,
-            builder: (context, aiEnabled, _) => PageView(
-              controller: _pageController,
-              onPageChanged: (page) => _tabIndex.value = page,
-              children: [
-                if (aiEnabled)
-                  _KeepAlivePage(
-                    child: ValueListenableBuilder(
-                      valueListenable: _tabIndex,
-                      builder: (context, currentTab, child) => PopScope(
-                        canPop: currentTab != 0,
-                        onPopInvokedWithResult: (didPop, _) {
-                          if (!didPop) {
-                            _tabIndex.value = 1;
-                            _pageController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                          }
-                        },
-                        child: child!,
+            builder: (context, aiEnabled, _) => ValueListenableBuilder<bool>(
+              valueListenable: agentFeaturesEnabled,
+              builder: (context, agentEnabled, _) => PageView(
+                controller: _pageController,
+                onPageChanged: (page) => _tabIndex.value = page,
+                children: [
+                  if (aiEnabled)
+                    _KeepAlivePage(
+                      child: ValueListenableBuilder(
+                        valueListenable: _tabIndex,
+                        builder: (context, currentTab, child) => PopScope(
+                          canPop: currentTab != 0,
+                          onPopInvokedWithResult: (didPop, _) {
+                            if (!didPop) {
+                              _tabIndex.value = 1;
+                              _pageController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                            }
+                          },
+                          child: child!,
+                        ),
+                        child: AiFeaturesPage(),
                       ),
-                      child: AiFeaturesPage(),
                     ),
-                  ),
                 _KeepAlivePage(
                   child: ValueListenableBuilder(
                     valueListenable: _homeCanPop,
@@ -4022,6 +4060,28 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                   ),
                 ),
                 _KeepAlivePage(child: _buildFilesTab()),
+                if (agentEnabled)
+                  _KeepAlivePage(
+                    child: ValueListenableBuilder(
+                      valueListenable: _agentCanPop,
+                      builder: (context, canPop, child) => PopScope(
+                        canPop: !canPop,
+                        onPopInvokedWithResult: (didPop, _) {
+                          if (!didPop && (_agentNavigatorKey.currentState?.canPop() ?? false)) {
+                            _agentNavigatorKey.currentState!.pop();
+                          }
+                        },
+                        child: child!,
+                      ),
+                      child: Navigator(
+                        key: _agentNavigatorKey,
+                        observers: [_NestedNavigatorObserver(_agentCanPop)],
+                        onGenerateRoute: (_) => MaterialPageRoute(
+                          builder: (context) => const AgentSessionsPage(),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -4030,66 +4090,74 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
             children: [
               ValueListenableBuilder<bool>(
                 valueListenable: aiFeaturesEnabled,
-                builder: (context, aiEnabled, _) => ValueListenableBuilder(
-                  valueListenable: _tabIndex,
-                  builder: (context, currentTabIndex, _) => Theme(
-                    data: Theme.of(context).copyWith(
-                      navigationBarTheme: NavigationBarThemeData(
-                        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return TextStyle(color: colours.tertiaryInfo, fontSize: textXS, fontWeight: FontWeight.bold);
-                          }
-                          return TextStyle(color: colours.secondaryLight, fontSize: textXS);
-                        }),
-                      ),
-                    ),
-                    child: NavigationBar(
-                      selectedIndex: currentTabIndex.clamp(0, aiEnabled ? 2 : 1),
-                      onDestinationSelected: (i) {
-                        if (aiEnabled) {
-                          if (i == 1 && _tabIndex.value == 1) {
-                            _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                          } else if (i == 2 && _tabIndex.value == 2) {
-                            _filesNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                          } else {
-                            _tabIndex.value = i;
-                            _pageController.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                          }
-                        } else {
-                          if (i == 0 && _tabIndex.value == 0) {
-                            _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                          } else if (i == 1 && _tabIndex.value == 1) {
-                            _filesNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                          } else {
-                            _tabIndex.value = i;
-                            _pageController.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                          }
-                        }
-                      },
-                      backgroundColor: colours.secondaryDark,
-                      indicatorColor: colours.tertiaryDark,
-                      surfaceTintColor: Colors.transparent,
-                      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                      height: 64,
-                      destinations: [
-                        if (aiEnabled)
-                          NavigationDestination(
-                            icon: FaIcon(FontAwesomeIcons.wandMagicSparkles, color: colours.secondaryLight, size: textLG),
-                            selectedIcon: FaIcon(FontAwesomeIcons.wandMagicSparkles, color: colours.tertiaryInfo, size: textLG),
-                            label: t.tabChat,
+                builder: (context, aiEnabled, _) => ValueListenableBuilder<bool>(
+                  valueListenable: agentFeaturesEnabled,
+                  builder: (context, agentEnabled, _) => ValueListenableBuilder(
+                    valueListenable: _tabIndex,
+                    builder: (context, currentTabIndex, _) {
+                      final filesIndex = aiEnabled ? 2 : 1;
+                      final agentIndex = filesIndex + 1;
+                      final maxIndex = agentEnabled ? agentIndex : filesIndex;
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          navigationBarTheme: NavigationBarThemeData(
+                            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return TextStyle(color: colours.tertiaryInfo, fontSize: textXS, fontWeight: FontWeight.bold);
+                              }
+                              return TextStyle(color: colours.secondaryLight, fontSize: textXS);
+                            }),
                           ),
-                        NavigationDestination(
-                          icon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.secondaryLight, size: textLG),
-                          selectedIcon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.tertiaryInfo, size: textLG),
-                          label: t.tabHome,
                         ),
-                        NavigationDestination(
-                          icon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.secondaryLight, size: textLG),
-                          selectedIcon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.tertiaryInfo, size: textLG),
-                          label: t.tabFiles,
+                        child: NavigationBar(
+                          selectedIndex: currentTabIndex.clamp(0, maxIndex),
+                          onDestinationSelected: (i) {
+                            final homeIdx = aiEnabled ? 1 : 0;
+                            final filesIdx = aiEnabled ? 2 : 1;
+                            final agentIdx = filesIdx + 1;
+                            if (i == homeIdx && _tabIndex.value == homeIdx) {
+                              _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                            } else if (i == filesIdx && _tabIndex.value == filesIdx) {
+                              _filesNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                            } else if (agentEnabled && i == agentIdx && _tabIndex.value == agentIdx) {
+                              _agentNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                            } else {
+                              _tabIndex.value = i;
+                              _pageController.animateToPage(i, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                            }
+                          },
+                          backgroundColor: colours.secondaryDark,
+                          indicatorColor: colours.tertiaryDark,
+                          surfaceTintColor: Colors.transparent,
+                          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                          height: 64,
+                          destinations: [
+                            if (aiEnabled)
+                              NavigationDestination(
+                                icon: FaIcon(FontAwesomeIcons.wandMagicSparkles, color: colours.secondaryLight, size: textLG),
+                                selectedIcon: FaIcon(FontAwesomeIcons.wandMagicSparkles, color: colours.tertiaryInfo, size: textLG),
+                                label: t.tabChat,
+                              ),
+                            NavigationDestination(
+                              icon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.secondaryLight, size: textLG),
+                              selectedIcon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.tertiaryInfo, size: textLG),
+                              label: t.tabHome,
+                            ),
+                            NavigationDestination(
+                              icon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.secondaryLight, size: textLG),
+                              selectedIcon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.tertiaryInfo, size: textLG),
+                              label: t.tabFiles,
+                            ),
+                            if (agentEnabled)
+                              NavigationDestination(
+                                icon: FaIcon(FontAwesomeIcons.robot, color: colours.secondaryLight, size: textLG),
+                                selectedIcon: FaIcon(FontAwesomeIcons.robot, color: colours.tertiaryInfo, size: textLG),
+                                label: t.tabAgent,
+                              ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
