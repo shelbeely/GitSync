@@ -75,6 +75,7 @@ import '../ui/page/clone_repo_main.dart';
 import 'package:GitSync/ui/page/expanded_commits.dart';
 import 'package:GitSync/ui/page/issues_page.dart';
 import 'package:GitSync/ui/page/pull_requests_page.dart';
+import 'package:GitSync/ui/page/tools_page.dart';
 import 'package:GitSync/type/showcase_feature.dart';
 import 'package:GitSync/ui/component/showcase_feature_button.dart';
 import '../ui/page/settings_main.dart';
@@ -770,6 +771,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
   final PageController _pageController = PageController(initialPage: 1);
   final GlobalKey<NavigatorState> _homeNavigatorKey = GlobalKey<NavigatorState>();
   final ValueNotifier<bool> _homeCanPop = ValueNotifier(false);
+  final GlobalKey<NavigatorState> _toolsNavigatorKey = GlobalKey<NavigatorState>();
+  final ValueNotifier<bool> _toolsCanPop = ValueNotifier(false);
   final GlobalKey<NavigatorState> _filesNavigatorKey = GlobalKey<NavigatorState>();
   final ValueNotifier<bool> _filesCanPop = ValueNotifier(false);
   final GlobalKey<NavigatorState> _agentNavigatorKey = GlobalKey<NavigatorState>();
@@ -1745,7 +1748,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
           builder: (context, currentTab, child) => ValueListenableBuilder(
             valueListenable: _filesCanPop,
             builder: (context, canPop, child) => PopScope(
-              canPop: currentTab != (aiFeaturesEnabled.value ? 2 : 1) && !canPop,
+              canPop: currentTab != (aiFeaturesEnabled.value ? 3 : 2) && !canPop,
               onPopInvokedWithResult: (didPop, _) {
                 if (didPop) return;
                 if (_filesNavigatorKey.currentState?.canPop() ?? false) {
@@ -4060,6 +4063,27 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                     ),
                   ),
                 ),
+                _KeepAlivePage(
+                  child: ValueListenableBuilder(
+                    valueListenable: _toolsCanPop,
+                    builder: (context, canPop, child) => PopScope(
+                      canPop: !canPop,
+                      onPopInvokedWithResult: (didPop, _) {
+                        if (!didPop && (_toolsNavigatorKey.currentState?.canPop() ?? false)) {
+                          _toolsNavigatorKey.currentState!.pop();
+                        }
+                      },
+                      child: child!,
+                    ),
+                    child: Navigator(
+                      key: _toolsNavigatorKey,
+                      observers: [_NestedNavigatorObserver(_toolsCanPop)],
+                      onGenerateRoute: (_) => MaterialPageRoute(
+                        builder: (context) => const ToolsPage(),
+                      ),
+                    ),
+                  ),
+                ),
                 _KeepAlivePage(child: _buildFilesTab()),
                 if (agentEnabled)
                   _KeepAlivePage(
@@ -4096,7 +4120,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                   builder: (context, agentEnabled, _) => ValueListenableBuilder(
                     valueListenable: _tabIndex,
                     builder: (context, currentTabIndex, _) {
-                      final filesIndex = aiEnabled ? 2 : 1;
+                      final filesIndex = aiEnabled ? 3 : 2;
                       final agentIndex = filesIndex + 1;
                       final maxIndex = agentEnabled ? agentIndex : filesIndex;
                       return Theme(
@@ -4114,10 +4138,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                           selectedIndex: currentTabIndex.clamp(0, maxIndex),
                           onDestinationSelected: (i) {
                             final homeIdx = aiEnabled ? 1 : 0;
-                            final filesIdx = aiEnabled ? 2 : 1;
+                            final toolsIdx = aiEnabled ? 2 : 1;
+                            final filesIdx = aiEnabled ? 3 : 2;
                             final agentIdx = filesIdx + 1;
                             if (i == homeIdx && _tabIndex.value == homeIdx) {
                               _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                            } else if (i == toolsIdx && _tabIndex.value == toolsIdx) {
+                              _toolsNavigatorKey.currentState?.popUntil((route) => route.isFirst);
                             } else if (i == filesIdx && _tabIndex.value == filesIdx) {
                               _filesNavigatorKey.currentState?.popUntil((route) => route.isFirst);
                             } else if (agentEnabled && i == agentIdx && _tabIndex.value == agentIdx) {
@@ -4143,6 +4170,11 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                               icon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.secondaryLight, size: textLG),
                               selectedIcon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.tertiaryInfo, size: textLG),
                               label: t.tabHome,
+                            ),
+                            NavigationDestination(
+                              icon: FaIcon(FontAwesomeIcons.layerGroup, color: colours.secondaryLight, size: textLG),
+                              selectedIcon: FaIcon(FontAwesomeIcons.layerGroup, color: colours.tertiaryInfo, size: textLG),
+                              label: t.tabTools,
                             ),
                             NavigationDestination(
                               icon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.secondaryLight, size: textLG),

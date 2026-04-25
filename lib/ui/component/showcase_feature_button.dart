@@ -37,6 +37,9 @@ class ShowcaseFeatureButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tint = feature.tintColor(colours.darkMode);
+    final iconCol = feature.iconColor(colours.darkMode);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -44,77 +47,67 @@ class ShowcaseFeatureButton extends StatelessWidget {
           onTap: onPressed,
           child: Container(
             decoration: BoxDecoration(
-              color: colours.showcaseBg,
+              color: tint,
               borderRadius: BorderRadius.all(cornerRadiusSM),
-              border: Border.all(color: colours.showcaseBorder, width: spaceXXXXS),
+              border: Border.all(color: iconCol.withAlpha(60), width: spaceXXXXS),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(width: spaceSM),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: spaceSM),
-                    child: FaIcon(feature.icon, color: colours.showcaseFeatureIcon, size: textMD),
-                  ),
-                  SizedBox(width: spaceXXS),
-                  Expanded(
-                    child: Center(
-                      widthFactor: 1,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          feature.labelForProvider(gitProvider),
-                          style: TextStyle(color: colours.showcaseFeatureIcon, fontSize: textSM, fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+            padding: EdgeInsets.symmetric(horizontal: spaceSM, vertical: spaceMD),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FaIcon(feature.icon, color: iconCol, size: textXL),
+                SizedBox(height: spaceXXXS),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        feature.labelForProvider(gitProvider),
+                        style: TextStyle(color: iconCol, fontSize: textXS, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
                       ),
                     ),
-                  ),
-                  if (countLoading && count == null) ...[
-                    SizedBox(width: spaceXXXS),
-                    Center(
-                      child: SizedBox(
-                        width: textXXS,
-                        height: textXXS,
-                        child: CircularProgressIndicator(strokeWidth: 1.5, color: colours.showcaseFeatureIcon),
+                    if (onAdd != null) ...[
+                      SizedBox(width: spaceXXXS),
+                      GestureDetector(
+                        onTap: onAdd,
+                        child: FaIcon(FontAwesomeIcons.plus, color: iconCol.withAlpha(180), size: textXXS),
                       ),
-                    ),
-                  ] else if (count != null && count! > 0) ...[
-                    SizedBox(width: spaceXXXS),
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: spaceXXXS + 1, vertical: 1),
-                        decoration: BoxDecoration(color: colours.showcaseBorder, borderRadius: BorderRadius.all(cornerRadiusMax)),
-                        child: Text(
-                          count! > 99 ? '99+' : '$count',
-                          style: TextStyle(color: colours.showcaseFeatureIcon, fontSize: textXXS, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
+                    ],
                   ],
-                  SizedBox(width: spaceXXS),
-                  if (onAdd != null)
-                    AspectRatio(
-                      aspectRatio: 2.25 / 3,
-                      child: TextButton(
-                        onPressed: onAdd,
-                        style: TextButton.styleFrom(
-                          backgroundColor: colours.showcaseBorder,
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          shape: const RoundedRectangleBorder(),
-                        ),
-                        child: FaIcon(FontAwesomeIcons.plus, color: colours.showcaseFeatureIcon, size: textSM),
-                      ),
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
+        // Badge count overlay — top-right
+        if (countLoading && count == null)
+          Positioned(
+            top: -spaceXXXS,
+            right: -spaceXXXS,
+            child: SizedBox(
+              width: textSM,
+              height: textSM,
+              child: CircularProgressIndicator(strokeWidth: 1.5, color: iconCol),
+            ),
+          )
+        else if (count != null && count! > 0)
+          Positioned(
+            top: -spaceXXXS,
+            right: -spaceXXXS,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: spaceXXXS + 1, vertical: 1),
+              decoration: BoxDecoration(color: iconCol, borderRadius: BorderRadius.all(cornerRadiusMax)),
+              child: Text(
+                count! > 99 ? '99+' : '$count',
+                style: TextStyle(color: tint, fontSize: textXXS, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        // Pin toggle overlay — top-left (only shown in expanded commits view)
         if (onPinToggle != null)
           Positioned(
             left: -spaceXXXS,

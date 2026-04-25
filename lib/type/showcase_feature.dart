@@ -16,6 +16,22 @@ enum ShowcaseFeature {
   final String label;
   final String storageKey;
 
+  Color tintColor(bool darkMode) => switch (this) {
+    ShowcaseFeature.issues => darkMode ? const Color(0xFF3E1515) : const Color(0xFFFFEBEE),
+    ShowcaseFeature.pullRequests => darkMode ? const Color(0xFF0D2137) : const Color(0xFFE3F2FD),
+    ShowcaseFeature.tags => darkMode ? const Color(0xFF1A1A2E) : const Color(0xFFEDE7F6),
+    ShowcaseFeature.releases => darkMode ? const Color(0xFF0A2A14) : const Color(0xFFE8F5E9),
+    ShowcaseFeature.actions => darkMode ? const Color(0xFF2D1B00) : const Color(0xFFFFF3E0),
+  };
+
+  Color iconColor(bool darkMode) => switch (this) {
+    ShowcaseFeature.issues => darkMode ? const Color(0xFFFDA4AF) : const Color(0xFFC62828),
+    ShowcaseFeature.pullRequests => darkMode ? const Color(0xFF90CAF9) : const Color(0xFF1565C0),
+    ShowcaseFeature.tags => darkMode ? const Color(0xFFCE93D8) : const Color(0xFF6A1B9A),
+    ShowcaseFeature.releases => darkMode ? const Color(0xFFA7F3D0) : const Color(0xFF2E7D32),
+    ShowcaseFeature.actions => darkMode ? const Color(0xFFFFE082) : const Color(0xFFE65100),
+  };
+
   static const defaultPinned = [ShowcaseFeature.issues, ShowcaseFeature.pullRequests];
 
   static ShowcaseFeature? fromStorageKey(String key) {

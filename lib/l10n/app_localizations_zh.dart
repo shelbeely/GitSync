@@ -2300,6 +2300,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get tabAgent => 'Copilot';
 
   @override
+  String get tabTools => 'Tools';
+
+  @override
+  String get toolsEmptyTitle => 'No Repository Connected';
+
+  @override
+  String get toolsEmptySubtitle => 'Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions';
+
+  @override
   String get agentFilterAll => 'All';
 
   @override

@@ -4590,6 +4590,24 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get tabChat;
 
+  /// No description provided for @tabTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get tabTools;
+
+  /// No description provided for @toolsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Repository Connected'**
+  String get toolsEmptyTitle;
+
+  /// No description provided for @toolsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions'**
+  String get toolsEmptySubtitle;
+
   /// No description provided for @tabFiles.
   ///
   /// In en, this message translates to:
