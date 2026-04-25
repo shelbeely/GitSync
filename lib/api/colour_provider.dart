@@ -93,7 +93,7 @@ class Colours {
   ColorScheme buildColorScheme({ColorScheme? dynamicScheme}) {
     final brightness = darkMode ? Brightness.dark : Brightness.light;
     if (dynamicScheme != null) {
-      return dynamicScheme.harmonized();
+      return dynamicScheme;
     }
     return ColorScheme.fromSeed(seedColor: kFallbackSeedColor, brightness: brightness);
   }

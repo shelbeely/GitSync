@@ -145,7 +145,7 @@ class _ToolsContent extends StatelessWidget {
     );
   }
 
-  IconData _iconForProvider(GitProvider provider) {
+  FaIconData _iconForProvider(GitProvider provider) {
     switch (provider) {
       case GitProvider.GITHUB:
         return FontAwesomeIcons.github;
