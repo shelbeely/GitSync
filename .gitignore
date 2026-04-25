@@ -31,7 +31,7 @@ app.*.map.json
 /android/keystore.properties
 
 # Generated files
-frb_generated.*
+# frb_generated.* - tracked in source control so `dart analyze` can resolve RustLib
 generated_plugin_registrant.*
 GeneratedPluginRegistrant.*
 
