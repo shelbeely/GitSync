@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:GitSync/api/logger.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, String repoUrl, String dir, Function(String?) callback, {int? depth, bool bare = false}) async {
   String task = "";
@@ -34,7 +34,7 @@ Future<void> showDialog(BuildContext context, String repoUrl, String dir, Functi
     callback(result);
   });
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) => PopScope(

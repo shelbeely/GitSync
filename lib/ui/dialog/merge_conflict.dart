@@ -7,9 +7,7 @@ import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/main.dart';
 import 'package:GitSync/ui/component/ai_wand_field.dart';
 import 'package:GitSync/api/ai_completion_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,6 +24,7 @@ import '../../../constant/dimens.dart';
 import '../../../global.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:anchor_scroll_controller/anchor_scroll_controller.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 typedef SelectedLine = ({bool isLocal, int lineIndex});
 
@@ -261,8 +260,10 @@ Future<void> showDialog(BuildContext parentContext, List<(String, GitManagerRs.C
     setState(() {});
   }
 
-  return await mat.showDialog(
+  return await showAppDialog(
     context: parentContext,
+    // Transparent scrim: avoids double-darkening the screen behind the
+    // merge-conflict dialog.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => PopScope(
       canPop: !isMerging && !isAborting,

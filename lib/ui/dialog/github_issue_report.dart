@@ -1,11 +1,11 @@
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/ui/dialog/info_dialog.dart' as InfoDialog;
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(
   BuildContext context,
@@ -18,7 +18,7 @@ Future<void> showDialog(
   final minimalReproController = TextEditingController();
   bool includeLogFiles = true;
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => StatefulBuilder(

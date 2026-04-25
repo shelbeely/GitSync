@@ -3,7 +3,6 @@ import 'package:GitSync/api/manager/auth/github_manager.dart';
 import 'package:GitSync/api/manager/settings_manager.dart';
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/constant/strings.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sprintf/sprintf.dart';
@@ -16,6 +15,7 @@ import '../../../ui/dialog/base_alert_dialog.dart';
 import '../component/https_auth_form.dart';
 import '../component/ssh_auth_form.dart';
 import 'github_scoped_guide.dart' as github_scoped_guide;
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 late final GlobalKey authDialogKey = GlobalKey();
 
@@ -174,7 +174,7 @@ Future<void> showDialog(BuildContext parentContext, Function() callback) async {
     }
   }
 
-  return await mat.showDialog(
+  return await showAppDialog(
     context: parentContext,
     builder: (BuildContext context) => StatefulBuilder(
       builder: (context, setState) => BaseAlertDialog(

@@ -1,15 +1,15 @@
 import 'package:GitSync/constant/strings.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, Function(bool directClone) callback) {
   bool directClone = true;
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       title: SizedBox(

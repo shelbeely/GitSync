@@ -1,0 +1,259 @@
+name: Screenshot Harness (Android)
+
+# Boots an Android emulator (phone + tablet matrix) using the Android CLI
+# (https://developer.android.com/tools/agents/android-cli), installs a debug
+# build of GitSync, and captures launch-state screenshots that are uploaded as
+# workflow artifacts.  Intended as the runtime-verification rig for the
+# deferred M3 redesign items (`docs/m3_redesign_deferred.md`, Steps 4 and 5)
+# — neither can be safely landed without screenshots from a real Android
+# surface.
+#
+# The Android CLI (`android` binary) replaces the fragmented sdkmanager /
+# avdmanager / emulator / adb orchestration with a single unified tool
+# designed for agents and CI pipelines.  Key commands:
+#   android emulator create  – downloads the system image + creates the AVD
+#   android emulator start   – boots the AVD headlessly
+#   android run --apk        – installs + launches a pre-built APK
+#
+# Manually-triggered (`workflow_dispatch`) only, so the cost of booting AVDs
+# is not paid on every PR.  Maintainers can extend the `screenshots` job to
+# run the existing Maestro flows under `.maestro/generate_screenshots/` once
+# the `MAESTRO_*` repository secrets are populated (see `.maestro/README.md`).
+
+on:
+    workflow_dispatch:
+        inputs:
+            api_level:
+                description: "Android API level for the emulator system image"
+                required: false
+                default: "34"
+                type: string
+            target:
+                description: "System image target (default | google_apis)"
+                required: false
+                default: "google_apis"
+                type: choice
+                options:
+                    - default
+                    - google_apis
+
+permissions:
+    contents: read
+
+jobs:
+    # Build a debug APK once and share it across the matrix legs. Mirrors the
+    # toolchain in `build.yml`; we pin to x86_64 because the GitHub Actions
+    # AVDs are x86_64 only.
+    build-debug-apk:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Free disk space
+              uses: jlumbroso/free-disk-space@v1.3.1
+              with:
+                  android: false
+                  dotnet: true
+                  haskell: true
+                  large-packages: true
+
+            - uses: actions/checkout@v4
+
+            - name: Cache Cargo registry
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      rust/target
+                  key: ${{ runner.os }}-cargo-debug-${{ hashFiles('**/Cargo.lock') }}
+
+            - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+            - name: Add Android Rust target (x86_64)
+              run: rustup target add x86_64-linux-android
+
+            - name: Create secrets.dart (placeholder if SECRETS not set)
+              env:
+                  SECRETS_CONTENT: ${{ secrets.SECRETS }}
+              run: |
+                  if [ -n "$SECRETS_CONTENT" ]; then
+                    printf '%s\n' "$SECRETS_CONTENT" > ./lib/constant/secrets.dart
+                  else
+                    cp ./lib/constant/secrets.dart.template ./lib/constant/secrets.dart
+                  fi
+
+            - name: Setup Flutter SDK
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  flutter-version-file: .fvmrc
+                  cache: true
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  distribution: zulu
+                  java-version: "17"
+                  cache: gradle
+
+            - name: Cache pub dependencies
+              uses: actions/cache@v4
+              with:
+                  path: ~/.pub-cache
+                  key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock', '**/pubspec.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pub-
+
+            - name: Install flutter_rust_bridge_codegen
+              uses: baptiste0928/cargo-install@v3
+              with:
+                  crate: flutter_rust_bridge_codegen
+                  version: "2.12.0"
+
+            - name: Install cargo-expand
+              uses: baptiste0928/cargo-install@v3
+              with:
+                  crate: cargo-expand
+
+            - name: Get Flutter packages
+              run: flutter pub get
+
+            - name: Generate Rust bridge bindings
+              run: flutter_rust_bridge_codegen generate
+
+            - uses: nttld/setup-ndk@v1
+              with:
+                  ndk-version: r29-beta4
+
+            - uses: SimonMarquis/android-accept-licenses@v1
+
+            - name: Build debug APK (x86_64)
+              run: flutter build apk --debug --target-platform android-x64
+
+            - name: Upload debug APK
+              uses: actions/upload-artifact@v4
+              with:
+                  name: gitsync-debug-x86_64
+                  path: build/app/outputs/flutter-apk/app-debug.apk
+                  if-no-files-found: error
+                  retention-days: 7
+
+    # Boot the emulator and capture launch-state screenshots using the Android
+    # CLI (https://developer.android.com/tools/agents/android-cli).  Phone +
+    # tablet are exercised in parallel.
+    #
+    # The Android CLI is Google's agent-first, unified binary for Android
+    # development:  a single `android` command replaces the fragmented
+    # `sdkmanager` / `avdmanager` / `emulator` / `adb install` / `monkey`
+    # pipeline.  Key commands used here:
+    #   android emulator create  – downloads the requested system image and
+    #                              creates a named AVD in one step.
+    #   android emulator start   – boots the AVD headlessly with sensible CI
+    #                              defaults baked in.
+    #   android run --apk        – installs a pre-built APK on the running
+    #                              emulator and launches its main activity.
+    screenshots:
+        needs: build-debug-apk
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - label: phone
+                      profile: pixel_6
+                    - label: tablet
+                      profile: pixel_tablet
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Download debug APK
+              uses: actions/download-artifact@v4
+              with:
+                  name: gitsync-debug-x86_64
+                  path: apk
+
+            # KVM enables hardware-accelerated x86_64 emulation on hosted
+            # runners; required for acceptable emulator boot times.
+            - name: Enable KVM
+              run: |
+                  echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+                    | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+                  sudo udevadm control --reload-rules
+                  sudo udevadm trigger --name-match=kvm
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  distribution: zulu
+                  java-version: "17"
+
+            # Install the Android CLI binary.  The `linux/latest` URL always
+            # resolves to the most recent stable release; pin to a specific
+            # version path (e.g. `0.7.15222914/linux/android`) if
+            # reproducibility is preferred over freshness.
+            - name: Install Android CLI
+              run: |
+                  curl -fsSL https://dl.google.com/android/android-cli/linux/latest/android \
+                    -o android-cli
+                  chmod +x android-cli
+                  sudo mv android-cli /usr/local/bin/android
+                  # First invocation downloads the full CLI runtime (~78 MB).
+                  android --version
+
+            # `android emulator create` resolves, downloads, and installs the
+            # correct system image for the requested API level + target, then
+            # creates a named AVD with the chosen device profile — replacing
+            # the separate `sdkmanager install` + `avdmanager create avd`
+            # calls that would otherwise be required.
+            - name: Create AVD
+              run: |
+                  android emulator create \
+                    --name "gitsync_${{ matrix.label }}" \
+                    --profile "${{ matrix.profile }}" \
+                    --api-level "${{ inputs.api_level }}" \
+                    --target "${{ inputs.target }}"
+
+            - name: Boot emulator, install app, and capture screenshots
+              run: |
+                  set -euo pipefail
+                  mkdir -p screenshots
+
+                  # Start the emulator headlessly in the background.  The
+                  # `--headless`, `--no-audio`, and `--no-boot-anim` flags
+                  # are the Android CLI equivalents of the raw emulator's
+                  # `-no-window -noaudio -no-boot-anim` flags.
+                  android emulator start \
+                    --name "gitsync_${{ matrix.label }}" \
+                    --headless \
+                    --no-audio \
+                    --no-boot-anim \
+                    --gpu swiftshader_indirect &
+                  EMU_PID=$!
+
+                  # Wait for the Android framework to finish booting before
+                  # trying to install anything.
+                  adb wait-for-device
+                  adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+
+                  # `android run --apk` installs the pre-built APK on the
+                  # running emulator and launches its main activity — a
+                  # single command replacing `adb install + adb shell monkey`.
+                  # Debug builds carry the `.dev` applicationIdSuffix.
+                  android run --apk apk/app-debug.apk
+
+                  # Allow the first frame and onboarding scrim to settle.
+                  sleep 12
+
+                  # Capture the current screen and collect logcat for triage.
+                  adb exec-out screencap -p > "screenshots/${{ matrix.label }}-launch.png"
+                  adb logcat -d > "screenshots/${{ matrix.label }}-logcat.txt" || true
+
+                  kill "$EMU_PID" || true
+
+            - name: Upload screenshots
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: screenshots-${{ matrix.label }}
+                  path: screenshots/
+                  if-no-files-found: warn
+                  retention-days: 14

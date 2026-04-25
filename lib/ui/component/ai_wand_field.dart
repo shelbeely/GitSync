@@ -6,6 +6,7 @@ import 'package:GitSync/constant/dimens.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/providers/riverpod_providers.dart';
 import 'package:GitSync/ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 class AiWandField extends ConsumerStatefulWidget {
   final Widget child;
@@ -44,7 +45,7 @@ class _AiWandFieldState extends ConsumerState<AiWandField> {
                 ? null
                 : () async {
                     if (!ref.read(aiKeyConfiguredProvider)) {
-                      final navigate = await showDialog<bool>(
+                      final navigate = await showAppDialog<bool>(
                         context: context,
                         builder: (dialogContext) => BaseAlertDialog(
                           title: Text(

@@ -892,7 +892,6 @@ class _PrDetailPageState extends ConsumerState<PrDetailPage> with SingleTickerPr
                   final detail = _detail;
                   if (detail == null) return;
                   final labels = detail.labels.map((l) => l.name).join(', ');
-                  final files = detail.changedFiles.map((f) => f.filename).join(', ');
                   final recentComments = detail.timelineItems.where((t) => t.type == PrTimelineItemType.comment && t.comment != null).toList();
                   final lastComments = recentComments.length > 5 ? recentComments.sublist(recentComments.length - 5) : recentComments;
                   final commentText = lastComments.map((t) => '@${t.comment!.authorUsername}: ${t.comment!.body}').join('\n');

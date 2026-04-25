@@ -6,7 +6,6 @@ import 'package:GitSync/api/manager/git_manager.dart';
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/type/action_run.dart';
-import 'package:GitSync/type/agent_session.dart';
 import 'package:GitSync/type/git_provider.dart';
 import 'package:GitSync/type/issue.dart';
 import 'package:GitSync/type/pr_detail.dart';

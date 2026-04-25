@@ -1,14 +1,14 @@
 import 'package:GitSync/global.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, String branchName, Future<void> Function() callback) {
   String text = sprintf(t.confirmDeleteBranchMsg, [branchName]);
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       title: SizedBox(

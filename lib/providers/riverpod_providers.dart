@@ -295,7 +295,7 @@ class RecommendedActionNotifier extends CachedGitNotifier<int?> {
         await writeCache(manager, live);
       }
       return live;
-    } catch (e, s) {
+    } catch (e) {
       if (await _isCurrentIndex(repoIndex)) state = AsyncData(previous);
       rethrow;
     }

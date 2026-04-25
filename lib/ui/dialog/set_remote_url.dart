@@ -1,9 +1,9 @@
 import 'package:GitSync/api/helper.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:GitSync/global.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, String? oldRemoteUrl, Future<void> Function(String newRemoteUrl) callback) async {
   final newRemoteController = TextEditingController(text: oldRemoteUrl);
@@ -11,7 +11,7 @@ Future<void> showDialog(BuildContext context, String? oldRemoteUrl, Future<void>
   // TODO: Dialog doesn't open without this (investigate)
   await Future.delayed(Duration(milliseconds: 500));
 
-  return await mat.showDialog(
+  return await showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       expandable: false,

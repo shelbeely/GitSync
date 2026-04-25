@@ -3,7 +3,6 @@ import 'package:GitSync/api/logger.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:collection/collection.dart';
 import 'package:extended_text/extended_text.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -17,6 +16,7 @@ import 'package:GitSync/global.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/ui/dialog/confirm_discard_changes.dart' as ConfirmDiscardChangesDialog;
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Widget outlineCircleMinus({required double size, required Color color}) => Stack(
   alignment: Alignment.center,
@@ -37,7 +37,7 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
   final editorLineWrap = await repoManager.getBool(StorageKey.repoman_editorLineWrap);
   final bool resolvedHasRemotes =
       hasRemotes ??
-      (await runGitOperation<List<String>>(LogType.ListRemotes, (event) => event?["result"].map<String>((r) => "$r").toList()))?.isNotEmpty == true;
+      (await runGitOperation<List<String>>(LogType.ListRemotes, (event) => event?["result"].map<String>((r) => "$r").toList())).isNotEmpty == true;
 
   if (demo) {
     selectedFiles.add("storage/external/example/file_changed.md");
@@ -103,8 +103,10 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
     });
   }
 
-  await mat.showDialog(
+  await showAppDialog(
     context: context,
+    // Transparent scrim: avoids double-darkening the screen behind the
+    // manual-sync dialog.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => PopScope(
       canPop: false,

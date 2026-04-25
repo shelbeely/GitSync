@@ -12,6 +12,7 @@ import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/ui/component/button_setting.dart';
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:GitSync/ui/component/item_setting.dart';
+import 'package:GitSync/ui/component/settings_section.dart';
 import 'package:GitSync/ui/component/sync_client_mode_toggle.dart';
 import 'package:GitSync/ui/page/file_explorer.dart';
 import 'package:archive/archive_io.dart';
@@ -490,330 +491,267 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                       ),
                     ],
                     SizedBox(height: spaceLG),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
-                          ),
-                          Text(
-                            t.backupRestoreTitle.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.primaryLight, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceSM),
-                    ButtonSetting(
-                      text: t.encryptedBackup,
-                      icon: FontAwesomeIcons.solidFloppyDisk,
-                      onPressed: () async {
-                        await EnterBackupRestorePasswordDialog.showDialog(context, true, (text) async {
-                          final repoManagerSettings = await repoManager.getAll();
-                          final repoCount = (await repoManager.getStringList(StorageKey.repoman_repoNames)).length;
-                          final settingsManagerSettings = <Map<String, String>>[];
+                    SettingsSection(
+                      title: t.backupRestoreTitle,
+                      children: [
+                        ButtonSetting(
+                          text: t.encryptedBackup,
+                          icon: FontAwesomeIcons.solidFloppyDisk,
+                          onPressed: () async {
+                            await EnterBackupRestorePasswordDialog.showDialog(context, true, (text) async {
+                              final repoManagerSettings = await repoManager.getAll();
+                              final repoCount = (await repoManager.getStringList(StorageKey.repoman_repoNames)).length;
+                              final settingsManagerSettings = <Map<String, String>>[];
 
-                          for (var i = 0; i < repoCount; i++) {
-                            final settingsManager = SettingsManager();
-                            settingsManager.reinit(repoIndex: i);
-                            settingsManagerSettings.add(await settingsManager.getAll());
-                          }
+                              for (var i = 0; i < repoCount; i++) {
+                                final settingsManager = SettingsManager();
+                                settingsManager.reinit(repoIndex: i);
+                                settingsManagerSettings.add(await settingsManager.getAll());
+                              }
 
-                          final Map<String, dynamic> settingsMap = {"repoManager": repoManagerSettings, "settingsManager": settingsManagerSettings};
+                              final Map<String, dynamic> settingsMap = {"repoManager": repoManagerSettings, "settingsManager": settingsManagerSettings};
 
-                          await FilePicker.platform.saveFile(
-                            dialogTitle: t.selectBackupLocation,
-                            fileName: sprintf(t.backupFileTemplate, [DateTime.now().toLocal().toString().replaceAll(":", "-")]),
-                            bytes: utf8.encode(await encryptMap(settingsMap, text)),
-                          );
-                        });
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.encryptedRestore,
-                      icon: FontAwesomeIcons.arrowRotateLeft,
-                      onPressed: () async {
-                        if (!await requestStoragePerm(false) && !await requestStoragePerm()) return;
-                        FilePickerResult? result = await FilePicker.platform.pickFiles();
-                        if (result == null) return;
+                              await FilePicker.platform.saveFile(
+                                dialogTitle: t.selectBackupLocation,
+                                fileName: sprintf(t.backupFileTemplate, [DateTime.now().toLocal().toString().replaceAll(":", "-")]),
+                                bytes: utf8.encode(await encryptMap(settingsMap, text)),
+                              );
+                            });
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.encryptedRestore,
+                          icon: FontAwesomeIcons.arrowRotateLeft,
+                          onPressed: () async {
+                            if (!await requestStoragePerm(false) && !await requestStoragePerm()) return;
+                            FilePickerResult? result = await FilePicker.platform.pickFiles();
+                            if (result == null) return;
 
-                        File file = File(result.files.single.path!);
+                            File file = File(result.files.single.path!);
 
-                        await EnterBackupRestorePasswordDialog.showDialog(context, false, (text) async {
-                          Map<String, dynamic> settingsMap = {};
-                          try {
-                            settingsMap = await decryptMap(file.readAsStringSync(), text);
-                          } catch (e) {
-                            await Fluttertoast.showToast(msg: t.invalidPassword, toastLength: Toast.LENGTH_LONG, gravity: null);
-                            return;
-                          }
+                            await EnterBackupRestorePasswordDialog.showDialog(context, false, (text) async {
+                              Map<String, dynamic> settingsMap = {};
+                              try {
+                                settingsMap = await decryptMap(file.readAsStringSync(), text);
+                              } catch (e) {
+                                await Fluttertoast.showToast(msg: t.invalidPassword, toastLength: Toast.LENGTH_LONG, gravity: null);
+                                return;
+                              }
 
-                          List<dynamic> settingsManagerSettings = settingsMap["settingsManager"];
+                              List<dynamic> settingsManagerSettings = settingsMap["settingsManager"];
 
-                          Future<void> importSettings() async {
-                            await repoManager.setAll(settingsMap["repoManager"]);
+                              Future<void> importSettings() async {
+                                await repoManager.setAll(settingsMap["repoManager"]);
 
-                            for (var i = 0; i < settingsManagerSettings.length; i++) {
-                              final settingsManager = SettingsManager();
-                              settingsManager.reinit(repoIndex: i);
-                              await settingsManager.setAll(settingsManagerSettings[i]);
-                            }
+                                for (var i = 0; i < settingsManagerSettings.length; i++) {
+                                  final settingsManager = SettingsManager();
+                                  settingsManager.reinit(repoIndex: i);
+                                  await settingsManager.setAll(settingsManagerSettings[i]);
+                                }
 
-                            for (var i = 0; i < settingsManagerSettings.length; i++) {
-                              final settingsManager = SettingsManager();
-                              settingsManager.reinit(repoIndex: i);
-                              await GitManager.clearLocks();
+                                for (var i = 0; i < settingsManagerSettings.length; i++) {
+                                  final settingsManager = SettingsManager();
+                                  settingsManager.reinit(repoIndex: i);
+                                  await GitManager.clearLocks();
 
-                              if (!await Permission.notification.isGranted && await settingsManager.getBool(StorageKey.setman_syncMessageEnabled)) {
-                                await settingsManager.setBool(StorageKey.setman_syncMessageEnabled, false);
-                                if (await Permission.notification.request().isGranted) {
-                                  await settingsManager.setBool(StorageKey.setman_syncMessageEnabled, true);
+                                  if (!await Permission.notification.isGranted && await settingsManager.getBool(StorageKey.setman_syncMessageEnabled)) {
+                                    await settingsManager.setBool(StorageKey.setman_syncMessageEnabled, false);
+                                    if (await Permission.notification.request().isGranted) {
+                                      await settingsManager.setBool(StorageKey.setman_syncMessageEnabled, true);
+                                    }
+                                  }
+                                }
+
+                                await uiSettingsManager.reinit();
+
+                                Navigator.of(context).canPop() ? Navigator.pop(context) : null;
+                              }
+
+                              if (settingsManagerSettings.length > 1) {
+                                if (ref.read(premiumStatusProvider) != true) {
+                                  final result = await Navigator.of(context).push(createUnlockPremiumRoute(context, {}));
+                                  if (result == true) {
+                                    await importSettings();
+                                  }
+                                  return;
                                 }
                               }
-                            }
 
-                            await uiSettingsManager.reinit();
+                              await importSettings();
+                            });
+                          },
+                        ),
+                      ],
+                    ),
 
-                            Navigator.of(context).canPop() ? Navigator.pop(context) : null;
-                          }
+                    SizedBox(height: spaceLG),
 
-                          if (settingsManagerSettings.length > 1) {
-                            if (ref.read(premiumStatusProvider) != true) {
-                              final result = await Navigator.of(context).push(createUnlockPremiumRoute(context, {}));
-                              if (result == true) {
-                                await importSettings();
-                              }
+                    SettingsSection(
+                      title: t.community,
+                      children: [
+                        ButtonSetting(
+                          text: t.reportABug,
+                          icon: FontAwesomeIcons.bug,
+                          textColor: colours.primaryDark,
+                          iconColor: colours.primaryDark,
+                          buttonColor: colours.tertiaryNegative,
+                          onPressed: () async {
+                            await Logger.reportIssue(context, From.GLOBAL_SETTINGS);
+                          },
+                        ),
+                        if (kDebugMode) ...[
+                          SizedBox(height: spaceSM),
+                          ButtonSetting(
+                            text: 'FAKE ERROR',
+                            icon: FontAwesomeIcons.explosion,
+                            textColor: colours.primaryDark,
+                            iconColor: colours.primaryDark,
+                            buttonColor: colours.tertiaryWarning,
+                            onPressed: () async {
+                              Logger.logError(LogType.Sync, 'uncommitted changes exist in index (at line 1291)', StackTrace.current);
+                              await Logger.dismissError(context);
+                            },
+                          ),
+                        ],
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.shareLogs,
+                          icon: FontAwesomeIcons.envelopeOpenText,
+                          loads: true,
+                          onPressed: () async {
+                            final dir = await getTemporaryDirectory();
+                            final logsDir = Directory('${dir.path}/logs');
+                            final files = !logsDir.existsSync()
+                                ? []
+                                : logsDir.listSync().whereType<File>().where((f) => f.path.endsWith('.log')).toList();
+
+                            if (files.isEmpty || !logsDir.existsSync()) {
+                              Fluttertoast.showToast(msg: t.noLogFilesFound, toastLength: Toast.LENGTH_SHORT, gravity: null);
                               return;
                             }
-                          }
 
-                          await importSettings();
-                        });
-                      },
-                    ),
+                            final zipFile = File('${dir.path}/logs.zip');
 
-                    SizedBox(height: spaceLG),
+                            var encoder = ZipFileEncoder();
+                            encoder.create('${dir.path}/logs.zip');
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
-                          ),
-                          Text(
-                            t.community.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.primaryLight, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceSM),
-                    ButtonSetting(
-                      text: t.reportABug,
-                      icon: FontAwesomeIcons.bug,
-                      textColor: colours.primaryDark,
-                      iconColor: colours.primaryDark,
-                      buttonColor: colours.tertiaryNegative,
-                      onPressed: () async {
-                        await Logger.reportIssue(context, From.GLOBAL_SETTINGS);
-                      },
-                    ),
-                    if (kDebugMode) ...[
-                      SizedBox(height: spaceSM),
-                      ButtonSetting(
-                        text: 'FAKE ERROR',
-                        icon: FontAwesomeIcons.explosion,
-                        textColor: colours.primaryDark,
-                        iconColor: colours.primaryDark,
-                        buttonColor: colours.tertiaryWarning,
-                        onPressed: () async {
-                          Logger.logError(LogType.Sync, 'uncommitted changes exist in index (at line 1291)', StackTrace.current);
-                          await Logger.dismissError(context);
-                        },
-                      ),
-                    ],
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.shareLogs,
-                      icon: FontAwesomeIcons.envelopeOpenText,
-                      loads: true,
-                      onPressed: () async {
-                        final dir = await getTemporaryDirectory();
-                        final logsDir = Directory('${dir.path}/logs');
-                        final files = !logsDir.existsSync()
-                            ? []
-                            : logsDir.listSync().whereType<File>().where((f) => f.path.endsWith('.log')).toList();
+                            for (var file in files) {
+                              await encoder.addFile(file);
+                            }
+                            await encoder.close();
 
-                        if (files.isEmpty || !logsDir.existsSync()) {
-                          Fluttertoast.showToast(msg: t.noLogFilesFound, toastLength: Toast.LENGTH_SHORT, gravity: null);
-                          return;
-                        }
+                            final Email email = Email(
+                              body:
+                                  """
 
-                        final zipFile = File('${dir.path}/logs.zip');
+                        ${await Logger.generateDeviceInfo()}
 
-                        var encoder = ZipFileEncoder();
-                        encoder.create('${dir.path}/logs.zip');
-
-                        for (var file in files) {
-                          await encoder.addFile(file);
-                        }
-                        await encoder.close();
-
-                        final Email email = Email(
-                          body:
-                              """
-
-                    ${await Logger.generateDeviceInfo()}
-
-                    """,
-                          subject: sprintf(t.logsEmailSubjectTemplate, [Platform.isIOS ? t.ios : t.android]),
-                          recipients: [t.logsEmailRecipient],
-                          attachmentPaths: [zipFile.path],
-                          isHTML: false,
-                        );
-
-                        try {
-                          await FlutterEmailSender.send(email);
-                        } catch (e, stackStrace) {
-                          if (e.toString().contains("No email clients found!")) {
-                            Fluttertoast.showToast(
-                              msg: "No compatible email app found!\n(Gmail incompatible)",
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: null,
+                        """,
+                              subject: sprintf(t.logsEmailSubjectTemplate, [Platform.isIOS ? t.ios : t.android]),
+                              recipients: [t.logsEmailRecipient],
+                              attachmentPaths: [zipFile.path],
+                              isHTML: false,
                             );
-                            return;
-                          }
-                          Logger.logError(LogType.Global, e, stackStrace);
-                        }
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.requestAFeature,
-                      icon: FontAwesomeIcons.solidHandPointUp,
-                      onPressed: () async {
-                        if (await canLaunchUrl(Uri.parse(githubFeatureTemplate))) {
-                          await launchUrl(Uri.parse(githubFeatureTemplate));
-                        }
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.improveTranslations,
-                      icon: FontAwesomeIcons.language,
-                      onPressed: () async {
-                        if (await canLaunchUrl(Uri.parse(githubImproveTranslationsDocs))) {
-                          await launchUrl(Uri.parse(githubImproveTranslationsDocs));
-                        }
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.joinTheDiscussion,
-                      icon: FontAwesomeIcons.discord,
-                      onPressed: () async {
-                        if (await canLaunchUrl(Uri.parse(discordLink))) {
-                          await launchUrl(Uri.parse(discordLink));
-                        }
-                      },
+
+                            try {
+                              await FlutterEmailSender.send(email);
+                            } catch (e, stackStrace) {
+                              if (e.toString().contains("No email clients found!")) {
+                                Fluttertoast.showToast(
+                                  msg: "No compatible email app found!\n(Gmail incompatible)",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: null,
+                                );
+                                return;
+                              }
+                              Logger.logError(LogType.Global, e, stackStrace);
+                            }
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.requestAFeature,
+                          icon: FontAwesomeIcons.solidHandPointUp,
+                          onPressed: () async {
+                            if (await canLaunchUrl(Uri.parse(githubFeatureTemplate))) {
+                              await launchUrl(Uri.parse(githubFeatureTemplate));
+                            }
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.improveTranslations,
+                          icon: FontAwesomeIcons.language,
+                          onPressed: () async {
+                            if (await canLaunchUrl(Uri.parse(githubImproveTranslationsDocs))) {
+                              await launchUrl(Uri.parse(githubImproveTranslationsDocs));
+                            }
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.joinTheDiscussion,
+                          icon: FontAwesomeIcons.discord,
+                          onPressed: () async {
+                            if (await canLaunchUrl(Uri.parse(discordLink))) {
+                              await launchUrl(Uri.parse(discordLink));
+                            }
+                          },
+                        ),
+                      ],
                     ),
 
                     SizedBox(height: spaceLG),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
+                    SettingsSection(
+                      title: t.guides,
+                      children: [
+                        ButtonSetting(
+                          text: t.viewDocumentation,
+                          icon: FontAwesomeIcons.solidFileLines,
+                          onPressed: () async {
+                            launchUrl(Uri.parse(documentationLink));
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        CustomShowcase(
+                          globalKey: _uiSetupGuideKey,
+                          cornerRadius: cornerRadiusMD,
+                          first: true,
+                          last: true,
+                          richContent: ShowcaseTooltipContent(
+                            title: t.showcaseSetupGuideTitle,
+                            subtitle: t.showcaseSetupGuideSubtitle,
+                            featureRows: [
+                              ShowcaseFeatureRow(icon: FontAwesomeIcons.chalkboardUser, text: t.showcaseSetupGuideFeatureSetup),
+                              ShowcaseFeatureRow(icon: FontAwesomeIcons.route, text: t.showcaseSetupGuideFeatureTour),
+                            ],
                           ),
-                          Text(
-                            t.guides.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.primaryLight, fontWeight: FontWeight.bold),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ButtonSetting(
+                                text: t.guidedSetup,
+                                icon: FontAwesomeIcons.chalkboardUser,
+                                onPressed: () async {
+                                  await repoManager.setInt(StorageKey.repoman_onboardingStep, 0);
+                                  Navigator.of(context).canPop() ? Navigator.pop(context, "guided_setup") : null;
+                                },
+                              ),
+                              SizedBox(height: spaceMD),
+                              ButtonSetting(
+                                text: t.uiGuide,
+                                icon: FontAwesomeIcons.route,
+                                onPressed: () async {
+                                  await repoManager.setInt(StorageKey.repoman_onboardingStep, 4);
+                                  Navigator.of(context).canPop() ? Navigator.pop(context, "ui_guide") : null;
+                                },
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceSM),
-                    ButtonSetting(
-                      text: t.viewDocumentation,
-                      icon: FontAwesomeIcons.solidFileLines,
-                      onPressed: () async {
-                        launchUrl(Uri.parse(documentationLink));
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    CustomShowcase(
-                      globalKey: _uiSetupGuideKey,
-                      cornerRadius: cornerRadiusMD,
-                      first: true,
-                      last: true,
-                      richContent: ShowcaseTooltipContent(
-                        title: t.showcaseSetupGuideTitle,
-                        subtitle: t.showcaseSetupGuideSubtitle,
-                        featureRows: [
-                          ShowcaseFeatureRow(icon: FontAwesomeIcons.chalkboardUser, text: t.showcaseSetupGuideFeatureSetup),
-                          ShowcaseFeatureRow(icon: FontAwesomeIcons.route, text: t.showcaseSetupGuideFeatureTour),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ButtonSetting(
-                            text: t.guidedSetup,
-                            icon: FontAwesomeIcons.chalkboardUser,
-                            onPressed: () async {
-                              await repoManager.setInt(StorageKey.repoman_onboardingStep, 0);
-                              Navigator.of(context).canPop() ? Navigator.pop(context, "guided_setup") : null;
-                            },
-                          ),
-                          SizedBox(height: spaceMD),
-                          ButtonSetting(
-                            text: t.uiGuide,
-                            icon: FontAwesomeIcons.route,
-                            onPressed: () async {
-                              await repoManager.setInt(StorageKey.repoman_onboardingStep, 4);
-                              Navigator.of(context).canPop() ? Navigator.pop(context, "ui_guide") : null;
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     if (orientation == Orientation.landscape) SizedBox(height: spaceLG),
                   ]),
@@ -844,189 +782,127 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                             ),
                           ),
                         ))([
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
-                          ),
-                          Text(
-                            t.repositoryDefaults.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.primaryLight, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceMD),
-                    SyncClientModeToggle(global: true),
-                    SizedBox(height: spaceMD),
-                    ItemSetting(
-                      setFn: (value) => repoManager.setString(StorageKey.repoman_defaultSyncMessage, value),
-                      getFn: () => repoManager.getString(StorageKey.repoman_defaultSyncMessage),
-                      title: t.defaultSyncMessageLabel,
-                      description: t.syncMessageDescription,
-                      hint: defaultSyncMessage,
-                      maxLines: null,
-                      minLines: null,
-                    ),
-                    SizedBox(height: spaceMD),
-                    ItemSetting(
-                      setFn: (value) => repoManager.setString(StorageKey.repoman_defaultSyncMessageTimeFormat, value),
-                      getFn: () => repoManager.getString(StorageKey.repoman_defaultSyncMessageTimeFormat),
-                      title: t.defaultSyncMessageTimeFormatLabel,
-                      description: t.syncMessageTimeFormatDescription,
-                      hint: defaultSyncMessageTimeFormat,
-                    ),
-                    SizedBox(height: spaceMD),
-                    ItemSetting(
-                      setFn: (value) => repoManager.setString(StorageKey.repoman_defaultAuthorName, value.trim()),
-                      getFn: demo ? () async => "" : () => repoManager.getString(StorageKey.repoman_defaultAuthorName),
-                      title: t.defaultAuthorNameLabel,
-                      description: t.authorNameDescription,
-                      hint: t.authorName,
-                    ),
-                    SizedBox(height: spaceMD),
-                    ItemSetting(
-                      setFn: (value) => repoManager.setString(StorageKey.repoman_defaultAuthorEmail, value.trim()),
-                      getFn: demo ? () async => "" : () => repoManager.getString(StorageKey.repoman_defaultAuthorEmail),
-                      title: t.defaultAuthorEmailLabel,
-                      description: t.authorEmailDescription,
-                      hint: t.authorEmail,
-                    ),
-                    SizedBox(height: spaceMD),
-                    ItemSetting(
-                      setFn: (value) => repoManager.setString(StorageKey.repoman_defaultPostFooter, value),
-                      getFn: () => repoManager.getString(StorageKey.repoman_defaultPostFooter),
-                      title: t.postFooterLabel,
-                      description: t.postFooterDescription,
-                      hint: defaultPostFooter,
-                      maxLines: null,
-                      minLines: null,
+                    SettingsSection(
+                      title: t.repositoryDefaults,
+                      children: [
+                        SyncClientModeToggle(global: true),
+                        SizedBox(height: spaceMD),
+                        ItemSetting(
+                          setFn: (value) => repoManager.setString(StorageKey.repoman_defaultSyncMessage, value),
+                          getFn: () => repoManager.getString(StorageKey.repoman_defaultSyncMessage),
+                          title: t.defaultSyncMessageLabel,
+                          description: t.syncMessageDescription,
+                          hint: defaultSyncMessage,
+                          maxLines: null,
+                          minLines: null,
+                        ),
+                        SizedBox(height: spaceMD),
+                        ItemSetting(
+                          setFn: (value) => repoManager.setString(StorageKey.repoman_defaultSyncMessageTimeFormat, value),
+                          getFn: () => repoManager.getString(StorageKey.repoman_defaultSyncMessageTimeFormat),
+                          title: t.defaultSyncMessageTimeFormatLabel,
+                          description: t.syncMessageTimeFormatDescription,
+                          hint: defaultSyncMessageTimeFormat,
+                        ),
+                        SizedBox(height: spaceMD),
+                        ItemSetting(
+                          setFn: (value) => repoManager.setString(StorageKey.repoman_defaultAuthorName, value.trim()),
+                          getFn: demo ? () async => "" : () => repoManager.getString(StorageKey.repoman_defaultAuthorName),
+                          title: t.defaultAuthorNameLabel,
+                          description: t.authorNameDescription,
+                          hint: t.authorName,
+                        ),
+                        SizedBox(height: spaceMD),
+                        ItemSetting(
+                          setFn: (value) => repoManager.setString(StorageKey.repoman_defaultAuthorEmail, value.trim()),
+                          getFn: demo ? () async => "" : () => repoManager.getString(StorageKey.repoman_defaultAuthorEmail),
+                          title: t.defaultAuthorEmailLabel,
+                          description: t.authorEmailDescription,
+                          hint: t.authorEmail,
+                        ),
+                        SizedBox(height: spaceMD),
+                        ItemSetting(
+                          setFn: (value) => repoManager.setString(StorageKey.repoman_defaultPostFooter, value),
+                          getFn: () => repoManager.getString(StorageKey.repoman_defaultPostFooter),
+                          title: t.postFooterLabel,
+                          description: t.postFooterDescription,
+                          hint: defaultPostFooter,
+                          maxLines: null,
+                          minLines: null,
+                        ),
+                      ],
                     ),
 
                     SizedBox(height: spaceLG + spaceMD),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
-                          ),
-                          Text(
-                            t.miscellaneous.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.primaryLight, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryLight,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceSM),
-                    Builder(
-                      builder: (context) {
-                        final hasPremium = ref.watch(premiumStatusProvider);
-                        return ButtonSetting(
-                          text: (hasPremium == true ? t.contributeTitle : t.premiumDialogTitle).toUpperCase(),
-                          icon: hasPremium == true ? FontAwesomeIcons.circleDollarToSlot : FontAwesomeIcons.solidGem,
-                          iconColor: colours.tertiaryPositive,
-                          onPressed: () async {
-                            if (hasPremium == true) {
-                              await launchUrl(Uri.parse(contributeLink));
-                            } else {
-                              final result = await Navigator.of(context).push(createUnlockPremiumRoute(context, {}));
-                              if (result == true && mounted) setState(() {});
-                            }
+                    SettingsSection(
+                      title: t.miscellaneous,
+                      children: [
+                        Builder(
+                          builder: (context) {
+                            final hasPremium = ref.watch(premiumStatusProvider);
+                            return ButtonSetting(
+                              text: (hasPremium == true ? t.contributeTitle : t.premiumDialogTitle).toUpperCase(),
+                              icon: hasPremium == true ? FontAwesomeIcons.circleDollarToSlot : FontAwesomeIcons.solidGem,
+                              iconColor: colours.tertiaryPositive,
+                              onPressed: () async {
+                                if (hasPremium == true) {
+                                  await launchUrl(Uri.parse(contributeLink));
+                                } else {
+                                  final result = await Navigator.of(context).push(createUnlockPremiumRoute(context, {}));
+                                  if (result == true && mounted) setState(() {});
+                                }
+                              },
+                            );
                           },
-                        );
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.viewPrivacyPolicy,
-                      icon: FontAwesomeIcons.userShield,
-                      onPressed: () async {
-                        launchUrl(Uri.parse(privacyPolicyLink));
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    ButtonSetting(
-                      text: t.viewEula,
-                      icon: FontAwesomeIcons.fileContract,
-                      onPressed: () async {
-                        launchUrl(Uri.parse(eulaLink));
-                      },
-                    ),
-                    SizedBox(height: spaceMD),
-                    FutureBuilder(
-                      future: PackageInfo.fromPlatform(),
-                      builder: (context, versionSnapshot) =>
-                          ButtonSetting(text: versionSnapshot.data?.version ?? "x.x.xx", icon: FontAwesomeIcons.tag, onPressed: null),
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.viewPrivacyPolicy,
+                          icon: FontAwesomeIcons.userShield,
+                          onPressed: () async {
+                            launchUrl(Uri.parse(privacyPolicyLink));
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        ButtonSetting(
+                          text: t.viewEula,
+                          icon: FontAwesomeIcons.fileContract,
+                          onPressed: () async {
+                            launchUrl(Uri.parse(eulaLink));
+                          },
+                        ),
+                        SizedBox(height: spaceMD),
+                        FutureBuilder(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, versionSnapshot) =>
+                              ButtonSetting(text: versionSnapshot.data?.version ?? "x.x.xx", icon: FontAwesomeIcons.tag, onPressed: null),
+                        ),
+                      ],
                     ),
 
                     SizedBox(height: spaceLG),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: spaceMD),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryNegative,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(right: spaceSM),
-                            ),
-                          ),
-                          Text(
-                            t.dangerZone.toUpperCase(),
-                            style: TextStyle(fontSize: textSM, color: colours.tertiaryNegative, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: colours.tertiaryNegative,
-                              height: spaceXXXXS,
-                              margin: EdgeInsets.only(left: spaceSM),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: spaceSM),
-                    ButtonSetting(
-                      text: t.iosClearDataAction,
-                      icon: FontAwesomeIcons.dumpsterFire,
-                      onPressed: () async {
-                        await ConfirmClearDataDialog.showDialog(context, () async {
-                          await uiSettingsManager.storage.deleteAll();
-                          await repoManager.storage.deleteAll();
-                          await uiSettingsManager.reinit();
-                          ref.read(premiumStatusProvider.notifier).set(false);
+                    SettingsSection(
+                      title: t.dangerZone,
+                      headerColor: colours.tertiaryNegative,
+                      children: [
+                        ButtonSetting(
+                          text: t.iosClearDataAction,
+                          icon: FontAwesomeIcons.dumpsterFire,
+                          onPressed: () async {
+                            await ConfirmClearDataDialog.showDialog(context, () async {
+                              await uiSettingsManager.storage.deleteAll();
+                              await repoManager.storage.deleteAll();
+                              await uiSettingsManager.reinit();
+                              ref.read(premiumStatusProvider.notifier).set(false);
 
-                          Navigator.of(context).canPop() ? Navigator.pop(context) : null;
-                        });
-                      },
-                      buttonColor: colours.secondaryNegative,
+                              Navigator.of(context).canPop() ? Navigator.pop(context) : null;
+                            });
+                          },
+                          buttonColor: colours.secondaryNegative,
+                        ),
+                      ],
                     ),
                     SizedBox(height: spaceLG),
                   ]),

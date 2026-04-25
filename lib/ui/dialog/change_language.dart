@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,6 +5,7 @@ import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/l10n/app_localizations.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, Future<void> Function(String locale) callback) {
   final localesOrder = ["en", "zh", "zh_Hant", "es", "ru", "fr", "de", "ja"];
@@ -17,7 +17,7 @@ Future<void> showDialog(BuildContext context, Future<void> Function(String local
       locale: LocaleNamesLocalizationsDelegate.nativeLocaleNames[locale],
   };
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       backgroundColor: colours.secondaryDark,

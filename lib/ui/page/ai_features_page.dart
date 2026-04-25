@@ -16,6 +16,7 @@ import 'package:GitSync/providers/riverpod_providers.dart';
 import 'package:GitSync/type/ai_chat.dart';
 import 'package:GitSync/ui/component/markdown_config.dart';
 import 'package:GitSync/ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 const _mono = TextStyle(fontFamily: "monospace", height: 1.6);
 
@@ -702,7 +703,7 @@ class _AiFeaturesPageState extends ConsumerState<AiFeaturesPage> {
       _setDialogState?.call(() {});
     }();
 
-    final signedOut = await showDialog<bool>(
+    final signedOut = await showAppDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
@@ -909,7 +910,7 @@ class _AiFeaturesPageState extends ConsumerState<AiFeaturesPage> {
   }
 
   void _confirmStop(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: colours.secondaryDark,
@@ -972,7 +973,7 @@ class _AiFeaturesPageState extends ConsumerState<AiFeaturesPage> {
   }
 
   Future<void> _confirmClearChat(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: colours.secondaryDark,
@@ -1321,7 +1322,7 @@ class _UninitializedPageState extends ConsumerState<_UninitializedPage> {
   }
 
   void _showHideAiDialog(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (dialogContext) => BaseAlertDialog(
         title: Text(
@@ -1411,7 +1412,7 @@ class _UninitializedPageState extends ConsumerState<_UninitializedPage> {
       });
     }
 
-    final connected = await showDialog<bool>(
+    final connected = await showAppDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {

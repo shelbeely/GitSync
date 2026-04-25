@@ -2,7 +2,6 @@ import 'package:GitSync/api/logger.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 final Map<List<String>, (String?, Future<void> Function([int? repomanRepoindex])?)> autoFixMessageCallbackMap = {
   [invalidIndexHeaderError]: (null, ([_]) async => await runGitOperation(LogType.DiscardGitIndex, (event) => event)),
@@ -41,7 +41,7 @@ Future<void> showDialog(BuildContext context, String error, Function()? callback
 
   final autoFixKey = autoFixMessageCallbackMap.keys.firstWhereOrNull((textArray) => textArray.every((text) => error.contains(text)));
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       expandable: callback != null,

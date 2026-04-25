@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
@@ -6,12 +5,13 @@ import 'package:GitSync/api/ai_completion_service.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/ui/component/ai_wand_field.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, String commitSha, String commitMessage, Future<void> Function(String newMessage) callback) {
   bool loading = false;
   final controller = TextEditingController(text: commitMessage);
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => StatefulBuilder(
       builder: (context, setState) => BaseAlertDialog(
