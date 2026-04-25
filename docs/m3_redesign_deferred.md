@@ -99,6 +99,27 @@ phase/step numbering.
     states.
 - ✅ Step 18 — `ExpandedCommits` "Repository Tools" header.
 
+## Runtime verification harness
+
+A manually-triggered GitHub Actions workflow,
+[`.github/workflows/screenshot-harness.yml`](../.github/workflows/screenshot-harness.yml),
+boots phone (`pixel_6`) and tablet (`pixel_tablet`) AVDs, installs a debug
+build of the app, and uploads launch-state screenshots as workflow
+artifacts. This is the rig the deferred Steps 4 and 5 below are blocked on:
+
+- Trigger via *Actions → Screenshot Harness (Android) → Run workflow*.
+- Defaults to API 34 / `google_apis`; both are workflow inputs.
+- Screenshots land in the `screenshots-phone` / `screenshots-tablet`
+  artifacts; `*-logcat.txt` is included for triage.
+- Out of the box the harness only captures the **first launch screen** (the
+  onboarding welcome dialog) — that is enough to spot AppBar layout
+  regressions on either form factor.
+- To exercise the home tab, the existing Maestro flows under
+  `.maestro/generate_screenshots/` need GitHub auth credentials
+  (`MAESTRO_GITHUB_*` — see `.maestro/README.md`). Once those are added as
+  repository secrets, extend the workflow's `script:` block to invoke
+  Maestro after the screencap step.
+
 ## Summary of remaining work
 
 After the follow-up implementation pass:
@@ -114,5 +135,9 @@ After the follow-up implementation pass:
    affordances.
 4. ⛔ **Step 5 (section headers + home `Card` reflow)** — still requires
    runtime device verification across the deeply-nested home widget tree.
+   The screenshot harness above provides that surface; running it on phone
+   *and* tablet artifacts before/after the reflow is the gating check.
 5. ⛔ **Step 4 (`SliverAppBar.medium`)** — still requires runtime
-   verification on phone and tablet form factors.
+   verification on phone and tablet form factors. Use the screenshot
+   harness above to confirm the medium app-bar collapse animation and that
+   no overflow appears on either profile before landing.

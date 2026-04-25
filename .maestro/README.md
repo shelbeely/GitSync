@@ -3,6 +3,16 @@
 > [!IMPORTANT]
 > All tests are written and optimised to run on a `Pixel 9 - API 35` emulated Android device
 
+> [!NOTE]
+> A minimal CI rig that boots phone + tablet AVDs and uploads launch
+> screenshots is wired up at
+> [`.github/workflows/screenshot-harness.yml`](../.github/workflows/screenshot-harness.yml)
+> (manually triggered). It does **not** run the Maestro flows below by
+> default because they require the GitHub auth credentials documented in
+> *Environment Variables*; once those are added as repository secrets the
+> workflow's `script:` block can be extended to invoke Maestro after the
+> baseline screencap.
+
 This test suite requires some preparation before running. Follow these steps to configure the environment variables correctly:
 
 ### Generate Screenshots Prerequisites
