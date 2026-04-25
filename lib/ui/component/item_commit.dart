@@ -360,7 +360,7 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                                 ),
                               ),
                               Text(
-                                "${demo ? "ViscousTests" : widget.commit.authorUsername} ${t.committed} $_relativeCommitDate",
+                                "${demo ? 'ViscousTests' : widget.commit.authorUsername} ${t.committed} $_relativeCommitDate",
                                 style: TextStyle(
                                   color: widget.commit.unpulled || widget.commit.unpushed ? colours.tertiaryDark : colours.secondaryLight,
                                   fontSize: textSM,

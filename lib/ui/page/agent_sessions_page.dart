@@ -225,7 +225,7 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
     );
   }
 
-  Widget _emptyState({required IconData icon, required String title, required String subtitle}) {
+  Widget _emptyState({required FaIconData icon, required String title, required String subtitle}) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(spaceLG),

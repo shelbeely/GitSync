@@ -4115,6 +4115,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
               ],
             ),
           ),
+          ),
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

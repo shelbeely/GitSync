@@ -42,13 +42,18 @@ jobs:
       - name: Add Android Rust targets
         run: rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
 
-      # Step 3 – OAuth secrets (secrets.dart is gitignored; inject from repo secret)
+      # Step 3 – OAuth secrets (inject from repo secret if set, else use committed fallback)
       - name: Create secrets.dart
+        env:
+          SECRETS_CONTENT: ${{ secrets.SECRETS }}
         run: |
-          echo "Creating secrets.dart from repo secret"
-          cat <<'EOF' > ./lib/constant/secrets.dart
-          ${{ secrets.SECRETS }}
-          EOF
+          if [ -n "$SECRETS_CONTENT" ]; then
+            echo "Creating secrets.dart from repo secret"
+            printf '%s\n' "$SECRETS_CONTENT" > ./lib/constant/secrets.dart
+          else
+            echo "SECRETS not configured – using template with empty credentials"
+            cp ./lib/constant/secrets.dart.template ./lib/constant/secrets.dart
+          fi
 
       # Step 1 – Flutter SDK (version pinned in .fvmrc; single source of truth)
       - name: Setup Flutter SDK
