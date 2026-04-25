@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:GitSync/global.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:path/path.dart' as p;
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, List<String> selectedPaths, Future<void> Function() callback) {
   final oldPath = selectedPaths[0];
@@ -20,7 +20,7 @@ Future<void> showDialog(BuildContext context, List<String> selectedPaths, Future
     sprintf(selectedPaths.length > 1 ? t.deleteMultipleSuffix : t.deleteSingularSuffix, [selectedPaths.length - 1]),
   ]);
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       title: SizedBox(

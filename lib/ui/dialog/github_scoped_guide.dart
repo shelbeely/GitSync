@@ -1,12 +1,12 @@
 import 'package:GitSync/global.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<bool> showLoginGuide(BuildContext context) async {
-  final result = await mat.showDialog<bool>(
+  final result = await showAppDialog<bool>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) => BaseAlertDialog(
@@ -62,7 +62,7 @@ Future<bool> showLoginGuide(BuildContext context) async {
 }
 
 Future<bool> showRepoSelectionGuide(BuildContext context) async {
-  final result = await mat.showDialog<bool>(
+  final result = await showAppDialog<bool>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) => BaseAlertDialog(

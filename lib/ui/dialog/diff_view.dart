@@ -7,7 +7,6 @@ import 'package:GitSync/ui/component/diff_file.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:collection/collection.dart';
 import 'package:extended_text/extended_text.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,6 +15,7 @@ import 'package:sprintf/sprintf.dart';
 import '../../../constant/dimens.dart';
 import '../../../global.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(
   BuildContext parentContext,
@@ -101,7 +101,7 @@ Future<void> showDialog(
     loading.value = false;
   });
 
-  return await mat.showDialog(
+  return await showAppDialog(
     context: parentContext,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => StatefulBuilder(

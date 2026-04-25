@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:GitSync/global.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,12 +7,13 @@ import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 
 import 'confirm_remove_container.dart' as ConfirmRemoveContainer;
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext context, Function(bool deleteContents) callback) async {
   final containerName = await repoManager.getRepoName(await repoManager.getInt(StorageKey.repoman_repoIndex));
   bool deleteContents = false;
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => BaseAlertDialog(
       title: SizedBox(

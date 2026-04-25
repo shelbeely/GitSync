@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(
   BuildContext context,
@@ -15,7 +15,7 @@ Future<void> showDialog(
   bool loading = false;
   String? selectedBranch = currentBranch;
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => StatefulBuilder(
       builder: (context, setState) => BaseAlertDialog(

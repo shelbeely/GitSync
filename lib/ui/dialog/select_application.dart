@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:GitSync/api/manager/storage.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:GitSync/api/accessibility_service_helper.dart';
@@ -11,6 +10,7 @@ import '../../../constant/dimens.dart';
 import '../../../global.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:flutter/services.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(BuildContext parentContext, Set<String>? prevSelectedApplications) async {
   final List<String> selectedApplications = prevSelectedApplications?.toList() ?? [];
@@ -21,7 +21,7 @@ Future<void> showDialog(BuildContext parentContext, Set<String>? prevSelectedApp
   List<String> originalDeviceApplications = [];
   List<String>? deviceApplications;
 
-  return await mat.showDialog(
+  return await showAppDialog(
     context: parentContext,
     builder: (BuildContext context) => BaseAlertDialog(
       title: Center(

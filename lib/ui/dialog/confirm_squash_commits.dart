@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import '../../../constant/dimens.dart';
@@ -8,6 +7,7 @@ import 'package:GitSync/api/manager/git_manager.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/ui/component/ai_wand_field.dart';
 import 'package:GitSync/src/rust/api/git_manager.dart' as GitManagerRs;
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 Future<void> showDialog(
   BuildContext context,
@@ -19,7 +19,7 @@ Future<void> showDialog(
   final messageController = TextEditingController(text: initialMessage);
   final hasPushed = selectedCommits.any((c) => !c.unpushed);
 
-  return mat.showDialog(
+  return showAppDialog(
     context: context,
     builder: (BuildContext context) => StatefulBuilder(
       builder: (context, setState) => BaseAlertDialog(

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
 import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/ui/dialog/dialog_utils.dart';
 
 class CreateRepoResult {
   final bool createLocal;
@@ -21,7 +21,7 @@ Future<CreateRepoResult?> showDialog(
   required bool repoAlreadyExists,
   required String defaultRepoName,
 }) async {
-  return mat.showDialog<CreateRepoResult>(
+  return showAppDialog<CreateRepoResult>(
     context: context,
     builder: (BuildContext context) {
       // Mode A: No OAuth, no existing repo — simple confirm/cancel
