@@ -3366,7 +3366,18 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
               ),
               child: Stack(
                 children: [
-                  child,
+                  // M3 step 17: smooth fade between onboarding screens.
+                  // AnimatedSwitcher is used in lieu of AnimatedCrossFade
+                  // because the flow has more than two states.
+                  AnimatedSwitcher(
+                    duration: animMedium,
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (Widget child, Animation<double> animation) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    child: KeyedSubtree(key: ValueKey<Screen>(screenIndexValue), child: child),
+                  ),
                   // M3 onboarding step progress at the top of the screen.
                   // Computed from the ordinal position of the current
                   // [Screen] in the enum so it advances naturally as the

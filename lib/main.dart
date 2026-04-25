@@ -76,6 +76,7 @@ import '../ui/component/item_commit.dart';
 import '../ui/page/clone_repo_main.dart';
 import 'package:GitSync/ui/page/expanded_commits.dart';
 import 'package:GitSync/ui/page/tools_page.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:GitSync/ui/page/issues_page.dart';
 import 'package:GitSync/ui/page/pull_requests_page.dart';
 import 'package:GitSync/type/showcase_feature.dart';
@@ -1843,6 +1844,30 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
               ),
             ),
             actions: [
+              // M3 step 4: trailing initials avatar derived from the
+              // authenticated git author name/email. Falls back to a
+              // generic person icon when neither is available.
+              Padding(
+                padding: EdgeInsets.only(right: spaceSM),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final name = ref.watch(authorNameProvider).valueOrNull ?? '';
+                    final email = ref.watch(authorEmailProvider).valueOrNull ?? '';
+                    if (name.isEmpty && email.isEmpty) {
+                      return CircleAvatar(
+                        radius: textMD,
+                        backgroundColor: colours.tertiaryDark,
+                        child: FaIcon(FontAwesomeIcons.solidUser, size: textSM, color: colours.secondaryLight),
+                      );
+                    }
+                    return AuthorAvatar(
+                      username: name.isNotEmpty ? name : email,
+                      email: email.isNotEmpty ? email : null,
+                      radius: textMD,
+                    );
+                  },
+                ),
+              ),
               CustomShowcase(
                 globalKey: _globalSettingsKey,
                 cornerRadius: cornerRadiusMax,
@@ -2324,6 +2349,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                                                   isSameItem: (a, b) => a.reference == b.reference,
                                                                                                   removeDuration: Duration.zero,
                                                                                                   removeItemBuilder: (_, _) => SizedBox.shrink(),
+                                                                                                  enterTransition: [
+                                                                                                    FadeIn(curve: Curves.easeOutCubic),
+                                                                                                    SlideInUp(curve: Curves.easeOutCubic),
+                                                                                                  ],
                                                                                                   itemBuilder: (BuildContext context, int index) {
                                                                                                     final reference = items[index].reference;
 
@@ -2813,19 +2842,37 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                                           height: textLG,
                                                                                           width: textLG,
                                                                                           child: Center(
-                                                                                            child: FaIcon(
-                                                                                              gitDirPath?.$2 == null
-                                                                                                  ? FontAwesomeIcons.solidCircleDown
-                                                                                                  : syncOptionsSnapshot[lastSyncMethodSnapshot.data]
-                                                                                                            ?.$1 ??
-                                                                                                        (syncOptionsSnapshot.values.isNotEmpty
-                                                                                                            ? syncOptionsSnapshot.values.first.$1
-                                                                                                            : null) ??
-                                                                                                        FontAwesomeIcons.solidCircleDown,
-                                                                                              color: gitDirPath?.$2 == null
-                                                                                                  ? colours.secondaryLight
-                                                                                                  : colours.primaryLight,
-                                                                                              size: textLG,
+                                                                                            child: AnimatedSwitcher(
+                                                                                              duration: animShort,
+                                                                                              transitionBuilder:
+                                                                                                  (Widget child, Animation<double> animation) =>
+                                                                                                      ScaleTransition(scale: animation, child: child),
+                                                                                              child: FaIcon(
+                                                                                                key: ValueKey<IconData>(
+                                                                                                  (gitDirPath?.$2 == null
+                                                                                                          ? FontAwesomeIcons.solidCircleDown
+                                                                                                          : syncOptionsSnapshot[lastSyncMethodSnapshot
+                                                                                                                        .data]
+                                                                                                                    ?.$1 ??
+                                                                                                                (syncOptionsSnapshot.values.isNotEmpty
+                                                                                                                    ? syncOptionsSnapshot.values.first.$1
+                                                                                                                    : null) ??
+                                                                                                                FontAwesomeIcons.solidCircleDown)
+                                                                                                      as IconData,
+                                                                                                ),
+                                                                                                gitDirPath?.$2 == null
+                                                                                                    ? FontAwesomeIcons.solidCircleDown
+                                                                                                    : syncOptionsSnapshot[lastSyncMethodSnapshot.data]
+                                                                                                              ?.$1 ??
+                                                                                                          (syncOptionsSnapshot.values.isNotEmpty
+                                                                                                              ? syncOptionsSnapshot.values.first.$1
+                                                                                                              : null) ??
+                                                                                                          FontAwesomeIcons.solidCircleDown,
+                                                                                                color: gitDirPath?.$2 == null
+                                                                                                    ? colours.secondaryLight
+                                                                                                    : colours.primaryLight,
+                                                                                                size: textLG,
+                                                                                              ),
                                                                                             ),
                                                                                           ),
                                                                                         ),

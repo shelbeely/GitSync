@@ -316,28 +316,32 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                 visualDensity: VisualDensity.compact,
               ),
               clipBehavior: Clip.antiAlias,
-              child: CustomPaint(
-                painter: ChevronPainter(
-                  color: widget.commit.unpushed
-                      ? colours.secondaryInfo.withAlpha(70)
-                      : widget.commit.unpulled
-                      ? colours.secondaryWarning.withAlpha(70)
-                      : Colors.transparent,
-                  stripeWidth: 20,
-                  facingDown: !widget.commit.unpushed,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(spaceSM),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: spaceSM),
-                          child: AuthorAvatar(
-                            username: demo ? "ViscousTests" : widget.commit.authorUsername,
-                            radius: textMD * 0.85,
-                          ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // M3 step 10: 3 dp left-border accent in place of the
+                  // diagonal-stripe ChevronPainter, color-coded by sync state.
+                  Container(
+                    width: 3,
+                    color: widget.commit.unpushed
+                        ? colours.secondaryInfo
+                        : widget.commit.unpulled
+                        ? colours.secondaryWarning
+                        : Colors.transparent,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(spaceSM),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: spaceSM),
+                              child: AuthorAvatar(
+                                username: demo ? "ViscousTests" : widget.commit.authorUsername,
+                                radius: textMD * 0.85,
+                              ),
                         ),
                         Flexible(
                           child: Column(
@@ -459,10 +463,10 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
