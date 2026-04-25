@@ -37,7 +37,7 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
   final editorLineWrap = await repoManager.getBool(StorageKey.repoman_editorLineWrap);
   final bool resolvedHasRemotes =
       hasRemotes ??
-      (await runGitOperation<List<String>>(LogType.ListRemotes, (event) => event?["result"].map<String>((r) => "$r").toList()))?.isNotEmpty == true;
+      (await runGitOperation<List<String>>(LogType.ListRemotes, (event) => event?["result"].map<String>((r) => "$r").toList())).isNotEmpty == true;
 
   if (demo) {
     selectedFiles.add("storage/external/example/file_changed.md");
@@ -105,9 +105,8 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
 
   await showAppDialog(
     context: context,
-    // Transparent scrim: the manual-sync dialog is a full-viewport editor
-    // surface (line/file selection UI), so the default translucent barrier
-    // would double-darken the screen behind it.
+    // Transparent scrim: avoids double-darkening the screen behind the
+    // manual-sync dialog.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => PopScope(
       canPop: false,

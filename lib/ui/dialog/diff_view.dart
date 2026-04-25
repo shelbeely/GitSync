@@ -103,9 +103,8 @@ Future<void> showDialog(
 
   return await showAppDialog(
     context: parentContext,
-    // Transparent scrim: the diff-view dialog fills the viewport with its own
-    // surface, so the default translucent barrier would double-darken the
-    // screen behind it.
+    // Transparent scrim: avoids double-darkening the screen behind the
+    // diff-view dialog.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => StatefulBuilder(
       builder: (context, setState) {
