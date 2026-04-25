@@ -882,17 +882,18 @@ class FileExplorerState extends State<FileExplorer> with WidgetsBindingObserver 
 
     if (widget.embedded) return scaffold;
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
         if (selectedPathsNotifier.value.isNotEmpty) {
           selectedPathsNotifier.value = [];
-          return false;
+          return;
         }
         if (_isAtRoot()) {
-          return true;
+          Navigator.of(context).pop();
         } else {
           controller.goToParentDirectory();
-          return false;
         }
       },
       child: scaffold,
