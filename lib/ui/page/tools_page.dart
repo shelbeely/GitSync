@@ -233,7 +233,7 @@ class _ToolsGrid extends StatelessWidget {
                   SizedBox(width: spaceXS),
                   Expanded(child: _buildCard(context, second)),
                 ] else
-                  Expanded(child: SizedBox.shrink()),
+                  Spacer(),
               ],
             ),
           );

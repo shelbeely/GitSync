@@ -146,9 +146,10 @@ class _ButtonSettingState extends State<ButtonSetting> {
             ),
           );
 
-    if (widget.tooltip == null || widget.tooltip!.isEmpty) return widgetTree;
+    final tooltip = widget.tooltip;
+    if (tooltip == null || tooltip.isEmpty) return widgetTree;
     return Tooltip(
-      message: widget.tooltip!,
+      message: tooltip,
       preferBelow: false,
       waitDuration: const Duration(milliseconds: 400),
       child: widgetTree,
