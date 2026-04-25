@@ -105,6 +105,9 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
 
   await showAppDialog(
     context: context,
+    // Transparent scrim: the manual-sync dialog is a full-viewport editor
+    // surface (line/file selection UI), so the default translucent barrier
+    // would double-darken the screen behind it.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => PopScope(
       canPop: false,

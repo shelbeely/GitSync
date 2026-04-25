@@ -263,6 +263,9 @@ Future<void> showDialog(BuildContext parentContext, List<(String, GitManagerRs.C
 
   return await showAppDialog(
     context: parentContext,
+    // Transparent scrim: the merge-conflict dialog covers the full viewport
+    // and renders its own backdrop, so the default translucent barrier would
+    // double-darken the screen.
     barrierColor: Colors.transparent,
     builder: (BuildContext context) => PopScope(
       canPop: !isMerging && !isAborting,
