@@ -2289,13 +2289,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tabAgent => 'Copilot';
 
   @override
-  String get tabTools => 'Tools';
+  String get tabTools => 'أدوات';
 
   @override
-  String get toolsEmptyTitle => 'No Repository Connected';
+  String get toolsEmptyTitle => 'لا يوجد مستودع متصل';
 
   @override
-  String get toolsEmptySubtitle => 'Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions';
+  String get toolsEmptySubtitle => 'سجّل الدخول وأضف مستودعاً لعرض المشكلات وطلبات السحب والإصدارات والوسوم والإجراءات';
 
   @override
   String get agentFilterAll => 'الكل';
