@@ -866,6 +866,7 @@
     "tabTools": "Tools",
     "toolsEmptyTitle": "No Repository Connected",
     "toolsEmptySubtitle": "Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions",
+    "toolsConnectCta": "Connect to GitHub",
     "tabFiles": "Files",
     "tabAgent": "Copilot",
 

@@ -4608,6 +4608,12 @@ abstract class AppLocalizations {
   /// **'Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions'**
   String get toolsEmptySubtitle;
 
+  /// No description provided for @toolsConnectCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to GitHub'**
+  String get toolsConnectCta;
+
   /// No description provided for @tabFiles.
   ///
   /// In en, this message translates to:

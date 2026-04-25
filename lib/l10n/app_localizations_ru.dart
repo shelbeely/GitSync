@@ -2316,6 +2316,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get toolsEmptySubtitle => 'Sign in and set up a repository to view Issues, Pull Requests, Releases, Tags, and Actions';
 
   @override
+  String get toolsConnectCta => 'Connect to GitHub';
+
+  @override
   String get agentFilterAll => 'All';
 
   @override

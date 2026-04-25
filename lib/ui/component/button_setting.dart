@@ -15,6 +15,7 @@ class ButtonSetting extends StatefulWidget {
     this.buttonColor,
     this.initiallyExpanded = false,
     this.subButtons,
+    this.tooltip,
     super.key,
   });
 
@@ -28,6 +29,11 @@ class ButtonSetting extends StatefulWidget {
   final Color? buttonColor;
   final List<Widget>? subButtons;
   final Future<void> Function()? onPressed;
+
+  /// Optional Material 3 tooltip text shown on long-press / hover. Helpful for
+  /// ADHD-friendly UX so the user can preview what an action will do without
+  /// triggering it.
+  final String? tooltip;
 
   @override
   State<ButtonSetting> createState() => _ButtonSettingState();
@@ -58,7 +64,7 @@ class _ButtonSettingState extends State<ButtonSetting> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.subButtons == null || widget.subButtons!.isEmpty
+    final widgetTree = widget.subButtons == null || widget.subButtons!.isEmpty
         ? TextButton.icon(
             onPressed: widget.onPressed != null ? onPressed : null,
             style: ButtonStyle(
@@ -139,5 +145,13 @@ class _ButtonSettingState extends State<ButtonSetting> {
               ],
             ),
           );
+
+    if (widget.tooltip == null || widget.tooltip!.isEmpty) return widgetTree;
+    return Tooltip(
+      message: widget.tooltip!,
+      preferBelow: false,
+      waitDuration: const Duration(milliseconds: 400),
+      child: widgetTree,
+    );
   }
 }

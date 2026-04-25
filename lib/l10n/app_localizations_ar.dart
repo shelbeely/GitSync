@@ -2298,6 +2298,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get toolsEmptySubtitle => 'سجّل الدخول وأضف مستودعاً لعرض المشكلات وطلبات السحب والإصدارات والوسوم والإجراءات';
 
   @override
+  String get toolsConnectCta => 'الاتصال بـ GitHub';
+
+  @override
   String get agentFilterAll => 'الكل';
 
   @override

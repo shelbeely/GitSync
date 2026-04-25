@@ -705,8 +705,37 @@ class _MyAppState extends State<MyApp> {
           return const Locale('en');
         },
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: colours.primaryDark),
+          // M3 seed-based palette. `ColorScheme.fromSeed` derives the full
+          // tonal palette (primary/secondary/tertiary + their containers and
+          // on-colors) from a single seed colour, providing a consistent
+          // Material 3 colour role system across the app.
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: colours.tertiaryInfo,
+            brightness: Brightness.dark,
+          ),
           useMaterial3: true,
+          // M3 component themes: keep card/dialog surfaces aligned with the
+          // app's existing dark surface so widgets that rely on the global
+          // `colours` tokens continue to look consistent.
+          cardTheme: CardThemeData(
+            color: colours.secondaryDark,
+            surfaceTintColor: Colors.transparent,
+            elevation: 1,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD)),
+          ),
+          dialogTheme: DialogThemeData(
+            backgroundColor: colours.secondaryDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD)),
+          ),
+          tooltipTheme: TooltipThemeData(
+            decoration: BoxDecoration(
+              color: colours.tertiaryDark,
+              borderRadius: BorderRadius.all(cornerRadiusSM),
+            ),
+            textStyle: TextStyle(color: colours.primaryLight, fontSize: textXS),
+            waitDuration: const Duration(milliseconds: 400),
+          ),
           textSelectionTheme: TextSelectionThemeData(
             selectionHandleColor: colours.tertiaryInfo,
             selectionColor: colours.secondaryInfo.withAlpha(100),

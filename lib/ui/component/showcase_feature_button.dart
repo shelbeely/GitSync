@@ -40,73 +40,79 @@ class ShowcaseFeatureButton extends StatelessWidget {
     final tint = feature.tintColor(colours.darkMode);
     final iconCol = feature.iconColor(colours.darkMode);
 
+    final card = GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          color: tint,
+          borderRadius: BorderRadius.all(cornerRadiusSM),
+          border: Border.all(color: iconCol.withAlpha(60), width: spaceXXXXS),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: spaceSM, vertical: spaceMD),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FaIcon(feature.icon, color: iconCol, size: textXL),
+            SizedBox(height: spaceXXXS),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    feature.labelForProvider(gitProvider),
+                    style: TextStyle(color: iconCol, fontSize: textXS, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                  ),
+                ),
+                if (onAdd != null) ...[
+                  SizedBox(width: spaceXXXS),
+                  GestureDetector(
+                    onTap: onAdd,
+                    child: FaIcon(FontAwesomeIcons.plus, color: iconCol.withAlpha(180), size: textXXS),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Wrap the card with an M3 Badge.count when there's a count to display.
+    // Use a shimmer-style pulsing indicator while counts are being fetched.
+    final Widget cardWithBadge;
+    if (countLoading && count == null) {
+      cardWithBadge = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          card,
+          Positioned(
+            top: -spaceXXS,
+            right: -spaceXXS,
+            child: _ShimmerDot(color: iconCol),
+          ),
+        ],
+      );
+    } else if (count != null && count! > 0) {
+      cardWithBadge = Badge.count(
+        count: count!,
+        backgroundColor: iconCol,
+        textColor: tint,
+        textStyle: TextStyle(color: tint, fontSize: textXXS, fontWeight: FontWeight.bold),
+        alignment: AlignmentDirectional.topEnd,
+        child: card,
+      );
+    } else {
+      cardWithBadge = card;
+    }
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        GestureDetector(
-          onTap: onPressed,
-          child: Container(
-            decoration: BoxDecoration(
-              color: tint,
-              borderRadius: BorderRadius.all(cornerRadiusSM),
-              border: Border.all(color: iconCol.withAlpha(60), width: spaceXXXXS),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: spaceSM, vertical: spaceMD),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(feature.icon, color: iconCol, size: textXL),
-                SizedBox(height: spaceXXXS),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        feature.labelForProvider(gitProvider),
-                        style: TextStyle(color: iconCol, fontSize: textXS, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                      ),
-                    ),
-                    if (onAdd != null) ...[
-                      SizedBox(width: spaceXXXS),
-                      GestureDetector(
-                        onTap: onAdd,
-                        child: FaIcon(FontAwesomeIcons.plus, color: iconCol.withAlpha(180), size: textXXS),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Badge count overlay — top-right
-        if (countLoading && count == null)
-          Positioned(
-            top: -spaceXXXS,
-            right: -spaceXXXS,
-            child: SizedBox(
-              width: textSM,
-              height: textSM,
-              child: CircularProgressIndicator(strokeWidth: 1.5, color: iconCol),
-            ),
-          )
-        else if (count != null && count! > 0)
-          Positioned(
-            top: -spaceXXXS,
-            right: -spaceXXXS,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: spaceXXXS + 1, vertical: 1),
-              decoration: BoxDecoration(color: iconCol, borderRadius: BorderRadius.all(cornerRadiusMax)),
-              child: Text(
-                count! > 99 ? '99+' : '$count',
-                style: TextStyle(color: tint, fontSize: textXXS, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+        cardWithBadge,
         // Pin toggle overlay — top-left (only shown in expanded commits view)
         if (onPinToggle != null)
           Positioned(
@@ -128,6 +134,46 @@ class ShowcaseFeatureButton extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Pulsing dot used as a "shimmer" placeholder while feature counts are being fetched.
+class _ShimmerDot extends StatefulWidget {
+  const _ShimmerDot({required this.color});
+
+  final Color color;
+
+  @override
+  State<_ShimmerDot> createState() => _ShimmerDotState();
+}
+
+class _ShimmerDotState extends State<_ShimmerDot> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: Tween<double>(begin: 0.35, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+      ),
+      child: Container(
+        width: textSM,
+        height: textSM,
+        decoration: BoxDecoration(
+          color: widget.color,
+          shape: BoxShape.circle,
+        ),
+      ),
     );
   }
 }

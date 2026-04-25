@@ -9,6 +9,7 @@ import 'package:GitSync/global.dart';
 import 'package:GitSync/src/rust/api/git_manager.dart' as GitManagerRs;
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -92,6 +93,9 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (previousLocked != null && locked == null) {
+      // M3 micro-interaction: provide a light haptic when a sync operation
+      // completes (the moment the success check appears).
+      HapticFeedback.lightImpact();
       Future.delayed(Duration(milliseconds: 10), () {
         widget.reload();
       });
