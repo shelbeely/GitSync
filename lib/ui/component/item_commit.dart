@@ -14,6 +14,7 @@ import '../../../src/rust/api/git_manager.dart' as GitManagerRs;
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:GitSync/type/git_provider.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
 import '../dialog/diff_view.dart' as DiffViewDialog;
 import '../dialog/create_branch_from_commit.dart' as CreateBranchFromCommitDialog;
@@ -315,22 +316,33 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                 visualDensity: VisualDensity.compact,
               ),
               clipBehavior: Clip.antiAlias,
-              child: CustomPaint(
-                painter: ChevronPainter(
-                  color: widget.commit.unpushed
-                      ? colours.secondaryInfo.withAlpha(70)
-                      : widget.commit.unpulled
-                      ? colours.secondaryWarning.withAlpha(70)
-                      : Colors.transparent,
-                  stripeWidth: 20,
-                  facingDown: !widget.commit.unpushed,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(spaceSM),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // M3 step 10: 3 dp left-border accent in place of the
+                  // diagonal-stripe ChevronPainter, color-coded by sync state.
+                  Container(
+                    width: 3,
+                    color: widget.commit.unpushed
+                        ? colours.secondaryInfo
+                        : widget.commit.unpulled
+                        ? colours.secondaryWarning
+                        : Colors.transparent,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(spaceSM),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: spaceSM),
+                              child: AuthorAvatar(
+                                username: demo ? "ViscousTests" : widget.commit.authorUsername,
+                                radius: textMD * 0.85,
+                              ),
+                        ),
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,10 +463,10 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),

@@ -26,6 +26,14 @@ const double spaceLG = 32.0 * multiplier;
 const double spaceXL = 48.0 * multiplier;
 const double spaceXXL = 64.0 * multiplier;
 
+const Duration animShort = Duration(milliseconds: 150);
 const Duration animFast = Duration(milliseconds: 200);
 const Duration animMedium = Duration(milliseconds: 400);
 const Duration animSlow = Duration(milliseconds: 500);
+
+// M3 typescale aliases for consistent application of the type ramp.
+const double displaySmall = textXXL;
+const double headlineMedium = textXL;
+const double titleLarge = textLG;
+const double bodyMedium = textMD;
+const double labelSmall = textXXS;

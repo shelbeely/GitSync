@@ -478,7 +478,7 @@ class _ExpandedCommitsState extends ConsumerState<ExpandedCommits> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(color: colours.secondaryDark, borderRadius: BorderRadius.all(cornerRadiusMD)),
-                                padding: EdgeInsets.only(left: spaceSM, bottom: spaceXS, right: spaceSM, top: spaceXS),
+                                padding: EdgeInsets.only(left: spaceSM, bottom: spaceSM, right: spaceSM, top: spaceMD),
                                 child: ValueListenableBuilder<Map<ShowcaseFeature, int?>>(
                                   valueListenable: _featureCounts,
                                   builder: (context, featureCounts, _) => ValueListenableBuilder<List<ShowcaseFeature>>(
@@ -549,7 +549,29 @@ class _ExpandedCommitsState extends ConsumerState<ExpandedCommits> {
                                           ),
                                         );
                                       }
-                                      return Column(spacing: spaceXS, children: rows);
+                                      return Column(
+                                        spacing: spaceXS,
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          ...rows,
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).maybePop();
+                                              },
+                                              child: Text(
+                                                'Open full view →',
+                                                style: TextStyle(
+                                                  color: colours.tertiaryInfo,
+                                                  fontSize: textXS,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
                                     },
                                   ),
                                 ),
@@ -559,9 +581,13 @@ class _ExpandedCommitsState extends ConsumerState<ExpandedCommits> {
                                 left: 0,
                                 right: 0,
                                 child: Center(
-                                  child: Text(
-                                    t.providerTools.toUpperCase(),
-                                    style: TextStyle(color: colours.tertiaryLight, fontSize: textXXS, fontWeight: FontWeight.w900),
+                                  child: Container(
+                                    color: colours.primaryDark,
+                                    padding: EdgeInsets.symmetric(horizontal: spaceXS),
+                                    child: Text(
+                                      'Repository Tools',
+                                      style: TextStyle(color: colours.tertiaryLight, fontSize: textXXS, fontWeight: FontWeight.w900),
+                                    ),
                                   ),
                                 ),
                               ),

@@ -11,6 +11,7 @@ import 'package:GitSync/type/git_provider.dart';
 import 'package:GitSync/type/issue.dart';
 import 'package:GitSync/ui/page/issue_detail_page.dart';
 import 'package:GitSync/ui/page/create_issue_page.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class IssuesPage extends StatefulWidget {
@@ -807,6 +808,8 @@ class _ItemIssue extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                AuthorAvatar(username: issue.authorUsername, radius: textMD * 0.85),
+                SizedBox(width: spaceXS),
                 Padding(
                   padding: EdgeInsets.only(top: spaceXXXXS),
                   child: FaIcon(
@@ -823,6 +826,11 @@ class _ItemIssue extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: colours.primaryLight, fontSize: textMD, fontWeight: FontWeight.bold),
                   ),
+                ),
+                SizedBox(width: spaceXS),
+                StatusBadge(
+                  label: issue.isOpen ? 'open' : 'closed',
+                  kind: issue.isOpen ? StatusKind.open : StatusKind.closed,
                 ),
               ],
             ),

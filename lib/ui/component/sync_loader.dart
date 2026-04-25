@@ -9,6 +9,7 @@ import 'package:GitSync/global.dart';
 import 'package:GitSync/src/rust/api/git_manager.dart' as GitManagerRs;
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -34,6 +35,14 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
   Timer? lockedTimer;
 
   late final AnimationController _arrowController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+
+  late final AnimationController _scaleController = AnimationController(
+    vsync: this,
+    duration: animFast,
+    lowerBound: 0.8,
+    upperBound: 1.0,
+    value: 0.8,
+  );
 
   late final Animation<double> _arrowAnimation = TweenSequence<double>([
     TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeOut)), weight: 40),
@@ -83,6 +92,7 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
   @override
   void dispose() {
     _arrowController.dispose();
+    _scaleController.dispose();
     hideCheckTimer?.cancel();
     lockedTimer?.cancel();
 
@@ -96,6 +106,8 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
         widget.reload();
       });
       showCheck = true;
+      // Sync just completed — light haptic for closure.
+      HapticFeedback.lightImpact();
       Future.delayed(Duration(milliseconds: 10), () {
         opacity = 1.0;
         setState(() {});
@@ -113,8 +125,10 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
 
     if (isLocked && !_arrowController.isAnimating) {
       _arrowController.repeat();
+      _scaleController.forward();
     } else if (!isLocked && _arrowController.isAnimating) {
       _arrowController.stop();
+      _scaleController.reverse();
     }
 
     print("//// locked $locked");
@@ -253,14 +267,21 @@ class _SyncLoaderState extends State<SyncLoader> with TickerProviderStateMixin {
           if (isLocked)
             Align(
               alignment: Alignment.center,
-              child: SizedBox(
-                width: spaceMD + spaceXS,
-                height: spaceMD + spaceXS,
-                child: CircularProgressIndicator(
-                  color: colours.primaryLight,
-                  padding: EdgeInsets.zero,
-                  strokeAlign: BorderSide.strokeAlignInside,
-                  strokeWidth: 4.2,
+              child: Tooltip(
+                message: locked ?? '',
+                triggerMode: TooltipTriggerMode.longPress,
+                child: ScaleTransition(
+                  scale: _scaleController,
+                  child: SizedBox(
+                    width: spaceMD + spaceXS,
+                    height: spaceMD + spaceXS,
+                    child: CircularProgressIndicator(
+                      color: colours.primaryLight,
+                      padding: EdgeInsets.zero,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                      strokeWidth: 4.2,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -158,26 +158,42 @@ class _BranchSelectorState extends State<BranchSelector> {
                         padding: EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceXS),
                         child: Row(
                           children: [
+                            FaIcon(FontAwesomeIcons.codeBranch, size: textSM, color: colours.tertiaryLight),
+                            SizedBox(width: spaceXS),
                             Expanded(
-                              child: Text(
-                                hasBranch
-                                    ? (widget.branchName ?? '').toUpperCase()
-                                    : widget.branchNames.isEmpty
-                                    ? t.unbornBranch.toUpperCase()
-                                    : t.detachedHead.toUpperCase(),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: textMD,
-                                  fontWeight: FontWeight.bold,
-                                  color: hasBranch
-                                      ? (widget.hasConflicts
-                                            ? colours.tertiaryLight
-                                            : (widget.branchNames[widget.branchName] == 'local'
-                                                  ? colours.tertiaryInfo
-                                                  : widget.branchNames[widget.branchName] == 'remote'
-                                                  ? colours.tertiaryWarning
-                                                  : colours.primaryLight))
-                                      : colours.secondaryLight,
+                              child: AnimatedSwitcher(
+                                duration: animFast,
+                                transitionBuilder: (child, animation) => FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                                child: Text(
+                                  key: ValueKey<String>(
+                                    hasBranch
+                                        ? (widget.branchName ?? '')
+                                        : widget.branchNames.isEmpty
+                                        ? '__unborn__'
+                                        : '__detached__',
+                                  ),
+                                  hasBranch
+                                      ? (widget.branchName ?? '').toUpperCase()
+                                      : widget.branchNames.isEmpty
+                                      ? t.unbornBranch.toUpperCase()
+                                      : t.detachedHead.toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: textMD,
+                                    fontWeight: FontWeight.bold,
+                                    color: hasBranch
+                                        ? (widget.hasConflicts
+                                              ? colours.tertiaryLight
+                                              : (widget.branchNames[widget.branchName] == 'local'
+                                                    ? colours.tertiaryInfo
+                                                    : widget.branchNames[widget.branchName] == 'remote'
+                                                    ? colours.tertiaryWarning
+                                                    : colours.primaryLight))
+                                         : colours.secondaryLight,
+                                  ),
                                 ),
                               ),
                             ),

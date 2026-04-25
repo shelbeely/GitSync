@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/auth/git_provider_manager.dart';
 import 'package:GitSync/constant/dimens.dart';
@@ -647,6 +648,8 @@ class _ItemPullRequest extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                AuthorAvatar(username: pr.authorUsername, radius: textMD * 0.85),
+                SizedBox(width: spaceXS),
                 Padding(
                   padding: EdgeInsets.only(top: spaceXXXXS),
                   child: FaIcon(icon, size: textMD, color: color),
@@ -659,6 +662,19 @@ class _ItemPullRequest extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: colours.primaryLight, fontSize: textMD, fontWeight: FontWeight.bold),
                   ),
+                ),
+                SizedBox(width: spaceXS),
+                StatusBadge(
+                  label: switch (pr.state) {
+                    PrState.open => 'open',
+                    PrState.merged => 'merged',
+                    PrState.closed => 'closed',
+                  },
+                  kind: switch (pr.state) {
+                    PrState.open => StatusKind.open,
+                    PrState.merged => StatusKind.merged,
+                    PrState.closed => StatusKind.closed,
+                  },
                 ),
                 if (pr.checkStatus != CheckStatus.none) ...[
                   SizedBox(width: spaceXS),

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
+import 'package:GitSync/api/colour_provider.dart';
 import 'package:GitSync/api/manager/settings_manager.dart';
 import 'package:GitSync/ui/component/button_setting.dart';
 import 'package:GitSync/ui/component/custom_showcase.dart';
@@ -31,6 +32,7 @@ import 'package:GitSync/ui/page/sync_settings_main.dart';
 import 'package:anchor_scroll_controller/anchor_scroll_controller.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +75,8 @@ import '../ui/component/commit_select_action_bar.dart';
 import '../ui/component/item_commit.dart';
 import '../ui/page/clone_repo_main.dart';
 import 'package:GitSync/ui/page/expanded_commits.dart';
+import 'package:GitSync/ui/page/tools_page.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:GitSync/ui/page/issues_page.dart';
 import 'package:GitSync/ui/page/pull_requests_page.dart';
 import 'package:GitSync/type/showcase_feature.dart';
@@ -687,65 +691,72 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: appLocale,
-      builder: (context, appLocaleSnapshot) => MaterialApp(
-        restorationScopeId: "root",
-        title: appName,
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [LocaleNamesLocalizationsDelegate(), ...AppLocalizations.localizationsDelegates],
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: appLocaleSnapshot.data == null ? null : Locale(appLocaleSnapshot.data!),
-        initialRoute: "/",
-        localeResolutionCallback: (locale, supportedLocales) {
-          for (var supportedLocale in supportedLocales) {
-            if (supportedLocale.languageCode == locale?.languageCode) {
-              return supportedLocale;
-            }
-          }
-          return const Locale('en');
-        },
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: colours.primaryDark),
-          useMaterial3: true,
-          textSelectionTheme: TextSelectionThemeData(
-            selectionHandleColor: colours.tertiaryInfo,
-            selectionColor: colours.secondaryInfo.withAlpha(100),
-            cursorColor: colours.secondaryInfo.withAlpha(150),
-          ),
-        ),
-        builder: (context, child) => Container(
-          color: colours.primaryDark,
-          child: SafeArea(
-            top: false,
-            child: Padding(padding: EdgeInsets.zero, child: child ?? SizedBox.shrink()),
-          ),
-        ),
-        home: ShowCaseWidget(
-          blurValue: 3,
-          builder: (context) {
-            t = AppLocalizations.of(context);
-            FlutterBackgroundService().invoke(
-              GitsyncService.UPDATE_SERVICE_STRINGS,
-              ServiceStrings(
-                syncStartPull: t.syncStartPull,
-                syncStartPush: t.syncStartPush,
-                syncNotRequired: t.syncNotRequired,
-                syncComplete: t.syncComplete,
-                syncInProgress: t.syncInProgress,
-                syncScheduled: t.syncScheduled,
-                detectingChanges: t.detectingChanges,
-                ongoingMergeConflict: t.ongoingMergeConflict,
-                networkStallRetry: t.networkStallRetry,
-              ).toMap(),
-            );
-            return MyHomePage(
-              title: appName,
-              reloadLocale: () async {
-                appLocale = repoManager.getStringNullable(StorageKey.repoman_appLocale);
-                if (mounted) setState(() {});
+      builder: (context, appLocaleSnapshot) => DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+          final ColorScheme? dynamicScheme = colours.darkMode ? darkDynamic : lightDynamic;
+          final ColorScheme colorScheme = colours.buildColorScheme(dynamicScheme: dynamicScheme);
+          return MaterialApp(
+            restorationScopeId: "root",
+            title: appName,
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: [LocaleNamesLocalizationsDelegate(), ...AppLocalizations.localizationsDelegates],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: appLocaleSnapshot.data == null ? null : Locale(appLocaleSnapshot.data!),
+            initialRoute: "/",
+            localeResolutionCallback: (locale, supportedLocales) {
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale?.languageCode) {
+                  return supportedLocale;
+                }
+              }
+              return const Locale('en');
+            },
+            theme: ThemeData(
+              colorScheme: colorScheme,
+              useMaterial3: true,
+              extensions: <ThemeExtension<dynamic>>[AppColours.fromColours(colours)],
+              textSelectionTheme: TextSelectionThemeData(
+                selectionHandleColor: colours.tertiaryInfo,
+                selectionColor: colours.secondaryInfo.withAlpha(100),
+                cursorColor: colours.secondaryInfo.withAlpha(150),
+              ),
+            ),
+            builder: (context, child) => Container(
+              color: colours.primaryDark,
+              child: SafeArea(
+                top: false,
+                child: Padding(padding: EdgeInsets.zero, child: child ?? SizedBox.shrink()),
+              ),
+            ),
+            home: ShowCaseWidget(
+              blurValue: 3,
+              builder: (context) {
+                t = AppLocalizations.of(context);
+                FlutterBackgroundService().invoke(
+                  GitsyncService.UPDATE_SERVICE_STRINGS,
+                  ServiceStrings(
+                    syncStartPull: t.syncStartPull,
+                    syncStartPush: t.syncStartPush,
+                    syncNotRequired: t.syncNotRequired,
+                    syncComplete: t.syncComplete,
+                    syncInProgress: t.syncInProgress,
+                    syncScheduled: t.syncScheduled,
+                    detectingChanges: t.detectingChanges,
+                    ongoingMergeConflict: t.ongoingMergeConflict,
+                    networkStallRetry: t.networkStallRetry,
+                  ).toMap(),
+                );
+                return MyHomePage(
+                  title: appName,
+                  reloadLocale: () async {
+                    appLocale = repoManager.getStringNullable(StorageKey.repoman_appLocale);
+                    if (mounted) setState(() {});
+                  },
+                );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -1233,8 +1244,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
 
   int get _agentTabIndex {
     int idx = aiFeaturesEnabled.value ? 1 : 0; // home tab index
+    idx += 1; // tools tab
     idx += 1; // files tab
-    idx += 1; // agent tab = home + 2
+    idx += 1; // agent tab = home + 3
     return idx;
   }
 
@@ -1745,7 +1757,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
           builder: (context, currentTab, child) => ValueListenableBuilder(
             valueListenable: _filesCanPop,
             builder: (context, canPop, child) => PopScope(
-              canPop: currentTab != (aiFeaturesEnabled.value ? 2 : 1) && !canPop,
+              canPop: currentTab != (aiFeaturesEnabled.value ? 3 : 2) && !canPop,
               onPopInvokedWithResult: (didPop, _) {
                 if (didPop) return;
                 if (_filesNavigatorKey.currentState?.canPop() ?? false) {
@@ -1832,6 +1844,30 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
               ),
             ),
             actions: [
+              // M3 step 4: trailing initials avatar derived from the
+              // authenticated git author name/email. Falls back to a
+              // generic person icon when neither is available.
+              Padding(
+                padding: EdgeInsets.only(right: spaceSM),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final name = ref.watch(authorNameProvider).valueOrNull ?? '';
+                    final email = ref.watch(authorEmailProvider).valueOrNull ?? '';
+                    if (name.isEmpty && email.isEmpty) {
+                      return CircleAvatar(
+                        radius: textMD,
+                        backgroundColor: colours.tertiaryDark,
+                        child: FaIcon(FontAwesomeIcons.solidUser, size: textSM, color: colours.secondaryLight),
+                      );
+                    }
+                    return AuthorAvatar(
+                      username: name.isNotEmpty ? name : email,
+                      email: email.isNotEmpty ? email : null,
+                      radius: textMD,
+                    );
+                  },
+                ),
+              ),
               CustomShowcase(
                 globalKey: _globalSettingsKey,
                 cornerRadius: cornerRadiusMax,
@@ -2313,6 +2349,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                                                   isSameItem: (a, b) => a.reference == b.reference,
                                                                                                   removeDuration: Duration.zero,
                                                                                                   removeItemBuilder: (_, _) => SizedBox.shrink(),
+                                                                                                  enterTransition: [
+                                                                                                    FadeIn(curve: Curves.easeOutCubic),
+                                                                                                    SlideInUp(curve: Curves.easeOutCubic),
+                                                                                                  ],
                                                                                                   itemBuilder: (BuildContext context, int index) {
                                                                                                     final reference = items[index].reference;
 
@@ -2663,73 +2703,43 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                         }
                                                                         final pinned = ShowcaseFeature.fromStorageKeys(data);
                                                                         if (pinned.isEmpty) return SizedBox(width: double.infinity, height: 0);
-                                                                        if (pinned.length == 1) {
-                                                                          return Hero(
-                                                                            tag: heroShowcaseFeature(pinned[0].storageKey),
-                                                                            child: ShowcaseFeatureButton(
-                                                                              feature: pinned[0],
-                                                                              gitProvider: gitProviderValue,
-                                                                              count: countsMap[pinned[0]],
-                                                                              countLoading: featureCountsLoading,
-                                                                              onAdd: resolveFeatureOnAdd(
-                                                                                context: context,
-                                                                                feature: pinned[0],
-                                                                                gitProvider: gitProviderValue,
-                                                                                remoteWebUrl: webUrl,
-                                                                              ),
-                                                                              onPressed: () => _navigateToExpandedCommits(
-                                                                                initialScrollOffset: recentCommitsController.offset,
-                                                                                pendingFeature: pinned[0],
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        }
-                                                                        return Row(
-                                                                          children: [
-                                                                            Expanded(
-                                                                              child: Hero(
-                                                                                tag: heroShowcaseFeature(pinned[0].storageKey),
-                                                                                child: ShowcaseFeatureButton(
-                                                                                  feature: pinned[0],
-                                                                                  gitProvider: gitProviderValue,
-                                                                                  count: countsMap[pinned[0]],
-                                                                                  countLoading: featureCountsLoading,
-                                                                                  onAdd: resolveFeatureOnAdd(
-                                                                                    context: context,
-                                                                                    feature: pinned[0],
-                                                                                    gitProvider: gitProviderValue,
-                                                                                    remoteWebUrl: webUrl,
+                                                                        // M3 step 6: render all pinned tools as a 2-column wrap so
+                                                                        // the entire toolset is reachable directly from the home tab.
+                                                                        return LayoutBuilder(
+                                                                          builder: (context, constraints) {
+                                                                            const int columns = 2;
+                                                                            final double tileWidth =
+                                                                                (constraints.maxWidth - spaceXS * (columns - 1)) / columns;
+                                                                            return Wrap(
+                                                                              spacing: spaceXS,
+                                                                              runSpacing: spaceXS,
+                                                                              children: [
+                                                                                for (final feature in pinned)
+                                                                                  SizedBox(
+                                                                                    width: tileWidth,
+                                                                                    child: Hero(
+                                                                                      tag: heroShowcaseFeature(feature.storageKey),
+                                                                                      child: ShowcaseFeatureButton(
+                                                                                        feature: feature,
+                                                                                        gitProvider: gitProviderValue,
+                                                                                        count: countsMap[feature],
+                                                                                        countLoading: featureCountsLoading,
+                                                                                        onAdd: resolveFeatureOnAdd(
+                                                                                          context: context,
+                                                                                          feature: feature,
+                                                                                          gitProvider: gitProviderValue,
+                                                                                          remoteWebUrl: webUrl,
+                                                                                        ),
+                                                                                        onPressed: () => _navigateToExpandedCommits(
+                                                                                          initialScrollOffset: recentCommitsController.offset,
+                                                                                          pendingFeature: feature,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
                                                                                   ),
-                                                                                  onPressed: () => _navigateToExpandedCommits(
-                                                                                    initialScrollOffset: recentCommitsController.offset,
-                                                                                    pendingFeature: pinned[0],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(width: spaceXS),
-                                                                            Expanded(
-                                                                              child: Hero(
-                                                                                tag: heroShowcaseFeature(pinned[1].storageKey),
-                                                                                child: ShowcaseFeatureButton(
-                                                                                  feature: pinned[1],
-                                                                                  gitProvider: gitProviderValue,
-                                                                                  count: countsMap[pinned[1]],
-                                                                                  countLoading: featureCountsLoading,
-                                                                                  onAdd: resolveFeatureOnAdd(
-                                                                                    context: context,
-                                                                                    feature: pinned[1],
-                                                                                    gitProvider: gitProviderValue,
-                                                                                    remoteWebUrl: webUrl,
-                                                                                  ),
-                                                                                  onPressed: () => _navigateToExpandedCommits(
-                                                                                    initialScrollOffset: recentCommitsController.offset,
-                                                                                    pendingFeature: pinned[1],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                                              ],
+                                                                            );
+                                                                          },
                                                                         );
                                                                       },
                                                                     );
@@ -2832,19 +2842,37 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                                           height: textLG,
                                                                                           width: textLG,
                                                                                           child: Center(
-                                                                                            child: FaIcon(
-                                                                                              gitDirPath?.$2 == null
-                                                                                                  ? FontAwesomeIcons.solidCircleDown
-                                                                                                  : syncOptionsSnapshot[lastSyncMethodSnapshot.data]
-                                                                                                            ?.$1 ??
-                                                                                                        (syncOptionsSnapshot.values.isNotEmpty
-                                                                                                            ? syncOptionsSnapshot.values.first.$1
-                                                                                                            : null) ??
-                                                                                                        FontAwesomeIcons.solidCircleDown,
-                                                                                              color: gitDirPath?.$2 == null
-                                                                                                  ? colours.secondaryLight
-                                                                                                  : colours.primaryLight,
-                                                                                              size: textLG,
+                                                                                            child: AnimatedSwitcher(
+                                                                                              duration: animShort,
+                                                                                              transitionBuilder:
+                                                                                                  (Widget child, Animation<double> animation) =>
+                                                                                                      ScaleTransition(scale: animation, child: child),
+                                                                                              child: FaIcon(
+                                                                                                key: ValueKey<IconData>(
+                                                                                                  (gitDirPath?.$2 == null
+                                                                                                          ? FontAwesomeIcons.solidCircleDown
+                                                                                                          : syncOptionsSnapshot[lastSyncMethodSnapshot
+                                                                                                                        .data]
+                                                                                                                    ?.$1 ??
+                                                                                                                (syncOptionsSnapshot.values.isNotEmpty
+                                                                                                                    ? syncOptionsSnapshot.values.first.$1
+                                                                                                                    : null) ??
+                                                                                                                FontAwesomeIcons.solidCircleDown)
+                                                                                                      as IconData,
+                                                                                                ),
+                                                                                                gitDirPath?.$2 == null
+                                                                                                    ? FontAwesomeIcons.solidCircleDown
+                                                                                                    : syncOptionsSnapshot[lastSyncMethodSnapshot.data]
+                                                                                                              ?.$1 ??
+                                                                                                          (syncOptionsSnapshot.values.isNotEmpty
+                                                                                                              ? syncOptionsSnapshot.values.first.$1
+                                                                                                              : null) ??
+                                                                                                          FontAwesomeIcons.solidCircleDown,
+                                                                                                color: gitDirPath?.$2 == null
+                                                                                                    ? colours.secondaryLight
+                                                                                                    : colours.primaryLight,
+                                                                                                size: textLG,
+                                                                                              ),
                                                                                             ),
                                                                                           ),
                                                                                         ),
@@ -4060,6 +4088,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                     ),
                   ),
                 ),
+                _KeepAlivePage(child: const ToolsPage()),
                 _KeepAlivePage(child: _buildFilesTab()),
                 if (agentEnabled)
                   _KeepAlivePage(
@@ -4096,7 +4125,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                   builder: (context, agentEnabled, _) => ValueListenableBuilder(
                     valueListenable: _tabIndex,
                     builder: (context, currentTabIndex, _) {
-                      final filesIndex = aiEnabled ? 2 : 1;
+                      final toolsIndex = aiEnabled ? 2 : 1;
+                      final filesIndex = toolsIndex + 1;
                       final agentIndex = filesIndex + 1;
                       final maxIndex = agentEnabled ? agentIndex : filesIndex;
                       return Theme(
@@ -4114,7 +4144,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                           selectedIndex: currentTabIndex.clamp(0, maxIndex),
                           onDestinationSelected: (i) {
                             final homeIdx = aiEnabled ? 1 : 0;
-                            final filesIdx = aiEnabled ? 2 : 1;
+                            final toolsIdx = aiEnabled ? 2 : 1;
+                            final filesIdx = toolsIdx + 1;
                             final agentIdx = filesIdx + 1;
                             if (i == homeIdx && _tabIndex.value == homeIdx) {
                               _homeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
@@ -4143,6 +4174,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                               icon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.secondaryLight, size: textLG),
                               selectedIcon: FaIcon(FontAwesomeIcons.codeBranch, color: colours.tertiaryInfo, size: textLG),
                               label: t.tabHome,
+                            ),
+                            NavigationDestination(
+                              icon: FaIcon(FontAwesomeIcons.toolbox, color: colours.secondaryLight, size: textLG),
+                              selectedIcon: FaIcon(FontAwesomeIcons.toolbox, color: colours.tertiaryInfo, size: textLG),
+                              label: 'Tools',
+                              tooltip: 'Repository tools',
                             ),
                             NavigationDestination(
                               icon: FaIcon(FontAwesomeIcons.solidFolderOpen, color: colours.secondaryLight, size: textLG),
