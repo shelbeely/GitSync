@@ -14,6 +14,7 @@ import '../../../src/rust/api/git_manager.dart' as GitManagerRs;
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:GitSync/type/git_provider.dart';
+import 'package:GitSync/ui/component/author_avatar.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
 import '../dialog/diff_view.dart' as DiffViewDialog;
 import '../dialog/create_branch_from_commit.dart' as CreateBranchFromCommitDialog;
@@ -331,6 +332,13 @@ class _ItemCommit extends ConsumerState<ItemCommit> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: spaceSM),
+                          child: AuthorAvatar(
+                            username: demo ? "ViscousTests" : widget.commit.authorUsername,
+                            radius: textMD * 0.85,
+                          ),
+                        ),
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

@@ -16,7 +16,13 @@ enum ShowcaseFeature {
   final String label;
   final String storageKey;
 
-  static const defaultPinned = [ShowcaseFeature.issues, ShowcaseFeature.pullRequests];
+  static const defaultPinned = [
+    ShowcaseFeature.issues,
+    ShowcaseFeature.pullRequests,
+    ShowcaseFeature.actions,
+    ShowcaseFeature.releases,
+    ShowcaseFeature.tags,
+  ];
 
   static ShowcaseFeature? fromStorageKey(String key) {
     for (final feature in ShowcaseFeature.values) {

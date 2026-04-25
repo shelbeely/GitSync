@@ -3367,6 +3367,22 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
               child: Stack(
                 children: [
                   child,
+                  // M3 onboarding step progress at the top of the screen.
+                  // Computed from the ordinal position of the current
+                  // [Screen] in the enum so it advances naturally as the
+                  // user progresses through the flow.
+                  if (!isEntryScreen)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: LinearProgressIndicator(
+                        value: (Screen.values.indexOf(screenIndexValue) + 1) / Screen.values.length,
+                        minHeight: 3,
+                        backgroundColor: colours.tertiaryDark,
+                        color: colours.tertiaryInfo,
+                      ),
+                    ),
                   AnimatedPositioned(
                     duration: animSlow,
                     curve: Curves.easeInOut,
