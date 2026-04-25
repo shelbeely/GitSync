@@ -31,21 +31,6 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Cache Cargo registry
-              uses: actions/cache@v4
-              with:
-                  path: |
-                      ~/.cargo/registry
-                      ~/.cargo/git
-                      rust/target
-                  key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-            - name: Set up Rust toolchain
-              uses: actions-rust-lang/setup-rust-toolchain@v1
-
-            - name: Add Android Rust targets
-              run: rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
-
             - name: Set up Flutter SDK
               uses: subosito/flutter-action@v2
               with:
@@ -68,17 +53,6 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-pub-
 
-            - name: Install flutter_rust_bridge_codegen
-              uses: baptiste0928/cargo-install@v3
-              with:
-                  crate: flutter_rust_bridge_codegen
-                  version: "2.12.0"
-
-            - name: Install cargo-expand
-              uses: baptiste0928/cargo-install@v3
-              with:
-                  crate: cargo-expand
-
             - name: Create placeholder secrets.dart
               run: |
                   mkdir -p ./lib/constant
@@ -96,6 +70,3 @@ jobs:
 
             - name: Get Flutter packages
               run: flutter pub get
-
-            - name: Generate Rust bridge bindings
-              run: flutter_rust_bridge_codegen generate
