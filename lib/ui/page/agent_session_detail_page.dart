@@ -289,16 +289,22 @@ class _AgentSessionDetailPageState extends State<AgentSessionDetailPage> {
           if (message.actions.isNotEmpty) _buildAgentSessionRow(message, isExpanded),
           if (message.body.isNotEmpty)
             Container(
-              margin: EdgeInsets.only(bottom: spaceXS, right: spaceXL),
+              margin: EdgeInsets.only(
+                bottom: spaceXS,
+                right: spaceXL,
+                top: message.actions.isNotEmpty ? spaceXXS : 0,
+              ),
               padding: EdgeInsets.all(spaceSM),
               decoration: BoxDecoration(
                 color: colours.secondaryDark,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(3),
-                  topRight: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
+                borderRadius: message.actions.isNotEmpty
+                    ? const BorderRadius.only(
+                        topLeft: Radius.circular(3),
+                        topRight: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      )
+                    : BorderRadius.all(cornerRadiusSM),
               ),
               child: GestureDetector(
                 onLongPress: () => Clipboard.setData(ClipboardData(text: message.body))
@@ -307,19 +313,6 @@ class _AgentSessionDetailPageState extends State<AgentSessionDetailPage> {
                   message.body,
                   style: TextStyle(color: colours.primaryLight, fontSize: textSM),
                 ),
-              ),
-            ),
-          if (message.actions.isEmpty && message.body.isEmpty)
-            Container(
-              margin: EdgeInsets.only(bottom: spaceSM, right: spaceXL),
-              padding: EdgeInsets.all(spaceSM),
-              decoration: BoxDecoration(
-                color: colours.secondaryDark,
-                borderRadius: BorderRadius.all(cornerRadiusSM),
-              ),
-              child: Text(
-                message.body,
-                style: TextStyle(color: colours.primaryLight, fontSize: textSM),
               ),
             ),
         ],

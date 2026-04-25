@@ -1595,6 +1595,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     _tabIndex.dispose();
     _pageController.dispose();
     _homeCanPop.dispose();
+    _filesCanPop.dispose();
     _agentCanPop.dispose();
     for (var key in debounceTimers.keys) {
       if (key.startsWith(iosFolderAccessDebounceReference)) {
