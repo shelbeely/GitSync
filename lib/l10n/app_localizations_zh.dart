@@ -2261,42 +2261,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tabFiles => 'Files';
 
   @override
-  String get chatComingSoon => 'Chat features coming soon';
-
-  @override
-  String get chatComingSoonSubtitle => 'Interact with your files using Claude Code';
-
-  @override
-  String get noRepoSetup => 'Set up a repository first';
-
-  @override
-  String get enableAiFeatures => 'Enable AI Features';
-
-  @override
-  String get hideAiFeatures => 'Hide AI Features';
-
-  @override
-  String get hideAiFeaturesConfirmTitle => 'Hide AI Features?';
-
-  @override
-  String get hideAiFeaturesConfirmMsg =>
-      'This will remove the AI tab and all AI buttons throughout the app. You can re-enable AI features anytime from Global Settings.';
-
-  @override
-  String get aiSetupTitle => 'Set Up AI';
-
-  @override
-  String get aiSetupMsg => 'Configure an AI provider to use this feature. Go to AI settings?';
-}
-
-/// The translations for Chinese, using the Han script (`zh_Hant`).
-class AppLocalizationsZhHant extends AppLocalizationsZh {
-  AppLocalizationsZhHant() : super('zh_Hant');
-
-  @override
-  String get iosAppSyncDocsLinkText => '其他應用程式開啟/關閉時同步';
-
-  @override
   String get tabAgent => 'Copilot';
 
   @override
@@ -2350,4 +2314,39 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get agentNoMessages => 'No messages yet';
 
+  @override
+  String get chatComingSoon => 'Chat features coming soon';
+
+  @override
+  String get chatComingSoonSubtitle => 'Interact with your files using Claude Code';
+
+  @override
+  String get noRepoSetup => 'Set up a repository first';
+
+  @override
+  String get enableAiFeatures => 'Enable AI Features';
+
+  @override
+  String get hideAiFeatures => 'Hide AI Features';
+
+  @override
+  String get hideAiFeaturesConfirmTitle => 'Hide AI Features?';
+
+  @override
+  String get hideAiFeaturesConfirmMsg =>
+      'This will remove the AI tab and all AI buttons throughout the app. You can re-enable AI features anytime from Global Settings.';
+
+  @override
+  String get aiSetupTitle => 'Set Up AI';
+
+  @override
+  String get aiSetupMsg => 'Configure an AI provider to use this feature. Go to AI settings?';
+}
+
+/// The translations for Chinese, using the Han script (`zh_Hant`).
+class AppLocalizationsZhHant extends AppLocalizationsZh {
+  AppLocalizationsZhHant() : super('zh_Hant');
+
+  @override
+  String get iosAppSyncDocsLinkText => '其他應用程式開啟/關閉時同步';
 }

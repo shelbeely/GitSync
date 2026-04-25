@@ -2276,34 +2276,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tabFiles => 'Files';
 
   @override
-  String get chatComingSoon => 'Chat features coming soon';
-
-  @override
-  String get chatComingSoonSubtitle => 'Interact with your files using Claude Code';
-
-  @override
-  String get noRepoSetup => 'Set up a repository first';
-
-  @override
-  String get enableAiFeatures => 'Enable AI Features';
-
-  @override
-  String get hideAiFeatures => 'Hide AI Features';
-
-  @override
-  String get hideAiFeaturesConfirmTitle => 'Hide AI Features?';
-
-  @override
-  String get hideAiFeaturesConfirmMsg =>
-      'This will remove the AI tab and all AI buttons throughout the app. You can re-enable AI features anytime from Global Settings.';
-
-  @override
-  String get aiSetupTitle => 'Set Up AI';
-
-  @override
-  String get aiSetupMsg => 'Configure an AI provider to use this feature. Go to AI settings?';
-
-  @override
   String get tabAgent => 'Copilot';
 
   @override
@@ -2357,4 +2329,31 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get agentNoMessages => 'No messages yet';
 
+  @override
+  String get chatComingSoon => 'Chat features coming soon';
+
+  @override
+  String get chatComingSoonSubtitle => 'Interact with your files using Claude Code';
+
+  @override
+  String get noRepoSetup => 'Set up a repository first';
+
+  @override
+  String get enableAiFeatures => 'Enable AI Features';
+
+  @override
+  String get hideAiFeatures => 'Hide AI Features';
+
+  @override
+  String get hideAiFeaturesConfirmTitle => 'Hide AI Features?';
+
+  @override
+  String get hideAiFeaturesConfirmMsg =>
+      'This will remove the AI tab and all AI buttons throughout the app. You can re-enable AI features anytime from Global Settings.';
+
+  @override
+  String get aiSetupTitle => 'Set Up AI';
+
+  @override
+  String get aiSetupMsg => 'Configure an AI provider to use this feature. Go to AI settings?';
 }
