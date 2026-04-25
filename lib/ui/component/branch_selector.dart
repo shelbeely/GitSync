@@ -74,8 +74,13 @@ class _BranchSelectorState extends State<BranchSelector> {
                               showMenu<String>(
                                 context: context,
                                 position: position,
+                                // M3 menu surface tokens: surfaceContainer-equivalent dark surface
+                                // with M3 medium corner radius and level-2 elevation.
                                 color: colours.secondaryDark,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusSM)),
+                                surfaceTintColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD)),
+                                elevation: 3,
+                                clipBehavior: Clip.antiAlias,
                                 constraints: BoxConstraints(maxHeight: 250, minWidth: size.width),
                                 items: otherBranches.entries.map((entry) {
                                   final item = entry.key;
