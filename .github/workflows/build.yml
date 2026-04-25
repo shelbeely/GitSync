@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v1.3.1
         with:
           android: false
           dotnet: true
@@ -50,12 +50,13 @@ jobs:
           ${{ secrets.SECRETS }}
           EOF
 
-      # Step 1 – Flutter SDK (version pinned in .fvmrc / pubspec.yaml)
+      # Step 1 – Flutter SDK (version pinned in .fvmrc; single source of truth)
       - name: Setup Flutter SDK
-        uses: flutter-actions/setup-flutter@v4
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
-          version: 3.35.2
+          flutter-version-file: .fvmrc
+          cache: true
 
       # Android build toolchain
       - name: Set Up JDK 17
@@ -65,12 +66,27 @@ jobs:
           java-version: "17"
           cache: "gradle"
 
-      # Step 4 – flutter_rust_bridge_codegen (version pinned per README)
+      # Cache the Dart pub cache so packages aren't re-downloaded every run.
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock', '**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      # Step 4 – flutter_rust_bridge_codegen (version pinned per README).
+      # baptiste0928/cargo-install caches the compiled binary across runs.
       - name: Install flutter_rust_bridge_codegen
-        run: cargo install flutter_rust_bridge_codegen --version 2.12.0
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: flutter_rust_bridge_codegen
+          version: "2.12.0"
 
       - name: Install cargo-expand (required by flutter_rust_bridge_codegen)
-        run: cargo install cargo-expand
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: cargo-expand
 
       # Step 2 – install Dart/Flutter packages
       - name: Get Flutter packages
