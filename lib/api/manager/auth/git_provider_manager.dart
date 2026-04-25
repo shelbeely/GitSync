@@ -4,6 +4,8 @@ import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:GitSync/global.dart';
+import 'package:GitSync/type/agent_message.dart';
+import 'package:GitSync/type/agent_session.dart';
 import 'package:GitSync/type/issue.dart';
 import 'package:GitSync/type/issue_detail.dart';
 import 'package:GitSync/type/issue_template.dart';
@@ -263,5 +265,21 @@ class GitProviderManager {
 
   Future<List<IssueTemplate>> getPrTemplates(String accessToken, String owner, String repo) async {
     return [];
+  }
+
+  Future<List<AgentSession>> getCopilotAgentSessions(String accessToken, String owner, String repo) async {
+    return [];
+  }
+
+  Future<List<AgentMessage>> getAgentSessionMessages(String accessToken, String owner, String repo, int issueNumber) async {
+    return [];
+  }
+
+  Future<AgentMessage?> postAgentFollowUp(String accessToken, String owner, String repo, int issueNumber, String body) async {
+    return null;
+  }
+
+  Future<AgentSession?> createAgentSession(String accessToken, String owner, String repo, String title, String body) async {
+    return null;
   }
 }

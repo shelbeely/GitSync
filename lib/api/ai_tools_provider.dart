@@ -6,6 +6,8 @@ import 'package:GitSync/api/manager/git_manager.dart';
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/type/action_run.dart';
+import 'package:GitSync/type/agent_session.dart';
+import 'package:GitSync/type/git_provider.dart';
 import 'package:GitSync/type/issue.dart';
 import 'package:GitSync/type/pr_detail.dart';
 import 'package:GitSync/type/pull_request.dart';
@@ -928,6 +930,133 @@ class GetSettingsInfoTool extends AiTool {
   }
 }
 
+class ListAgentSessionsTool extends AiTool {
+  @override
+  String get name => 'list_agent_sessions';
+  @override
+  String get description =>
+      'List GitHub Copilot agent sessions (issues assigned to the Copilot agent) for the current repository. GitHub-only.';
+  @override
+  ToolConfirmation get confirmation => ToolConfirmation.none;
+  @override
+  ToolTier get tier => ToolTier.contextual;
+  @override
+  Map<String, dynamic> get inputSchema => {'type': 'object', 'properties': {}, 'required': []};
+
+  @override
+  Future<String> execute(Map<String, dynamic> input, ToolContext? context) async {
+    final ctx = await _getContext(context);
+    if (ctx == null) return err('OAuth not configured for this repository');
+    if (ctx.manager.runtimeType.toString().contains('Github') == false &&
+        (await uiSettingsManager.getGitProvider()) != GitProvider.GITHUB) {
+      return err('Copilot agent sessions are only available on GitHub repositories');
+    }
+
+    final sessions = await ctx.manager.getCopilotAgentSessions(ctx.accessToken, ctx.owner, ctx.repo);
+    return ok(
+      sessions
+          .take(30)
+          .map(
+            (s) => {
+              'issue_number': s.issueNumber,
+              'title': s.title,
+              'status': s.isOpen ? 'active' : 'completed',
+              'created_at': s.createdAt.toIso8601String(),
+              if (s.sessionCount > 0) 'session_count': s.sessionCount,
+              if (s.premiumRequests > 0) 'premium_requests': s.premiumRequests,
+              if (s.linkedPrNumber != null) 'linked_pr': s.linkedPrNumber,
+            },
+          )
+          .toList(),
+    );
+  }
+}
+
+class CreateAgentSessionTool extends AiTool {
+  @override
+  String get name => 'create_agent_session';
+  @override
+  String get description =>
+      'Create a new GitHub Copilot agent session by opening an issue assigned to Copilot. GitHub-only.';
+  @override
+  ToolConfirmation get confirmation => ToolConfirmation.warn;
+  @override
+  ToolTier get tier => ToolTier.contextual;
+  @override
+  Map<String, dynamic> get inputSchema => {
+    'type': 'object',
+    'properties': {
+      'title': {'type': 'string', 'description': 'A concise task title for the Copilot agent session'},
+      'body': {'type': 'string', 'description': 'Detailed description of the task (optional; defaults to title)'},
+    },
+    'required': ['title'],
+  };
+
+  @override
+  Future<String> execute(Map<String, dynamic> input, ToolContext? context) async {
+    final ctx = await _getContext(context);
+    if (ctx == null) return err('OAuth not configured for this repository');
+
+    final title = input['title'] as String;
+    final body = (input['body'] as String?) ?? '';
+
+    final session = await ctx.manager.createAgentSession(ctx.accessToken, ctx.owner, ctx.repo, title, body);
+    if (session == null) return err('Failed to create Copilot agent session');
+    return ok({
+      'issue_number': session.issueNumber,
+      'title': session.title,
+      'status': session.isOpen ? 'active' : 'completed',
+      'created_at': session.createdAt.toIso8601String(),
+    });
+  }
+}
+
+class GetAgentSessionDetailTool extends AiTool {
+  @override
+  String get name => 'get_agent_session_detail';
+  @override
+  String get description =>
+      'Get the full conversation thread of a GitHub Copilot agent session by issue number. GitHub-only.';
+  @override
+  ToolConfirmation get confirmation => ToolConfirmation.none;
+  @override
+  ToolTier get tier => ToolTier.contextual;
+  @override
+  Map<String, dynamic> get inputSchema => {
+    'type': 'object',
+    'properties': {
+      'issue_number': {'type': 'integer', 'description': 'The issue number of the agent session'},
+    },
+    'required': ['issue_number'],
+  };
+
+  @override
+  Future<String> execute(Map<String, dynamic> input, ToolContext? context) async {
+    final ctx = await _getContext(context);
+    if (ctx == null) return err('OAuth not configured for this repository');
+
+    final number = input['issue_number'] as int;
+    final messages = await ctx.manager.getAgentSessionMessages(ctx.accessToken, ctx.owner, ctx.repo, number);
+    if (messages.isEmpty) return ok({'issue_number': number, 'messages': []});
+
+    return ok({
+      'issue_number': number,
+      'messages': messages
+          .take(50)
+          .map(
+            (m) => {
+              'id': m.id,
+              'author': m.authorLogin,
+              'is_agent': m.isAgent,
+              'body': m.body.length > 1000 ? '${m.body.substring(0, 1000)}...' : m.body,
+              'created_at': m.createdAt.toIso8601String(),
+            },
+          )
+          .toList(),
+    });
+  }
+}
+
 List<AiTool> allProviderTools() => [
   ListIssuesTool(),
   GetIssueDetailTool(),
@@ -953,4 +1082,7 @@ List<AiTool> allProviderTools() => [
   ListReposTool(),
   ListProjectsTool(),
   GetSettingsInfoTool(),
+  ListAgentSessionsTool(),
+  CreateAgentSessionTool(),
+  GetAgentSessionDetailTool(),
 ];

@@ -2295,4 +2295,59 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get iosAppSyncDocsLinkText => '其他應用程式開啟/關閉時同步';
+
+  @override
+  String get tabAgent => 'Copilot';
+
+  @override
+  String get agentFilterAll => 'All';
+
+  @override
+  String get agentFilterActive => 'Active';
+
+  @override
+  String get agentFilterCompleted => 'Completed';
+
+  @override
+  String get agentNotAvailableTitle => 'GitHub OAuth Required';
+
+  @override
+  String get agentNotAvailableSubtitle => 'Connect with GitHub OAuth to manage Copilot agent sessions.';
+
+  @override
+  String get agentNoSessionsTitle => 'No Sessions Found';
+
+  @override
+  String get agentNoSessionsSubtitle => 'Create a session to ask Copilot to work on a task.';
+
+  @override
+  String get agentSessions => 'sessions';
+
+  @override
+  String get agentPremiumRequests => 'premium requests';
+
+  @override
+  String get agentActions => 'actions';
+
+  @override
+  String get agentCreateTitle => 'Ask Copilot';
+
+  @override
+  String get agentCreateTitleHint => 'Describe the task…';
+
+  @override
+  String get agentCreateBodyHint => 'Additional details (optional)';
+
+  @override
+  String get agentAskCopilot => 'Ask Copilot';
+
+  @override
+  String get agentFollowUpHint => 'Follow up';
+
+  @override
+  String get agentFollowUpFailed => 'Failed to send follow-up';
+
+  @override
+  String get agentNoMessages => 'No messages yet';
+
 }

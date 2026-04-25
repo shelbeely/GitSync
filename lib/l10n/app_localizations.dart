@@ -4596,6 +4596,114 @@ abstract class AppLocalizations {
   /// **'Files'**
   String get tabFiles;
 
+  /// No description provided for @tabAgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Copilot'**
+  String get tabAgent;
+
+  /// No description provided for @agentFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get agentFilterAll;
+
+  /// No description provided for @agentFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get agentFilterActive;
+
+  /// No description provided for @agentFilterCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get agentFilterCompleted;
+
+  /// No description provided for @agentNotAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub OAuth Required'**
+  String get agentNotAvailableTitle;
+
+  /// No description provided for @agentNotAvailableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with GitHub OAuth to manage Copilot agent sessions.'**
+  String get agentNotAvailableSubtitle;
+
+  /// No description provided for @agentNoSessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Sessions Found'**
+  String get agentNoSessionsTitle;
+
+  /// No description provided for @agentNoSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a session to ask Copilot to work on a task.'**
+  String get agentNoSessionsSubtitle;
+
+  /// No description provided for @agentSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'sessions'**
+  String get agentSessions;
+
+  /// No description provided for @agentPremiumRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'premium requests'**
+  String get agentPremiumRequests;
+
+  /// No description provided for @agentActions.
+  ///
+  /// In en, this message translates to:
+  /// **'actions'**
+  String get agentActions;
+
+  /// No description provided for @agentCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Copilot'**
+  String get agentCreateTitle;
+
+  /// No description provided for @agentCreateTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the task…'**
+  String get agentCreateTitleHint;
+
+  /// No description provided for @agentCreateBodyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional details (optional)'**
+  String get agentCreateBodyHint;
+
+  /// No description provided for @agentAskCopilot.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Copilot'**
+  String get agentAskCopilot;
+
+  /// No description provided for @agentFollowUpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up'**
+  String get agentFollowUpHint;
+
+  /// No description provided for @agentFollowUpFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send follow-up'**
+  String get agentFollowUpFailed;
+
+  /// No description provided for @agentNoMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get agentNoMessages;
+
   /// No description provided for @chatComingSoon.
   ///
   /// In en, this message translates to:

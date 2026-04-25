@@ -20,4 +20,5 @@ late AppLocalizations t;
 
 final ValueNotifier<bool> aiKeyConfigured = ValueNotifier(false);
 final ValueNotifier<bool> aiFeaturesEnabled = ValueNotifier(true);
+final ValueNotifier<bool> agentFeaturesEnabled = ValueNotifier(false);
 VoidCallback? switchToAiTab;
