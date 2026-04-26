@@ -18,6 +18,8 @@
 7. [Out of Scope](#7-out-of-scope)
 
 > **Amendment (2026-04-26):** Section 3.5 has been added to specify the GitHub MCP Server as a second built-in server alongside the kelivo fetch server.
+>
+> **Amendment (2026-04-26):** Section 3.6 has been added to specify the in-memory `@app/github-mcp-apps` server — a fully app-local MCP proxy that wraps the upstream GitHub MCP server and layers MCP Apps UI on top of every discovered tool.
 
 ---
 
@@ -30,6 +32,7 @@ GitSync is a Flutter Git client with an AI chat assistant backed by an internal 
 | Allow the AI to connect to any external MCP server | `lib/core/providers/mcp_provider.dart`, `lib/core/services/mcp/` |
 | Ship a built-in web-fetch MCP server | `lib/core/services/mcp/kelivo_fetch/` |
 | Ship the official GitHub MCP server as a built-in, pre-configured server | [github/github-mcp-server](https://github.com/github/github-mcp-server) |
+| Ship a built-in in-memory GitHub MCP proxy server with full MCP Apps UI for every GitHub tool | `lib/core/services/mcp/github_apps/` (new — modeled after `kelivo_fetch` pattern) |
 | Render code blocks with syntax highlighting, LaTeX, diagrams, and more | `lib/shared/widgets/markdown_with_highlight.dart`, `lib/shared/widgets/mermaid_*`, `lib/shared/widgets/plantuml_block.dart` |
 | Accept images, PDFs, Word docs, and other files as AI input | `lib/features/chat/widgets/image_preview_sheet.dart`, `lib/core/models/chat_message.dart` |
 
@@ -201,6 +204,196 @@ The `McpServerConfig` for the built-in server reads the base URL from GitSync's 
 
 ---
 
+### 3.6 Built-in GitHub MCP Apps Server (`@app/github-mcp-apps`)
+
+**Architecture:** In-memory proxy with MCP Apps UI layer  
+**Transport:** `GithubMcpAppsInMemoryClientTransport` (new `InMemory` transport variant)  
+**Upstream:** `https://api.githubcopilot.com/mcp/x/all` (GitHub's remote MCP server)
+
+#### 3.6.1 Overview & Architecture
+
+§3.5 registers a raw SSE connection to the upstream GitHub MCP server through `McpProvider`. §3.6 is a fundamentally different approach: it is a fully app-local MCP server engine that *proxies* the upstream GitHub MCP server and layers MCP Apps UI metadata on top of every tool it discovers. This gives the app a rich, interactive UI for every GitHub MCP tool without any external daemon or subprocess.
+
+**Two-tier architecture:**
+
+```
+App
+ └─ mcp.Client
+     └─ GithubMcpAppsInMemoryClientTransport   (implements mcp.ClientTransport)
+         └─ GithubMcpAppsServerEngine           (in-process MCP server)
+             └─ GithubUpstreamClient            (outbound MCP client, SSE)
+                 └─ https://api.githubcopilot.com/mcp/x/all
+```
+
+The server is registered as `@app/github-mcp-apps` via the existing `McpProvider`. A new `InMemory` transport variant is added to `McpServerConfig` alongside the existing `SSE` and `Stdio` variants. No network port or subprocess is involved on the local side.
+
+§3.5 and §3.6 can be active simultaneously. They share the same token from `FlutterSecureStorage`. §3.6 is the preferred built-in for users who interact with GitHub tools through the MCP Apps UI; §3.5 is retained for programmatic/AI-only access patterns.
+
+#### 3.6.2 New source files
+
+| File | Purpose |
+|---|---|
+| `lib/core/services/mcp/github_apps/github_mcp_apps_server.dart` | `GithubMcpAppsServerEngine` — handles `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read` |
+| `lib/core/services/mcp/github_apps/github_upstream_client.dart` | `GithubUpstreamClient` — MCP client connecting to upstream SSE endpoint; manages token, optional headers, and reconnect |
+| `lib/core/services/mcp/github_apps/github_tool_manifest.dart` | `GithubToolManifest` — cached tool list; each entry holds name, description, inputSchema, annotations, safety class, and generated `_meta.ui.resourceUri` |
+| `lib/core/services/mcp/github_apps/github_tool_safety.dart` | `GithubToolSafety` — classifies each tool as `read`, `write`, `destructive`, or `unknown` by name-prefix heuristic and upstream annotations |
+| `lib/core/services/mcp/github_apps/resources/tool_runner_app_html.dart` | `ToolRunnerAppHtml` — single-file bundled HTML app served by `resources/read`; receives boot config as injected JSON |
+
+#### 3.6.3 Upstream connection
+
+- **Default URL:** `https://api.githubcopilot.com/mcp/x/all` (also configurable per-server)
+- **Token source:** `GITHUB_MCP_TOKEN` env var or the app setting; falls back to the PAT already stored in `FlutterSecureStorage` for the active GitHub provider (same as §3.5)
+- **Required header when token is present:** `Authorization: Bearer <token>`
+- **Optional pass-through headers:**
+  - `X-MCP-Toolsets` — filter which GitHub toolsets are returned
+  - `X-MCP-Tools` — filter which individual tools are returned
+  - `X-MCP-Readonly` — restrict server to read-only tools
+  - `X-MCP-Insiders` — opt in to Insiders-only tools
+  - `X-MCP-Lockdown` — enable lockdown mode
+- The token is **never** embedded in generated HTML, log output, or tool results.
+
+#### 3.6.4 Tool discovery and wrapping
+
+The manifest is built lazily on first `tools/list` (or eagerly when `github_apps_refresh_manifest` is called):
+
+1. `GithubUpstreamClient` connects to the upstream SSE endpoint and calls upstream `tools/list`.
+2. Each upstream tool is stored in `GithubToolManifest` with its `name`, `description`, `inputSchema`, and any `annotations`/metadata preserved verbatim.
+3. Each cached entry gains a `_meta.ui.resourceUri` of the form `ui://github-mcp-apps/tool/<url-encoded-tool-name>`.
+4. `GithubToolSafety` assigns a safety classification (`read`, `write`, `destructive`, or `unknown`) to each entry.
+5. The local server's `tools/list` returns all wrapped tools together with the four local helper tools (§3.6.5).
+6. The upstream manifest is the **source of truth** — the full GitHub tool list is never hardcoded. New GitHub MCP tools are exposed automatically on the next manifest refresh.
+
+#### 3.6.5 Local helper tools
+
+Four built-in wrapper tools are added to the local server's `tools/list` in addition to all proxied GitHub tools:
+
+| Tool | Inputs | Purpose |
+|---|---|---|
+| `github_apps_refresh_manifest` | *(none)* | Re-fetches upstream `tools/list` and rebuilds the cached manifest |
+| `github_apps_open_tool` | `tool_name: string` | Returns `_meta.ui.resourceUri` for the named tool so the caller can open its UI |
+| `github_apps_search_tools` | `query: string` | Full-text search across tool name, description, and inputSchema field names |
+| `github_apps_tool_catalog` | *(none)* | Returns all available tools grouped by GitHub toolset/category |
+
+#### 3.6.6 MCP Apps resources
+
+**`resources/list`** returns:
+
+- One entry per wrapped upstream tool: `uri = ui://github-mcp-apps/tool/<toolName>`
+- The generic tool-runner entry: `uri = ui://github-mcp-apps/tool-runner`
+- All curated app entries listed in §3.6.7
+
+**`resources/read`** for a `ui://github-mcp-apps/tool/<toolName>` URI:
+
+- Returns the `ToolRunnerAppHtml` bundle
+- MIME type: `text/html;profile=mcp-app`
+- Injects a boot-config JSON block (as an inline `<script>` tag) containing:
+  - selected tool name
+  - selected tool inputSchema
+  - read/write/destructive/unknown safety classification
+  - upstream tool description
+- Does **not** inject the GitHub token or any credentials
+
+#### 3.6.7 Curated MCP Apps resources
+
+In addition to the per-tool generated resources, the following named app resources are included in `resources/list` and handled by `resources/read`:
+
+| URI | Purpose |
+|---|---|
+| `ui://github-mcp-apps/catalog` | Browsable catalog of all available GitHub tools |
+| `ui://github-mcp-apps/repo-dashboard` | Repository overview — issues, PRs, and Actions at a glance |
+| `ui://github-mcp-apps/issues` | Issue list and creation form |
+| `ui://github-mcp-apps/pull-requests` | PR list, review, and merge UI |
+| `ui://github-mcp-apps/actions` | Workflow runs and job logs |
+| `ui://github-mcp-apps/notifications` | Notification inbox and mark-as-read controls |
+| `ui://github-mcp-apps/security` | Code scanning, Dependabot, and secret scanning alerts |
+| `ui://github-mcp-apps/copilot-task` | Copilot task creation and tracking |
+| `ui://github-mcp-apps/copilot-spaces` | Copilot Spaces management |
+| `ui://github-mcp-apps/support-docs-search` | GitHub docs search via the `support_docs_search` tool |
+
+These curated apps pre-configure context, filtering, and layout for each GitHub surface. They may call the same wrapped upstream tools internally. They are not required to cover every possible field up front because the universal `ToolRunnerApp` (§3.6.8) already covers every tool automatically.
+
+#### 3.6.8 ToolRunnerApp (`tool_runner_app_html.dart`)
+
+`ToolRunnerAppHtml` is a single-file, self-contained HTML application served by `resources/read`. It receives its configuration through an injected boot-config JSON block and communicates with the native app exclusively through the MCP Apps bridge/postMessage API — it has no direct network access and never touches the GitHub token.
+
+Required capabilities:
+
+- Render the tool name and description clearly
+- Build a form from the tool's inputSchema, supporting:
+  - `string`, `number`, `integer`, `boolean`
+  - `array` (simple item-add UI)
+  - `object` (nested field set)
+  - `enum` (dropdown/radio selection)
+  - nullable/optional fields (checkbox to include/exclude)
+  - required fields clearly marked
+- Validate all inputs client-side before allowing submission; block submission on validation failure
+- For **write** tools: show an explicit confirmation step before calling
+- For **destructive** tools: show a confirmation step and require the user to type a confirmation string before calling
+- Call the tool via the MCP Apps bridge/postMessage API
+- Display results as:
+  - rendered readable text
+  - formatted/pretty-printed JSON
+  - a copy-to-clipboard block
+- Provide a "View raw schema" toggle
+- Provide a "View raw result" toggle
+- Never display the GitHub token or any credential
+
+#### 3.6.9 Safety classification (`GithubToolSafety`)
+
+Every entry in `GithubToolManifest` is assigned one of four safety classes:
+
+| Class | UI behaviour | Detection heuristic |
+|---|---|---|
+| `read` | Execute directly, no confirmation | Name has no write-signal prefix; or upstream readonly mode active (`X-MCP-Readonly`) |
+| `write` | Require explicit confirmation before executing | Name prefix: `create`, `update`, `fork`, `add`, `lock`, `unlock`, `manage`, `run`, `trigger`, `merge`, `mark` |
+| `destructive` | Require confirmation + typed confirmation string | Name prefix: `delete`, `remove`, `dismiss` |
+| `unknown` | Require explicit confirmation | Insufficient signal from name or annotations |
+
+Upstream tool annotations (if present) take precedence over the name-prefix heuristic. When `X-MCP-Readonly` is active, all tools are downgraded to `read` class regardless of name.
+
+#### 3.6.10 Relation to §3.5
+
+| Aspect | §3.5 (remote SSE server) | §3.6 (`@app/github-mcp-apps`) |
+|---|---|---|
+| Transport | SSE registered in `McpProvider` directly | `InMemory` — `GithubMcpAppsInMemoryClientTransport` |
+| MCP Apps UI | None | Full — every tool has a generated form |
+| Token handling | Header on SSE connection config | Header on upstream SSE leg only; never in local responses |
+| Use case | Programmatic / AI-only tool access | Interactive MCP Apps UI access |
+| Coexistence | Can run alongside §3.6 | Can run alongside §3.5 |
+
+#### 3.6.11 Coverage requirement
+
+Every tool returned by upstream `tools/list` automatically receives:
+
+- A callable local proxy in `tools/list`
+- A generated `_meta.ui.resourceUri` of the form `ui://github-mcp-apps/tool/<toolName>`
+- A `resources/list` entry with that URI
+- A `resources/read` response that renders successfully
+- A schema-rendered form via `ToolRunnerApp`
+- A result display
+- A safety classification from `GithubToolSafety`
+
+No code change is required when GitHub adds new MCP tools upstream.
+
+#### 3.6.12 Testing requirements
+
+| # | Test case |
+|---|---|
+| 1 | `initialize` returns correct server info and capability set |
+| 2 | `tools/list` includes all four local helper tools |
+| 3 | `tools/list` wraps all tools returned by the mock upstream |
+| 4 | Every wrapped tool has `_meta.ui.resourceUri` set |
+| 5 | `resources/list` contains exactly one entry per wrapped tool plus all curated entries |
+| 6 | `resources/read` for a valid tool URI returns MIME type `text/html;profile=mcp-app` |
+| 7 | A `read`-classified tool calls upstream directly without a confirmation gate |
+| 8 | A `write`-classified tool blocks the upstream call until confirmation is present in arguments |
+| 9 | A `destructive`-classified tool requires a typed confirmation string before executing |
+| 10 | The GitHub token never appears in returned HTML, logs, or tool results |
+| 11 | Upstream connection failure returns a structured MCP error content block instead of throwing |
+| 12 | After `github_apps_refresh_manifest`, newly added tools appear and removed tools disappear from both `tools/list` and `resources/list` |
+
+---
+
 ## 4. Feature B — Enhanced Markdown Rendering
 
 ### 4.1 Syntax-highlighted Code Blocks
@@ -343,6 +536,7 @@ The following packages need to be added to GitSync's `pubspec.yaml`. All are eit
 | `mcp_client` | MCP — Feature A | Vendor or use pub.dev release |
 | `html2md` | MCP built-in fetch server — Feature A.2 | `html` already present |
 | *(no new package)* | GitHub MCP server — Feature A.5 | Pure SSE over HTTPS; uses existing `http` package |
+| *(no new package)* | GitHub MCP Apps server — Feature A.6 | In-memory transport; minor vendored extension to `mcp_client` to add `InMemory` transport variant; no additional pub package |
 | `flutter_highlight` | Code highlighting — Feature B.1 | |
 | `highlight` | Code highlighting — Feature B.1 | |
 | `flutter_math_fork` | LaTeX rendering — Feature B.2 | |
