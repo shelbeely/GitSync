@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/git_manager.dart';
-import 'package:GitSync/constant/icons.dart';
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/constant/dimens.dart';
 import 'package:GitSync/constant/strings.dart';
@@ -21,7 +20,6 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:GitSync/api/manager/auth/github_manager.dart';
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
-import 'package:GitSync/api/manager/auth/git_provider_manager.dart';
 import 'package:GitSync/api/accessibility_service_helper.dart';
 import 'package:GitSync/ui/component/auto_sync_settings.dart';
 import 'package:GitSync/ui/component/scheduled_sync_settings.dart';
@@ -2440,43 +2438,6 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
                                           onPressed: () async {
                                             _oauthLoading.value = true;
                                             try {
-                                              final gitProviderManager = GitProviderManager.getGitProviderManager(GitProvider.CODEBERG, false);
-                                              if (gitProviderManager == null) return;
-                                              final result = await gitProviderManager.launchOAuthFlow();
-                                              if (result == null) return;
-                                              await _completeOAuthAuth(result, GitProvider.CODEBERG);
-                                            } finally {
-                                              _oauthLoading.value = false;
-                                            }
-                                          },
-                                          style: ButtonStyle(
-                                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceSM)),
-                                            backgroundColor: WidgetStatePropertyAll(colours.tertiaryDark),
-                                            alignment: Alignment.centerLeft,
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none),
-                                            ),
-                                          ),
-                                          icon: FaIcon(codeberg_logo, size: textSM, color: colours.codebergBlue),
-                                          label: Text(
-                                            "CODEBERG",
-                                            style: TextStyle(
-                                              color: colours.primaryLight,
-                                              fontSize: textMD,
-                                              fontFamily: "AtkinsonHyperlegible",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: spaceXXS),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            _oauthLoading.value = true;
-                                            try {
                                               ref.read(githubScopedOauthProvider.notifier).set(false);
 
                                               final gitProviderManager = GithubManager();
@@ -2569,88 +2530,6 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
                                           ),
                                           label: Text(
                                             "GITHUB (SCOPED)",
-                                            style: TextStyle(
-                                              color: colours.primaryLight,
-                                              fontSize: textMD,
-                                              fontFamily: "AtkinsonHyperlegible",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: spaceXXS),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            _oauthLoading.value = true;
-                                            try {
-                                              final gitProviderManager = GitProviderManager.getGitProviderManager(GitProvider.GITLAB, false);
-                                              if (gitProviderManager == null) return;
-                                              final result = await gitProviderManager.launchOAuthFlow();
-                                              if (result == null) return;
-                                              await _completeOAuthAuth(result, GitProvider.GITLAB);
-                                            } finally {
-                                              _oauthLoading.value = false;
-                                            }
-                                          },
-                                          style: ButtonStyle(
-                                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceSM)),
-                                            backgroundColor: WidgetStatePropertyAll(colours.tertiaryDark),
-                                            alignment: Alignment.centerLeft,
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none),
-                                            ),
-                                          ),
-                                          icon: FaIcon(
-                                            Platform.isIOS ? FontAwesomeIcons.gitAlt : gitlab_logo,
-                                            color: Platform.isIOS ? colours.primaryLight : colours.gitlabOrange,
-                                            size: textSM,
-                                          ),
-                                          label: Text(
-                                            "GITLAB",
-                                            style: TextStyle(
-                                              color: colours.primaryLight,
-                                              fontSize: textMD,
-                                              fontFamily: "AtkinsonHyperlegible",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: spaceXXS),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            _oauthLoading.value = true;
-                                            try {
-                                              final gitProviderManager = GitProviderManager.getGitProviderManager(GitProvider.GITEA, false);
-                                              if (gitProviderManager == null) return;
-                                              final result = await gitProviderManager.launchOAuthFlow();
-                                              if (result == null) return;
-                                              await _completeOAuthAuth(result, GitProvider.GITEA);
-                                            } finally {
-                                              _oauthLoading.value = false;
-                                            }
-                                          },
-                                          style: ButtonStyle(
-                                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceSM)),
-                                            backgroundColor: WidgetStatePropertyAll(colours.tertiaryDark),
-                                            alignment: Alignment.centerLeft,
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none),
-                                            ),
-                                          ),
-                                          icon: FaIcon(
-                                            Platform.isIOS ? FontAwesomeIcons.gitAlt : gitea_logo,
-                                            color: Platform.isIOS ? colours.primaryLight : colours.giteaGreen,
-                                            size: textSM,
-                                          ),
-                                          label: Text(
-                                            "GITEA",
                                             style: TextStyle(
                                               color: colours.primaryLight,
                                               fontSize: textMD,
