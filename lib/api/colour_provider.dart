@@ -78,10 +78,6 @@ class Colours {
   Color get showcaseBorder => darkMode ? Color(0xFF1E3A5F) : Color(0xFFBFDBFE);
   Color get showcaseFeatureIcon => darkMode ? Color(0xFF60A5FA) : Color(0xFF2563EB);
 
-  Color get gitlabOrange => Color(0xFFFC6D26);
-  Color get giteaGreen => Color(0xFF609926);
-  Color get codebergBlue => Color(0xFF2185D0);
-
   Future<void> reloadTheme(BuildContext context) async {
     final newDarkMode = await repoManager.getBoolNullable(StorageKey.repoman_themeMode);
     darkMode = newDarkMode ?? MediaQuery.of(context).platformBrightness == Brightness.dark;

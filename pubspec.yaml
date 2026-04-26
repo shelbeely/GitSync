@@ -1,5 +1,5 @@
 name: GitSync
-description: "Git client for syncing a repository between remote and a local directory"
+description: "GitHub Command Center — a GitHub-focused mobile client for managing and syncing your repositories"
 publish_to: "none"
 version: 1.8.54+1854
 
@@ -110,15 +110,6 @@ flutter:
   assets:
     - assets/
   fonts:
-    - family: GiteaLogo
-      fonts:
-        - asset: fonts/GiteaLogo.ttf
-    - family: GitlabLogo
-      fonts:
-        - asset: fonts/GitlabLogo.ttf
-    - family: CodebergLogo
-      fonts:
-        - asset: fonts/CodebergLogo.ttf
     - family: RobotoMono
       fonts:
         - asset: fonts/RobotoMono/RobotoMono-Regular.ttf

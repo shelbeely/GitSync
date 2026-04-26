@@ -806,7 +806,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appSyncDescription => '選択したアプリが開かれた、または閉じられた時に自動同期します';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitSync is opened or closed';
+  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
 
   @override
   String get iosAppSyncDocsLinkText => '他のアプリの開閉時に同期する';
@@ -816,7 +816,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get accessibilityServiceDisclosureMessage =>
-      'ユーザー体験を向上させるため、GitSyncはAndroidのユーザー補助サービスを使用してアプリの開閉を検出します。\n\nこれにより、データを保存または共有することなく、カスタマイズされた機能を提供できます。\n\n次の画面でGitSyncを有効にしてください';
+      'ユーザー体験を向上させるため、GitHub Command CenterはAndroidのユーザー補助サービスを使用してアプリの開閉を検出します。\n\nこれにより、データを保存または共有することなく、カスタマイズされた機能を提供できます。\n\n次の画面でGitHub Command Centerを有効にしてください';
 
   @override
   String get search => '検索';
@@ -843,10 +843,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncOnAppOpened => 'アプリが開かれた時に同期';
 
   @override
-  String get iosSyncOnAppClosed => 'GitSyncが閉じられた時に同期';
+  String get iosSyncOnAppClosed => 'GitHub Command Centerが閉じられた時に同期';
 
   @override
-  String get iosSyncOnAppOpened => 'GitSyncが開かれた時に同期';
+  String get iosSyncOnAppOpened => 'GitHub Command Centerが開かれた時に同期';
 
   @override
   String get scheduledSyncSettings => 'スケジュール同期設定';
@@ -1337,7 +1337,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shareLogs => 'ログを共有';
 
   @override
-  String get logsEmailSubjectTemplate => 'GitSync ログ (%s)';
+  String get logsEmailSubjectTemplate => 'GitHub Command Center ログ (%s)';
 
   @override
   String get logsEmailRecipient => 'bugsviscouspotential@gmail.com';
@@ -2046,13 +2046,14 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get githubScopedLoginMsg =>
-      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitSync.';
+      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitHub Command Center.';
 
   @override
   String get githubScopedRepoTitle => 'Step 2: Select Repositories';
 
   @override
-  String get githubScopedRepoMsg => 'Choose which repositories GitSync can access.\n\nWhen finished, close the browser to return to the app.';
+  String get githubScopedRepoMsg =>
+      'Choose which repositories GitHub Command Center can access.\n\nWhen finished, close the browser to return to the app.';
 
   @override
   String get issueDescription => 'Description';

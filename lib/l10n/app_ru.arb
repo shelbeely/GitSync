@@ -143,7 +143,7 @@
     
     
     "accessibilityServiceDisclosureTitle": "Раскрытие информации о службе специальных возможностей",
-    "accessibilityServiceDisclosureMessage": "Для улучшения вашего опыта\nGitSync использует службу специальных возможностей Android для обнаружения открытия или закрытия приложений.\n\nЭто помогает нам предоставить персонализированные функции без сохранения или передачи данных.\n\nᴘᴏᴊᴀʟᴜʏsᴛᴀ ᴠᴋʟᴊuᴄʜɪᴛᴇ ɢɪᴛsʏɴᴄ ɴᴀ sʟᴇᴅᴜʏsᴄʜᴇᴍ ᴇᴋʀᴀɴᴇ",
+    "accessibilityServiceDisclosureMessage": "Для улучшения вашего опыта\nGitHub Command Center использует службу специальных возможностей Android для обнаружения открытия или закрытия приложений.\n\nЭто помогает нам предоставить персонализированные функции без сохранения или передачи данных.\n\nᴘᴏᴊᴀʟᴜʏsᴛᴀ ᴠᴋʟᴊuᴄʜɪᴛᴇ ɢɪᴛʜᴜʙ ᴄᴏᴍᴍᴀɴᴅ ᴄᴇɴᴛᴇʀ ɴᴀ sʟᴇᴅᴜʏsᴄʜᴇᴍ ᴇᴋʀᴀɴᴇ",
     "search": "Поиск",
     "applicationNotSet": "Выбрать приложение(я)",
     "selectApplication": "Выбрать приложение(я)",
@@ -151,8 +151,8 @@
     "saveApplication": "Сохранить",
     "syncOnAppClosed": "Синхронизация при закрытии приложения(й)",
     "syncOnAppOpened": "Синхронизация при открытии приложения(й)",
-    "iosSyncOnAppClosed": "Синхронизация при закрытии GitSync",
-    "iosSyncOnAppOpened": "Синхронизация при открытии GitSync",
+    "iosSyncOnAppClosed": "Синхронизация при закрытии GitHub Command Center",
+    "iosSyncOnAppOpened": "Синхронизация при открытии GitHub Command Center",
     "scheduledSyncSettings": "Настройки запланированной синхронизации",
     "sync": "Синхронизация",
     "iosDefaultSyncRate": "когда iOS позволяет",
@@ -325,7 +325,7 @@
     "youreOffline": "Вы офлайн.",
     "someFeaturesMayNotWork": "Некоторые функции могут не работать.",
     "ongoingMergeConflict": "Текущий конфликт слияния",
-    "networkUnavailableRetry": "Сеть недоступна!\nGitSync повторит попытку при подключении",
+    "networkUnavailableRetry": "Сеть недоступна!\nGitHub Command Center повторит попытку при подключении",
     "pullFailed": "Получение не удалось! Пожалуйста, проверьте незафиксированные изменения и попробуйте снова.",
     "reportABug": "Сообщить об ошибке",
     "errorOccurredTitle": "Произошла ошибка!",

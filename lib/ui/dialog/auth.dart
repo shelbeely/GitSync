@@ -111,32 +111,6 @@ Future<void> showDialog(BuildContext parentContext, Function() callback) async {
             ),
           ],
         );
-      case GitProvider.GITEA:
-      case GitProvider.CODEBERG:
-      case GitProvider.GITLAB:
-        return TextButton.icon(
-          onPressed: () async {
-            final gitProviderManager = GitProviderManager.getGitProviderManager(selectedGitProvider, false);
-            if (gitProviderManager == null) return;
-
-            final result = await gitProviderManager.launchOAuthFlow();
-
-            if (result == null) return;
-
-            await setHttpAuth(context, result, selectedGitProvider);
-          },
-          style: ButtonStyle(
-            alignment: Alignment.center,
-            backgroundColor: WidgetStatePropertyAll(colours.secondaryPositive),
-            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceSM)),
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
-          ),
-          icon: FaIcon(FontAwesomeIcons.squareArrowUpRight, color: colours.primaryPositive, size: textLG),
-          label: Text(
-            t.oauth.toUpperCase(),
-            style: TextStyle(color: colours.primaryPositive, fontSize: textSM, fontWeight: FontWeight.bold),
-          ),
-        );
       case GitProvider.HTTPS:
         return SizedBox.shrink();
       case GitProvider.SSH:
@@ -147,9 +121,6 @@ Future<void> showDialog(BuildContext parentContext, Function() callback) async {
   Widget buildContent(void Function(void Function()) setState) {
     switch (selectedGitProvider) {
       case GitProvider.GITHUB:
-      case GitProvider.GITEA:
-      case GitProvider.CODEBERG:
-      case GitProvider.GITLAB:
         return Padding(
           padding: EdgeInsets.only(top: spaceMD, left: spaceMD, right: spaceMD),
           child: Text(

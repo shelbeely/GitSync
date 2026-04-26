@@ -143,7 +143,7 @@
     
     
     "accessibilityServiceDisclosureTitle": "Divulgación del Servicio de Accesibilidad",
-    "accessibilityServiceDisclosureMessage": "Para mejorar tu experiencia,\nGitSync usa el Servicio de Accesibilidad de Android para detectar cuándo se abren o cierran aplicaciones.\n\nEsto nos ayuda a proporcionar funciones personalizadas sin almacenar o compartir ningún dato.\n\nᴘᴏʀ ғᴀᴠᴏʀ ʜᴀʙɪʟɪᴛᴀ ɢɪᴛsʏɴᴄ ᴇɴ ʟᴀ sɪɢᴜɪᴇɴᴛᴇ ᴘᴀɴᴛᴀʟʟᴀ",
+    "accessibilityServiceDisclosureMessage": "Para mejorar tu experiencia,\nGitHub Command Center usa el Servicio de Accesibilidad de Android para detectar cuándo se abren o cierran aplicaciones.\n\nEsto nos ayuda a proporcionar funciones personalizadas sin almacenar o compartir ningún dato.\n\nᴘᴏʀ ғᴀᴠᴏʀ ʜᴀʙɪʟɪᴛᴀ ɢɪᴛʜᴜʙ ᴄᴏᴍᴍᴀɴᴅ ᴄᴇɴᴛᴇʀ ᴇɴ ʟᴀ sɪɢᴜɪᴇɴᴛᴇ ᴘᴀɴᴛᴀʟʟᴀ",
     "search": "Buscar",
     "applicationNotSet": "Seleccionar App(s)",
     "selectApplication": "Seleccionar aplicación(es)",
@@ -151,8 +151,8 @@
     "saveApplication": "Guardar",
     "syncOnAppClosed": "Sync al cerrar app(s)",
     "syncOnAppOpened": "Sync al abrir app(s)",
-    "iosSyncOnAppClosed": "Sync al cerrar GitSync",
-    "iosSyncOnAppOpened": "Sync al abrir GitSync",
+    "iosSyncOnAppClosed": "Sync al cerrar GitHub Command Center",
+    "iosSyncOnAppOpened": "Sync al abrir GitHub Command Center",
     "scheduledSyncSettings": "Configuración de Sync Programada",
     "sync": "Sync",
     "iosDefaultSyncRate": "cuando iOS lo permita",
@@ -325,7 +325,7 @@
     "youreOffline": "Estás desconectado.",
     "someFeaturesMayNotWork": "Algunas funciones pueden no funcionar.",
     "ongoingMergeConflict": "Conflicto de fusión en curso",
-    "networkUnavailableRetry": "¡Red no disponible!\nGitSync reintentará cuando se reconecte",
+    "networkUnavailableRetry": "¡Red no disponible!\nGitHub Command Center reintentará cuando se reconecte",
     "pullFailed": "¡Falló el pull! Por favor, verifica cambios sin confirmar e intenta de nuevo.",
     "reportABug": "Reportar un Error",
     "errorOccurredTitle": "¡Ocurrió un Error!",

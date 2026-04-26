@@ -199,10 +199,7 @@ class _ItemTag extends StatelessWidget {
     final repo = segments[1].replaceAll('.git', '');
     final encodedTag = Uri.encodeComponent(tag.name);
 
-    return switch (gitProvider) {
-      GitProvider.GITLAB => '$base/$owner/$repo/-/archive/$encodedTag/$repo-$encodedTag.$ext',
-      _ => '$base/$owner/$repo/archive/$encodedTag.$ext',
-    };
+    return '$base/$owner/$repo/archive/$encodedTag.$ext';
   }
 
   String get _repoName {
@@ -210,10 +207,7 @@ class _ItemTag extends StatelessWidget {
     return segments[1].replaceAll('.git', '');
   }
 
-  Map<String, String> get _authHeaders => switch (gitProvider) {
-    GitProvider.GITLAB => {'Authorization': 'Bearer $accessToken'},
-    _ => {'Authorization': 'token $accessToken'},
-  };
+  Map<String, String> get _authHeaders => {'Authorization': 'token $accessToken'};
 
   Future<void> _downloadArchive(String ext) async {
     final url = _archiveUrl(ext);

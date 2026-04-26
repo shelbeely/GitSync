@@ -149,8 +149,6 @@ class _ToolsContent extends StatelessWidget {
     switch (provider) {
       case GitProvider.GITHUB:
         return FontAwesomeIcons.github;
-      case GitProvider.GITLAB:
-        return FontAwesomeIcons.gitlab;
       default:
         return FontAwesomeIcons.codeBranch;
     }

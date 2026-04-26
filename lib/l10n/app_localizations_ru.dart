@@ -807,7 +807,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appSyncDescription => 'Automatically syncs when your selected app is opened or closed';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitSync is opened or closed';
+  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
 
   @override
   String get iosAppSyncDocsLinkText => 'Синхронизировать при открытии/закрытии других приложений';
@@ -817,7 +817,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accessibilityServiceDisclosureMessage =>
-      'Для улучшения вашего опыта\nGitSync использует службу специальных возможностей Android для обнаружения открытия или закрытия приложений.\n\nЭто помогает нам предоставить персонализированные функции без сохранения или передачи данных.\n\nᴘᴏᴊᴀʟᴜʏsᴛᴀ ᴠᴋʟᴊuᴄʜɪᴛᴇ ɢɪᴛsʏɴᴄ ɴᴀ sʟᴇᴅᴜʏsᴄʜᴇᴍ ᴇᴋʀᴀɴᴇ';
+      'Для улучшения вашего опыта\nGitHub Command Center использует службу специальных возможностей Android для обнаружения открытия или закрытия приложений.\n\nЭто помогает нам предоставить персонализированные функции без сохранения или передачи данных.\n\nᴘᴏᴊᴀʟᴜʏsᴛᴀ ᴠᴋʟᴊuᴄʜɪᴛᴇ ɢɪᴛʜᴜʙ ᴄᴏᴍᴍᴀɴᴅ ᴄᴇɴᴛᴇʀ ɴᴀ sʟᴇᴅᴜʏsᴄʜᴇᴍ ᴇᴋʀᴀɴᴇ';
 
   @override
   String get search => 'Поиск';
@@ -844,10 +844,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get syncOnAppOpened => 'Синхронизация при открытии приложения(й)';
 
   @override
-  String get iosSyncOnAppClosed => 'Синхронизация при закрытии GitSync';
+  String get iosSyncOnAppClosed => 'Синхронизация при закрытии GitHub Command Center';
 
   @override
-  String get iosSyncOnAppOpened => 'Синхронизация при открытии GitSync';
+  String get iosSyncOnAppOpened => 'Синхронизация при открытии GitHub Command Center';
 
   @override
   String get scheduledSyncSettings => 'Настройки запланированной синхронизации';
@@ -1340,7 +1340,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shareLogs => 'Поделиться логами';
 
   @override
-  String get logsEmailSubjectTemplate => 'GitSync Logs (%s)';
+  String get logsEmailSubjectTemplate => 'GitHub Command Center Logs (%s)';
 
   @override
   String get logsEmailRecipient => 'bugsviscouspotential@gmail.com';
@@ -1898,7 +1898,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get networkStallRetry => 'Poor network — will retry shortly';
 
   @override
-  String get networkUnavailableRetry => 'Сеть недоступна!\nGitSync повторит попытку при подключении';
+  String get networkUnavailableRetry => 'Сеть недоступна!\nGitHub Command Center повторит попытку при подключении';
 
   @override
   String get failedToResolveAddressMessage => 'Could not reach the server. Check your internet connection or verify the repository URL is correct.';
@@ -2053,13 +2053,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get githubScopedLoginMsg =>
-      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitSync.';
+      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitHub Command Center.';
 
   @override
   String get githubScopedRepoTitle => 'Step 2: Select Repositories';
 
   @override
-  String get githubScopedRepoMsg => 'Choose which repositories GitSync can access.\n\nWhen finished, close the browser to return to the app.';
+  String get githubScopedRepoMsg =>
+      'Choose which repositories GitHub Command Center can access.\n\nWhen finished, close the browser to return to the app.';
 
   @override
   String get issueDescription => 'Description';

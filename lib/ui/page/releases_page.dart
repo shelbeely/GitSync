@@ -208,10 +208,7 @@ class _ItemReleaseState extends State<_ItemRelease> with SingleTickerProviderSta
     super.dispose();
   }
 
-  Map<String, String> get _authHeaders => switch (widget.gitProvider) {
-    GitProvider.GITLAB => {'Authorization': 'Bearer ${widget.accessToken}'},
-    _ => {'Authorization': 'token ${widget.accessToken}'},
-  };
+  Map<String, String> get _authHeaders => {'Authorization': 'token ${widget.accessToken}'};
 
   Future<void> _downloadAsset(ReleaseAsset asset) async {
     Fluttertoast.showToast(msg: 'Downloading...', toastLength: Toast.LENGTH_SHORT, gravity: null);

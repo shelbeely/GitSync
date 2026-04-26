@@ -43,15 +43,7 @@ enum ShowcaseFeature {
     return features.map((f) => f.storageKey).toList();
   }
 
-  String labelForProvider(GitProvider? provider) => switch ((this, provider)) {
-    (ShowcaseFeature.pullRequests, GitProvider.GITLAB) => 'MERGE REQUESTS',
-    // (ShowcaseFeature.snippets, GitProvider.GITHUB) => 'GISTS',
-    (ShowcaseFeature.actions, GitProvider.GITLAB) => 'JOBS',
-    _ => label,
-  };
+  String labelForProvider(GitProvider? provider) => label;
 
-  static List<ShowcaseFeature> availableFor(GitProvider? provider) => switch (provider) {
-    GitProvider.GITEA || GitProvider.CODEBERG => values,
-    _ => values,
-  };
+  static List<ShowcaseFeature> availableFor(GitProvider? provider) => values;
 }

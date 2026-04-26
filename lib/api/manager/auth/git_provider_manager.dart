@@ -17,31 +17,18 @@ import 'package:GitSync/type/showcase_feature.dart';
 import 'package:GitSync/type/tag.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:GitSync/api/manager/auth/gitlab_manager.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:oauth2_client/oauth2_client.dart';
-import '../../manager/auth/codeberg_manager.dart';
-import '../../manager/auth/gitea_manager.dart';
 import '../../manager/auth/github_manager.dart';
 import '../../../constant/dimens.dart';
-import '../../../constant/icons.dart';
 import '../../../type/git_provider.dart';
 
 class GitProviderManager {
   // ignore: non_constant_identifier_names
   static Map<GitProvider, Widget> get GitProviderIconsMap => {
-    GitProvider.CODEBERG: Platform.isIOS
-        ? FaIcon(FontAwesomeIcons.gitAlt, size: textLG, color: colours.primaryLight)
-        : FaIcon(codeberg_logo, size: textMD, color: colours.codebergBlue),
     GitProvider.GITHUB: Platform.isIOS
         ? FaIcon(FontAwesomeIcons.gitAlt, size: textLG, color: colours.primaryLight)
         : FaIcon(FontAwesomeIcons.github, size: textMD, color: colours.primaryLight),
-    GitProvider.GITEA: Platform.isIOS
-        ? FaIcon(FontAwesomeIcons.gitAlt, size: textLG, color: colours.primaryLight)
-        : FaIcon(gitea_logo, size: textMD, color: colours.giteaGreen),
-    GitProvider.GITLAB: Platform.isIOS
-        ? FaIcon(FontAwesomeIcons.gitAlt, size: textLG, color: colours.primaryLight)
-        : FaIcon(gitlab_logo, size: textMD, color: colours.gitlabOrange),
     GitProvider.HTTPS: FaIcon(FontAwesomeIcons.lock, size: textMD, color: colours.primaryLight),
     GitProvider.SSH: FaIcon(FontAwesomeIcons.terminal, size: textMD, color: colours.primaryLight),
   };
@@ -49,14 +36,10 @@ class GitProviderManager {
   static GitProviderManager? getGitProviderManager(GitProvider provider, bool githubAppOauth) {
     return switch (provider) {
       GitProvider.GITHUB => githubAppOauth ? GithubAppManager() : GithubManager(),
-      GitProvider.GITEA => GiteaManager(),
-      GitProvider.CODEBERG => CodebergManager(),
-      GitProvider.GITLAB => GitlabManager(),
       GitProvider.HTTPS => null,
       GitProvider.SSH => null,
     };
   }
-
   String get clientId => "";
   String? get clientSecret => null;
   List<String>? get scopes => null;

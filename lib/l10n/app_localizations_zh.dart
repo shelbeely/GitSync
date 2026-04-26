@@ -804,7 +804,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appSyncDescription => '选定的应用打开或关闭时自动同步';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitSync is opened or closed';
+  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
 
   @override
   String get iosAppSyncDocsLinkText => '其他应用打开/关闭时同步';
@@ -813,7 +813,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accessibilityServiceDisclosureTitle => '无障碍服务声明';
 
   @override
-  String get accessibilityServiceDisclosureMessage => '为了提升你的体验，\nGitSync 使用安卓的无障碍服务来检测应用何时打开或关闭。\n\n这有助于我们提供定制功能，而不会存储或共享任何数据。\n\n请在下一页启用 GitSync';
+  String get accessibilityServiceDisclosureMessage =>
+      '为了提升你的体验，\nGitHub Command Center 使用安卓的无障碍服务来检测应用何时打开或关闭。\n\n这有助于我们提供定制功能，而不会存储或共享任何数据。\n\n请在下一页启用 GitHub Command Center';
 
   @override
   String get search => '搜索';
@@ -840,10 +841,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncOnAppOpened => '应用打开时同步';
 
   @override
-  String get iosSyncOnAppClosed => 'GitSync关闭时同步';
+  String get iosSyncOnAppClosed => 'GitHub Command Center关闭时同步';
 
   @override
-  String get iosSyncOnAppOpened => 'GitSync打开时同步';
+  String get iosSyncOnAppOpened => 'GitHub Command Center打开时同步';
 
   @override
   String get scheduledSyncSettings => '计划同步设置';
@@ -1333,7 +1334,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shareLogs => '分享日志';
 
   @override
-  String get logsEmailSubjectTemplate => 'GitSync 日志 (%s)';
+  String get logsEmailSubjectTemplate => 'GitHub Command Center 日志 (%s)';
 
   @override
   String get logsEmailRecipient => 'bugsviscouspotential@gmail.com';
@@ -1889,7 +1890,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get networkStallRetry => '网络较差 — 稍后将重试';
 
   @override
-  String get networkUnavailableRetry => '网络不可用！\nGitSync 将在重新连接后重试';
+  String get networkUnavailableRetry => '网络不可用！\nGitHub Command Center 将在重新连接后重试';
 
   @override
   String get failedToResolveAddressMessage => '无法连接到服务器。请检查你的网络连接或验证仓库 URL 是否正确。';
@@ -2038,13 +2039,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get githubScopedLoginMsg =>
-      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitSync.';
+      'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitHub Command Center.';
 
   @override
   String get githubScopedRepoTitle => 'Step 2: Select Repositories';
 
   @override
-  String get githubScopedRepoMsg => 'Choose which repositories GitSync can access.\n\nWhen finished, close the browser to return to the app.';
+  String get githubScopedRepoMsg =>
+      'Choose which repositories GitHub Command Center can access.\n\nWhen finished, close the browser to return to the app.';
 
   @override
   String get issueDescription => 'Description';

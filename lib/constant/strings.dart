@@ -1,5 +1,5 @@
 // App Name
-const String appName = "GitSync";
+const String appName = "GitHub Command Center";
 
 // Routes
 const String settings_main = "/settings_main";
@@ -43,7 +43,7 @@ const String gitAttributesPath = ".gitattributes";
 
 // Bug Notification
 const String reportABug = "Report a Bug";
-const String reportBug = "<GitSync Error> Tap to send a bug report";
+const String reportBug = "<GitHub Command Center Error> Tap to send a bug report";
 
 const String applicationError = "Application Error!";
 const String operationInProgressError = "Background operation in progress. Please try again later.";
@@ -112,7 +112,7 @@ const String mergeConflictNotificationBody = "There is an irreconcilable differe
 // Settings Page
 const String defaultSyncMessage = "Last Sync: %s (Mobile)";
 const String defaultSyncMessageTimeFormat = "yyyy-MM-dd HH:mm";
-const String defaultPostFooter = '\n<sub>CREATED WITH <a href="https://github.com/ViscousPot/GitSync">GITSYNC</a></sub>';
+const String defaultPostFooter = '\n<sub>CREATED WITH <a href="https://github.com/ViscousPot/GitSync">GITHUB COMMAND CENTER</a></sub>';
 
 const String documentationLink = "https://gitsync.viscouspotenti.al/wiki/";
 const String troubleshootingLink = "https://gitsync.viscouspotenti.al/wiki/troubleshooting";
@@ -161,21 +161,21 @@ final httpsPattern = RegExp(r'^(https?://)[a-zA-Z0-9.-]+([:/])(\S+)/(\S+)(\.git)
 const gitSyncIconRes = "gitsync_notif";
 
 const gitSyncNotifyChannelId = "git_sync_notify_channel";
-const gitSyncNotifyChannelName = "GitSync Merge Conflict";
+const gitSyncNotifyChannelName = "GitHub Command Center Merge Conflict";
 
 const gitSyncBugChannelId = "git_sync_bug_channel";
-const gitSyncBugChannelName = "GitSync Bug";
+const gitSyncBugChannelName = "GitHub Command Center Bug";
 
 const gitSyncSyncChannelId = "git_sync_sync_channel";
-const gitSyncSyncChannelName = "GitSync Sync Status";
+const gitSyncSyncChannelName = "GitHub Command Center Sync Status";
 const int syncStatusNotificationId = 1733;
 
 const gitSyncActionsChannelId = "git_sync_actions_channel";
-const gitSyncActionsChannelName = "GitSync Actions Status";
+const gitSyncActionsChannelName = "GitHub Command Center Actions Status";
 const int actionsRunNotificationId = 1734;
 
 const gitSyncAgentChannelId = "git_sync_agent_channel";
-const gitSyncAgentChannelName = "GitSync Agent Status";
+const gitSyncAgentChannelName = "GitHub Command Center Agent Status";
 const int agentSessionNotificationId = 1735;
 
 const bullet = "•";
