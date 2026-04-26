@@ -14,6 +14,7 @@ import '../api/helper.dart';
 import '../api/logger.dart';
 import '../api/manager/git_manager.dart';
 import '../api/manager/settings_manager.dart';
+import '../api/sync_progress_notification.dart';
 import '../constant/strings.dart';
 
 ServiceInstance? serviceInstance;
@@ -210,6 +211,53 @@ class GitsyncService {
     }
   }
 
+  /// Drives the Android 16+ `Notification.ProgressStyle` notification when
+  /// available, otherwise falls back to the legacy [_displaySyncMessage] toast.
+  ///
+  /// Returns `true` if the rich progress notification handled the update so
+  /// the caller can avoid double-notifying on Android 16+ devices.
+  Future<bool> _displaySyncStage(
+    SettingsManager? settingsManager,
+    String stage,
+    String message,
+  ) async {
+    final enabled = settingsManager == null || await settingsManager.getBool(StorageKey.setman_syncMessageEnabled);
+    if (!enabled) return false;
+
+    if (Platform.isAndroid) {
+      final handled = await SyncProgressNotification.instance.showProgress(
+        stage: stage,
+        title: appName,
+        text: message,
+      );
+      if (handled) {
+        _progressNotificationActive = true;
+        return true;
+      }
+    }
+    await _displaySyncMessage(settingsManager, message);
+    return false;
+  }
+
+  bool _progressNotificationActive = false;
+
+  Future<void> _completeProgressNotification(bool success, String message) async {
+    if (!_progressNotificationActive) return;
+    _progressNotificationActive = false;
+    if (success) {
+      await SyncProgressNotification.instance.completeProgress(
+        success: true,
+        title: appName,
+        text: message,
+      );
+    } else {
+      // Errors already surface via _displaySyncMessage with a specific reason
+      // ("Credentials not found", merge conflict, etc.). Cancel the progress
+      // frame so the user is not left with a misleading "Sync complete" tile.
+      await SyncProgressNotification.instance.cancelProgress();
+    }
+  }
+
   void _scheduleStallRetry(int repomanRepoindex) {
     Future.delayed(const Duration(seconds: 30), () {
       debouncedSync(repomanRepoindex);
@@ -254,7 +302,7 @@ class GitsyncService {
       }
 
       if (forced) {
-        await _displaySyncMessage(settingsManager, s.detectingChanges);
+        await _displaySyncStage(settingsManager, 'detecting', s.detectingChanges);
       }
       Logger.gmLog(type: LogType.Sync, "Start Sync");
 
@@ -283,7 +331,7 @@ class GitsyncService {
           Logger.gmLog(type: LogType.Sync, "Start Pull Repo");
           pullResult = await GitManager.backgroundDownloadChanges(repomanRepoindex, settingsManager, () async {
             synced = true;
-            await _displaySyncMessage(settingsManager, s.syncStartPull);
+            await _displaySyncStage(settingsManager, 'pulling', s.syncStartPull);
           });
 
           switch (pullResult) {
@@ -324,7 +372,7 @@ class GitsyncService {
             settingsManager,
             () async {
               if (!synced) {
-                await _displaySyncMessage(settingsManager, s.syncStartPush);
+                await _displaySyncStage(settingsManager, 'pushing', s.syncStartPush);
               }
             },
             null,
@@ -381,6 +429,7 @@ class GitsyncService {
       isSyncing = false;
       if (myGen == _syncGeneration) {
         await _finishWidget(terminal);
+        await _completeProgressNotification(terminal == 'success', s.syncComplete);
       }
       if (isScheduled) {
         Logger.gmLog(type: LogType.Sync, "Scheduled Sync Starting");
