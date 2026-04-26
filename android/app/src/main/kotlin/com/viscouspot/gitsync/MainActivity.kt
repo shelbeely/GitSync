@@ -31,7 +31,13 @@ class MainActivity: FlutterActivity() {
         channel!!.setMethodCallHandler(AccessibilityServiceHelper(context))
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SyncProgressNotification.CHANNEL_NAME)
-            .setMethodCallHandler(SyncProgressNotification(applicationContext))
+            .setMethodCallHandler(SyncProgressNotification.create(applicationContext))
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ActionsProgressNotification.CHANNEL_NAME)
+            .setMethodCallHandler(ActionsProgressNotification.create(applicationContext))
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, AgentProgressNotification.CHANNEL_NAME)
+            .setMethodCallHandler(AgentProgressNotification.create(applicationContext))
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SyncDiagnostics.CHANNEL_NAME)
             .setMethodCallHandler(SyncDiagnostics(applicationContext))

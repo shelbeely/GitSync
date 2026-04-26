@@ -1884,6 +1884,7 @@ query(\$owner: String!, \$repo: String!, \$number: Int!) {
             title: item["title"] as String? ?? "",
             isOpen: item["state"] == "open",
             createdAt: DateTime.tryParse(item["created_at"] as String? ?? "") ?? DateTime.now(),
+            updatedAt: DateTime.tryParse(item["updated_at"] as String? ?? ""),
             linkedPrNumber: prLinks != null ? (item["number"] as int?) : null,
           );
         }).toList();

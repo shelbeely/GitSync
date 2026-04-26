@@ -170,4 +170,12 @@ const gitSyncSyncChannelId = "git_sync_sync_channel";
 const gitSyncSyncChannelName = "GitSync Sync Status";
 const int syncStatusNotificationId = 1733;
 
+const gitSyncActionsChannelId = "git_sync_actions_channel";
+const gitSyncActionsChannelName = "GitSync Actions Status";
+const int actionsRunNotificationId = 1734;
+
+const gitSyncAgentChannelId = "git_sync_agent_channel";
+const gitSyncAgentChannelName = "GitSync Agent Status";
+const int agentSessionNotificationId = 1735;
+
 const bullet = "•";
