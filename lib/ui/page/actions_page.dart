@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:GitSync/api/actions_progress_notification.dart';
+import 'package:GitSync/api/github_actions_channel.dart';
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/auth/git_provider_manager.dart';
 import 'package:GitSync/constant/dimens.dart';
@@ -30,15 +34,22 @@ class _ActionsPageState extends State<ActionsPage> {
   String _stateFilter = "all";
   int _fetchGeneration = 0;
 
+  GithubActionsChannel? _actionsChannel;
+  StreamSubscription<ActionRun>? _channelSub;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     _fetchActionRuns();
+    _startChannel();
   }
 
   @override
   void dispose() {
+    _channelSub?.cancel();
+    _actionsChannel?.disconnect();
+    ActionsProgressNotification.instance.cancelProgress();
     _scrollController.dispose();
     super.dispose();
   }
@@ -46,6 +57,53 @@ class _ActionsPageState extends State<ActionsPage> {
   (String, String) _parseOwnerRepo() {
     final segments = Uri.parse(widget.remoteWebUrl).pathSegments;
     return (segments[0], segments[1].replaceAll(".git", ""));
+  }
+
+  void _startChannel() {
+    if (widget.gitProvider != GitProvider.GITHUB) return;
+    final (owner, repo) = _parseOwnerRepo();
+    _actionsChannel = GithubActionsChannel(
+      accessToken: widget.accessToken,
+      owner: owner,
+      repo: repo,
+    );
+    _channelSub = _actionsChannel!.events.listen(_onChannelEvent);
+    _actionsChannel!.connect();
+  }
+
+  void _onChannelEvent(ActionRun run) {
+    if (!mounted) return;
+    // Update matching entry in the in-memory list so the UI reflects the change.
+    setState(() {
+      final idx = _runs.indexWhere((r) => r.number == run.number);
+      if (idx >= 0) {
+        _runs[idx] = run;
+      }
+    });
+    // Drive the progress notification based on the new status.
+    switch (run.status) {
+      case ActionRunStatus.inProgress:
+      case ActionRunStatus.pending:
+        ActionsProgressNotification.instance.showProgress(
+          stage: run.status == ActionRunStatus.pending ? 'queued' : 'running',
+          title: run.name,
+          text: '#${run.number}',
+        );
+      case ActionRunStatus.success:
+        ActionsProgressNotification.instance.completeProgress(
+          success: true,
+          title: run.name,
+          text: '#${run.number}',
+        );
+      case ActionRunStatus.failure:
+        ActionsProgressNotification.instance.completeProgress(
+          success: false,
+          title: run.name,
+          text: '#${run.number}',
+        );
+      default:
+        break;
+    }
   }
 
   void _fetchActionRuns() {

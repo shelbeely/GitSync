@@ -3,6 +3,7 @@ class AgentSession {
   final String title;
   final bool isOpen;
   final DateTime createdAt;
+  final DateTime? updatedAt;
   final int actionCount;
   final int durationSeconds;
   final int? linkedPrNumber;
@@ -14,6 +15,7 @@ class AgentSession {
     required this.title,
     required this.isOpen,
     required this.createdAt,
+    this.updatedAt,
     this.actionCount = 0,
     this.durationSeconds = 0,
     this.linkedPrNumber,

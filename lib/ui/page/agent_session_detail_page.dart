@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:GitSync/api/agent_progress_notification.dart';
+import 'package:GitSync/api/github_agent_channel.dart';
 import 'package:GitSync/api/manager/auth/git_provider_manager.dart';
 import 'package:GitSync/constant/dimens.dart';
 import 'package:GitSync/global.dart';
@@ -43,14 +47,22 @@ class _AgentSessionDetailPageState extends State<AgentSessionDetailPage> {
   bool _submitting = false;
   final Set<int> _expandedAgentMessages = {};
 
+  GithubAgentChannel? _agentChannel;
+  StreamSubscription<AgentSession>? _channelSub;
+  int _lastMessageCount = 0;
+
   @override
   void initState() {
     super.initState();
     _fetchMessages();
+    _startChannel();
   }
 
   @override
   void dispose() {
+    _channelSub?.cancel();
+    _agentChannel?.disconnect();
+    AgentProgressNotification.instance.cancelProgress();
     _scrollController.dispose();
     _followUpController.dispose();
     _inputFocusNode.dispose();
@@ -59,6 +71,37 @@ class _AgentSessionDetailPageState extends State<AgentSessionDetailPage> {
 
   GitProviderManager? get _manager =>
       GitProviderManager.getGitProviderManager(widget.gitProvider, widget.githubAppOauth);
+
+  void _startChannel() {
+    _agentChannel = GithubAgentChannel(
+      accessToken: widget.accessToken,
+      owner: widget.owner,
+      repo: widget.repo,
+    );
+    _channelSub = _agentChannel!.events.listen(_onChannelEvent);
+    _agentChannel!.connect();
+  }
+
+  void _onChannelEvent(AgentSession session) {
+    if (session.issueNumber != widget.session.issueNumber) return;
+    // Session closed → complete notification and re-fetch messages.
+    if (!session.isOpen) {
+      AgentProgressNotification.instance.completeProgress(
+        success: true,
+        title: widget.session.title,
+        text: '#${widget.session.issueNumber}',
+      );
+      _fetchMessages();
+      return;
+    }
+    // Still open but updatedAt changed → Copilot may have replied.
+    AgentProgressNotification.instance.showProgress(
+      stage: 'working',
+      title: widget.session.title,
+      text: '#${widget.session.issueNumber}',
+    );
+    _fetchMessages();
+  }
 
   Future<void> _fetchMessages() async {
     setState(() => _loading = true);
@@ -76,11 +119,22 @@ class _AgentSessionDetailPageState extends State<AgentSessionDetailPage> {
     );
 
     if (!mounted) return;
+    final prevCount = _lastMessageCount;
     setState(() {
       _messages = messages;
+      _lastMessageCount = messages.length;
       _loading = false;
     });
     _scrollToBottom();
+
+    // If Copilot posted a new message since last fetch, surface a notification.
+    if (messages.length > prevCount && prevCount > 0) {
+      AgentProgressNotification.instance.showProgress(
+        stage: 'working',
+        title: widget.session.title,
+        text: '#${widget.session.issueNumber}',
+      );
+    }
   }
 
   Future<void> _sendFollowUp() async {

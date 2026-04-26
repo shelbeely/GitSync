@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:GitSync/api/agent_progress_notification.dart';
+import 'package:GitSync/api/github_agent_channel.dart';
 import 'package:GitSync/api/manager/auth/git_provider_manager.dart';
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/constant/dimens.dart';
@@ -30,6 +34,9 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
   GitProvider? _gitProvider;
   bool _githubAppOauth = false;
 
+  GithubAgentChannel? _agentChannel;
+  StreamSubscription<AgentSession>? _channelSub;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +45,9 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
 
   @override
   void dispose() {
+    _channelSub?.cancel();
+    _agentChannel?.disconnect();
+    AgentProgressNotification.instance.cancelProgress();
     _scrollController.dispose();
     super.dispose();
   }
@@ -51,6 +61,7 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
       _githubAppOauth = githubAppOauth;
     });
     _fetchSessions();
+    _startChannel();
   }
 
   (String, String)? _parseOwnerRepo() {
@@ -89,6 +100,60 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
         _loading = false;
       });
     });
+  }
+
+  void _startChannel() {
+    if (!_isGithubWithOauth) return;
+    final ownerRepo = _parseOwnerRepo();
+    if (ownerRepo == null) return;
+    final (owner, repo) = ownerRepo;
+
+    // Cancel any existing channel before creating a new one.
+    _channelSub?.cancel();
+    _agentChannel?.disconnect();
+
+    _agentChannel = GithubAgentChannel(
+      accessToken: _accessToken!,
+      owner: owner,
+      repo: repo,
+    );
+    _channelSub = _agentChannel!.events.listen(_onChannelEvent);
+    _agentChannel!.connect();
+  }
+
+  void _onChannelEvent(AgentSession session) {
+    if (!mounted) return;
+
+    // Capture previous state before the setState call so notifications can
+    // be fired cleanly outside the setState callback.
+    AgentSession? prev;
+    setState(() {
+      final idx = _sessions.indexWhere((s) => s.issueNumber == session.issueNumber);
+      if (idx >= 0) {
+        prev = _sessions[idx];
+        _sessions[idx] = session;
+      } else {
+        _sessions.insert(0, session);
+      }
+    });
+
+    // Session just closed → complete notification.
+    if (prev != null && prev!.isOpen && !session.isOpen) {
+      AgentProgressNotification.instance.completeProgress(
+        success: true,
+        title: session.title,
+        text: '#${session.issueNumber}',
+      );
+      return;
+    }
+
+    if (session.isOpen) {
+      AgentProgressNotification.instance.showProgress(
+        stage: 'working',
+        title: session.title,
+        text: '#${session.issueNumber}',
+      );
+    }
   }
 
   List<AgentSession> get _filteredSessions {

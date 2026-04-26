@@ -6,6 +6,7 @@ import 'package:GitSync/api/accessibility_service_helper.dart';
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/auth/github_manager.dart';
 import 'package:GitSync/api/manager/settings_manager.dart';
+import 'package:GitSync/api/sync_diagnostics.dart';
 import 'package:GitSync/main.dart';
 import 'package:GitSync/type/git_provider.dart';
 import 'package:GitSync/ui/dialog/github_issue_oauth.dart' as GithubIssueOauthDialog;
@@ -323,6 +324,14 @@ $logs
     final schedule = await uiSettingsManager.getString(StorageKey.setman_schedule);
     if (schedule.isNotEmpty) {
       entries.add(('Scheduled Sync', schedule));
+    }
+
+    if (Platform.isAndroid) {
+      // Android 16 diagnostics — empty on older devices, so adding them is safe.
+      final recentStarts = await SyncDiagnostics.instance.getRecentStartComponents();
+      if (recentStarts.isNotEmpty) {
+        entries.add(('Recent Process Starts', recentStarts.join(' | ')));
+      }
     }
 
     return entries;

@@ -79,6 +79,7 @@ dependencies:
   home_widget: 0.9.1
   flutter_riverpod: ^2.6.1
   dynamic_color: ^1.7.0
+  web_socket_channel: ^3.0.2
 
 dependency_overrides:
   flutter_background_service_platform_interface:
