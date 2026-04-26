@@ -86,7 +86,11 @@ class HttpLongPollChannel<T> implements RemoteEventChannel<T> {
 
         if (response.statusCode == 304) {
           backoffSeconds = 2;
-          if (pollInterval > 0) await Future.delayed(Duration(seconds: pollInterval));
+          // Only apply a guard delay if the server gave no indication that it
+          // already held the connection. A non-zero X-Poll-Interval header on a
+          // 304 response means the server imposed the wait itself; adding a
+          // further delay would double the effective polling interval.
+          if (pollInterval == 0) await Future.delayed(const Duration(seconds: 2));
           continue;
         }
 

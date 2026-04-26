@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:GitSync/api/remote_event_channel.dart';
 import 'package:GitSync/type/action_run.dart';
-import 'package:http/http.dart' as http;
 
 /// A [RemoteEventChannel] that monitors GitHub Actions workflow runs for a
 /// given repository using ETag-based conditional polling.

@@ -123,24 +123,30 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
 
   void _onChannelEvent(AgentSession session) {
     if (!mounted) return;
+
+    // Capture previous state before the setState call so notifications can
+    // be fired cleanly outside the setState callback.
+    AgentSession? prev;
     setState(() {
       final idx = _sessions.indexWhere((s) => s.issueNumber == session.issueNumber);
       if (idx >= 0) {
-        final prev = _sessions[idx];
+        prev = _sessions[idx];
         _sessions[idx] = session;
-        // Session just closed → complete notification.
-        if (prev.isOpen && !session.isOpen) {
-          AgentProgressNotification.instance.completeProgress(
-            success: true,
-            title: session.title,
-            text: '#${session.issueNumber}',
-          );
-          return;
-        }
       } else {
         _sessions.insert(0, session);
       }
     });
+
+    // Session just closed → complete notification.
+    if (prev != null && prev!.isOpen && !session.isOpen) {
+      AgentProgressNotification.instance.completeProgress(
+        success: true,
+        title: session.title,
+        text: '#${session.issueNumber}',
+      );
+      return;
+    }
+
     if (session.isOpen) {
       AgentProgressNotification.instance.showProgress(
         stage: 'working',
@@ -149,6 +155,8 @@ class _AgentSessionsPageState extends ConsumerState<AgentSessionsPage> {
       );
     }
   }
+
+  List<AgentSession> get _filteredSessions {
     if (_stateFilter == "active") return _sessions.where((s) => s.isOpen).toList();
     if (_stateFilter == "completed") return _sessions.where((s) => !s.isOpen).toList();
     return _sessions;

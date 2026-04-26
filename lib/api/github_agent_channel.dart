@@ -84,6 +84,9 @@ class GithubAgentChannel implements RemoteEventChannel<AgentSession> {
 
   static AgentSession _parseSession(Map<String, dynamic> item) {
     final prLinks = item['pull_request'] as Map<String, dynamic>?;
+    // GitHub's issue `pull_request` field does not include the PR number
+    // directly; the linked PR shares the same issue number in the Copilot
+    // agent flow.  This matches the behaviour of GithubManager.getCopilotAgentSessions.
     return AgentSession(
       issueNumber: item['number'] as int? ?? 0,
       title: item['title'] as String? ?? '',
