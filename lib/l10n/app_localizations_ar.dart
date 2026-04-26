@@ -804,7 +804,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appSyncDescription => 'مزامنة تلقائية عند فتح أو إغلاق التطبيق المختار';
 
   @override
-  String get appSyncIosDescription => 'مزامنة تلقائية عند فتح أو إغلاق GitSync';
+  String get appSyncIosDescription => 'مزامنة تلقائية عند فتح أو إغلاق GitHub Command Center';
 
   @override
   String get iosAppSyncDocsLinkText => 'مزامنة عند فتح/إغلاق تطبيقات أخرى';
@@ -814,7 +814,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accessibilityServiceDisclosureMessage =>
-      'يستخدم GitSync خدمة الوصول في أندرويد لاكتشاف فتح أو إغلاق التطبيقات.\n\nهذا يساعدنا في توفير الميزات المخصصة دون تخزين أو مشاركة بيانات.\n\nيرجى تفعيل GitSync في الشاشة التالية.';
+      'يستخدم GitHub Command Center خدمة الوصول في أندرويد لاكتشاف فتح أو إغلاق التطبيقات.\n\nهذا يساعدنا في توفير الميزات المخصصة دون تخزين أو مشاركة بيانات.\n\nيرجى تفعيل GitHub Command Center في الشاشة التالية.';
 
   @override
   String get search => 'بحث';
@@ -841,10 +841,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncOnAppOpened => 'مزامنة عند فتح التطبيقات';
 
   @override
-  String get iosSyncOnAppClosed => 'مزامنة عند إغلاق GitSync';
+  String get iosSyncOnAppClosed => 'مزامنة عند إغلاق GitHub Command Center';
 
   @override
-  String get iosSyncOnAppOpened => 'مزامنة عند فتح GitSync';
+  String get iosSyncOnAppOpened => 'مزامنة عند فتح GitHub Command Center';
 
   @override
   String get scheduledSyncSettings => 'إعدادات المزامنة المجدولة';
@@ -1333,7 +1333,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get shareLogs => 'مشاركة السجلات';
 
   @override
-  String get logsEmailSubjectTemplate => 'سجلات GitSync (%s)';
+  String get logsEmailSubjectTemplate => 'سجلات GitHub Command Center (%s)';
 
   @override
   String get logsEmailRecipient => 'bugsviscouspotential@gmail.com';

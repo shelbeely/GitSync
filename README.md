@@ -4,8 +4,8 @@
     src="android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="140" 
   />
 
-  <h3>GitSync</h3>
-  <h4>Mobile git client for syncing a repository between remote and a local directory</h4>
+  <h3>GitHub Command Center</h3>
+  <h4>Mobile GitHub client for managing and syncing your repositories</h4>
   
   <p align="center">
     <a href="#"><img src="https://img.shields.io/github/license/ViscousPot/GitSync?v=1" alt="license"></a>
@@ -35,7 +35,7 @@
 
 </div>
 
-GitSync is a cross-platform git client for Android and iOS that aims to simplify the process of syncing a folder between a git remote and a local directory. It works in the background to keep your files synced with a simple one-time setup and a range of options for activating manual syncs.
+GitHub Command Center is a cross-platform GitHub client for Android and iOS that aims to simplify the process of syncing a folder between a git remote and a local directory. It works in the background to keep your files synced with a simple one-time setup and a range of options for activating manual syncs.
 
 - **Supports Android 5+ & iOS 13+**
 - Authenticate with

@@ -1701,7 +1701,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSyncIosDescription.
   ///
   /// In en, this message translates to:
-  /// **'Automatically syncs when GitSync is opened or closed'**
+  /// **'Automatically syncs when GitHub Command Center is opened or closed'**
   String get appSyncIosDescription;
 
   /// No description provided for @iosAppSyncDocsLinkText.
@@ -1719,7 +1719,7 @@ abstract class AppLocalizations {
   /// No description provided for @accessibilityServiceDisclosureMessage.
   ///
   /// In en, this message translates to:
-  /// **'To enhance your experience,\nGitSync uses Android\'s Accessibility Service to detect when apps are opened or closed.\n\nThis helps us provide tailored features without storing or sharing any data.\n\nᴘʟᴇᴀsᴇ ᴇɴᴀʙʟᴇ ɢɪᴛsʏɴᴄ ᴏɴ ᴛʜᴇ ɴᴇxᴛ sᴄʀᴇᴇɴ'**
+  /// **'To enhance your experience,\nGitHub Command Center uses Android\'s Accessibility Service to detect when apps are opened or closed.\n\nThis helps us provide tailored features without storing or sharing any data.\n\nᴘʟᴇᴀsᴇ ᴇɴᴀʙʟᴇ ɢɪᴛʜᴜʙ ᴄᴏᴍᴍᴀɴᴅ ᴄᴇɴᴛᴇʀ ᴏɴ ᴛʜᴇ ɴᴇxᴛ sᴄʀᴇᴇɴ'**
   String get accessibilityServiceDisclosureMessage;
 
   /// No description provided for @search.
@@ -1773,13 +1773,13 @@ abstract class AppLocalizations {
   /// No description provided for @iosSyncOnAppClosed.
   ///
   /// In en, this message translates to:
-  /// **'Sync on GitSync closed'**
+  /// **'Sync on GitHub Command Center closed'**
   String get iosSyncOnAppClosed;
 
   /// No description provided for @iosSyncOnAppOpened.
   ///
   /// In en, this message translates to:
-  /// **'Sync on GitSync opened'**
+  /// **'Sync on GitHub Command Center opened'**
   String get iosSyncOnAppOpened;
 
   /// No description provided for @scheduledSyncSettings.
@@ -2757,7 +2757,7 @@ abstract class AppLocalizations {
   /// No description provided for @logsEmailSubjectTemplate.
   ///
   /// In en, this message translates to:
-  /// **'GitSync Logs (%s)'**
+  /// **'GitHub Command Center Logs (%s)'**
   String get logsEmailSubjectTemplate;
 
   /// No description provided for @logsEmailRecipient.
@@ -3867,7 +3867,7 @@ abstract class AppLocalizations {
   /// No description provided for @networkUnavailableRetry.
   ///
   /// In en, this message translates to:
-  /// **'Network unavailable!\nGitSync will retry when reconnected'**
+  /// **'Network unavailable!\nGitHub Command Center will retry when reconnected'**
   String get networkUnavailableRetry;
 
   /// No description provided for @failedToResolveAddressMessage.
@@ -4161,7 +4161,7 @@ abstract class AppLocalizations {
   /// No description provided for @githubScopedLoginMsg.
   ///
   /// In en, this message translates to:
-  /// **'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitSync.'**
+  /// **'You\'ll be redirected to GitHub to sign in.\n\nLog in with the account that has access to your repositories, then authorize GitHub Command Center.'**
   String get githubScopedLoginMsg;
 
   /// No description provided for @githubScopedRepoTitle.
@@ -4173,7 +4173,7 @@ abstract class AppLocalizations {
   /// No description provided for @githubScopedRepoMsg.
   ///
   /// In en, this message translates to:
-  /// **'Choose which repositories GitSync can access.\n\nWhen finished, close the browser to return to the app.'**
+  /// **'Choose which repositories GitHub Command Center can access.\n\nWhen finished, close the browser to return to the app.'**
   String get githubScopedRepoMsg;
 
   /// No description provided for @issueDescription.

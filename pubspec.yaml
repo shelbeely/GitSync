@@ -1,5 +1,5 @@
 name: GitSync
-description: "Git client for syncing a repository between remote and a local directory"
+description: "GitHub Command Center — a GitHub-focused mobile client for managing and syncing your repositories"
 publish_to: "none"
 version: 1.8.54+1854
 
