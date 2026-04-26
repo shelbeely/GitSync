@@ -2,7 +2,7 @@
 
 **Source repo:** [Chevey339/kelivo](https://github.com/Chevey339/kelivo)  
 **Target repo:** shelbeely/GitSync  
-**Scope:** MCP Server support · Enhanced Markdown Rendering · Multimodal Input  
+**Scope:** MCP Server support · Built-in GitHub MCP Server · Enhanced Markdown Rendering · Multimodal Input  
 **Type:** Spec only — no code changes in this document
 
 ---
@@ -17,6 +17,8 @@
 6. [Dependency Delta](#6-dependency-delta)
 7. [Out of Scope](#7-out-of-scope)
 
+> **Amendment (2026-04-26):** Section 3.5 has been added to specify the GitHub MCP Server as a second built-in server alongside the kelivo fetch server.
+
 ---
 
 ## 1. Context & Goals
@@ -26,6 +28,8 @@ GitSync is a Flutter Git client with an AI chat assistant backed by an internal 
 | Goal | Kelivo source |
 |---|---|
 | Allow the AI to connect to any external MCP server | `lib/core/providers/mcp_provider.dart`, `lib/core/services/mcp/` |
+| Ship a built-in web-fetch MCP server | `lib/core/services/mcp/kelivo_fetch/` |
+| Ship the official GitHub MCP server as a built-in, pre-configured server | [github/github-mcp-server](https://github.com/github/github-mcp-server) |
 | Render code blocks with syntax highlighting, LaTeX, diagrams, and more | `lib/shared/widgets/markdown_with_highlight.dart`, `lib/shared/widgets/mermaid_*`, `lib/shared/widgets/plantuml_block.dart` |
 | Accept images, PDFs, Word docs, and other files as AI input | `lib/features/chat/widgets/image_preview_sheet.dart`, `lib/core/models/chat_message.dart` |
 
@@ -126,6 +130,74 @@ Bridges `McpProvider`'s connected servers into the chat loop. For a given conver
 - Adapt navigation to GitSync's routing style
 - Surface as a new page reachable from the existing AI settings section
 - Replace kelivo's `Provider` state lookups with Riverpod equivalents
+
+### 3.5 Built-in GitHub MCP Server
+
+**External source:** [github/github-mcp-server](https://github.com/github/github-mcp-server)  
+**Transport:** SSE (remote) at `https://api.githubcopilot.com/mcp/`  
+**Authentication:** GitHub Personal Access Token (PAT) — GitSync already stores and manages PATs per provider
+
+#### Overview
+
+The official GitHub MCP Server is hosted by GitHub and exposes GitHub's entire platform surface as MCP tools. It is the ideal second built-in server for GitSync because GitSync is a GitHub/Gitea/GitLab client; the AI agent already has a PAT for the authenticated user, so no extra credentials are required.
+
+The server uses standard SSE transport, meaning it connects over a single HTTPS endpoint — no subprocess, no binary bundling. It is pre-registered as a hidden, always-available server (users can disable individual toolsets from the settings UI but cannot delete it).
+
+#### How it fits the existing MCP stack
+
+The GitHub MCP server is registered via the same `McpProvider` and `McpServerConfig` model described in §3.1. The only difference from a user-added SSE server is that:
+- It is created programmatically at app startup with `isBuiltIn: true`
+- The `Authorization: Bearer <token>` header is populated from the PAT already stored in GitSync's `FlutterSecureStorage` for the active provider
+- It is shown in the MCP settings UI under a "Built-in Servers" section, separately from user-added servers
+
+#### Tool surface
+
+The GitHub MCP server exposes tools grouped into **toolsets**. The default toolset selection on first launch is pre-configured to the tools most relevant to a Git client:
+
+| Toolset | Default state | Key tools included |
+|---|---|---|
+| `context` | **Enabled** | `get_me`, `get_teams` |
+| `repos` | **Enabled** | `get_file_contents`, `list_commits`, `get_commit`, `create_or_update_file`, `push_files`, `search_repositories`, `create_repository`, `fork_repository`, `list_branches` |
+| `issues` | **Enabled** | `list_issues`, `get_issue`, `create_issue`, `update_issue`, `add_issue_comment`, `search_issues` |
+| `pull_requests` | **Enabled** | `list_pull_requests`, `get_pull_request`, `create_pull_request`, `merge_pull_request`, `get_pull_request_diff`, `list_pull_request_files`, `get_pull_request_reviews` |
+| `actions` | **Enabled** | `actions_list`, `actions_get`, `get_job_logs`, `actions_run_trigger` |
+| `notifications` | **Enabled** | `list_notifications`, `get_notification_details`, `mark_notification_as_read`, `dismiss_notification` |
+| `git` | **Enabled** | `get_tag`, `list_tags`, `list_branches` (low-level Git API) |
+| `code_security` | Disabled | `list_code_scanning_alerts`, `get_code_scanning_alert` |
+| `dependabot` | Disabled | `list_dependabot_alerts`, `get_dependabot_alert` |
+| `secret_protection` | Disabled | `list_secret_scanning_alerts`, `get_secret_scanning_alert` |
+| `discussions` | Disabled | `list_discussions`, `get_discussion`, `get_discussion_comments` |
+| `labels` | Disabled | `create_label`, `list_labels_for_repo`, `get_label` |
+| `orgs` | Disabled | `list_org_repositories`, `get_org_members` |
+| `projects` | Disabled | `get_project`, `list_projects` |
+| `gists` | Disabled | `list_gists`, `get_gist`, `create_gist` |
+| `users` | Disabled | `search_users`, `get_user` |
+| `stargazers` | Disabled | `list_stargazers` |
+| `security_advisories` | Disabled | `list_global_security_advisories` |
+
+All toolsets remain individually toggle-able by the user in the MCP settings UI.
+
+#### Authentication flow
+
+1. On startup, `McpProvider` checks for a stored PAT for the currently active provider
+2. If a GitHub/GitHub Enterprise PAT is present, the built-in server is auto-created with `Authorization: Bearer <PAT>` in its header map
+3. If no PAT is present (e.g. Gitea-only user), the built-in server is registered but shown as "Not configured" with a prompt linking to the AI provider settings
+4. When the user rotates their PAT in GitSync settings, `McpProvider` updates the header on the live server config and reconnects
+
+#### Overlap with GitSync's existing native tools
+
+GitSync already has native `AiTool` implementations for some Git operations (`ai_tools_git.dart`, `ai_tools_provider.dart`). The GitHub MCP server overlaps with several of these. The resolution strategy:
+
+- Native tools take precedence for local Git operations (clone, commit, push, diff, merge) — these require filesystem access that an HTTP MCP server cannot provide
+- GitHub MCP server tools are preferred for remote GitHub API operations (issues, PRs, Actions, notifications) where the MCP server has broader scope and richer output than the existing native tools
+- For operations that exist in both (e.g. listing branches), the native tool is kept and the MCP duplicate is disabled by default; users can enable it if desired
+
+#### GitHub Enterprise support
+
+The `McpServerConfig` for the built-in server reads the base URL from GitSync's existing provider config:
+- **GitHub.com:** `https://api.githubcopilot.com/mcp/`
+- **GitHub Enterprise Cloud (ghe.com):** `https://api.{hostname}/mcp/`
+- **GitHub Enterprise Server (GHES):** The remote MCP server is not available for GHES; the built-in entry is hidden and replaced by a prompt to add the locally-hosted GHES MCP server binary as a stdio server instead
 
 ---
 
@@ -270,6 +342,7 @@ The following packages need to be added to GitSync's `pubspec.yaml`. All are eit
 |---|---|---|
 | `mcp_client` | MCP — Feature A | Vendor or use pub.dev release |
 | `html2md` | MCP built-in fetch server — Feature A.2 | `html` already present |
+| *(no new package)* | GitHub MCP server — Feature A.5 | Pure SSE over HTTPS; uses existing `http` package |
 | `flutter_highlight` | Code highlighting — Feature B.1 | |
 | `highlight` | Code highlighting — Feature B.1 | |
 | `flutter_math_fork` | LaTeX rendering — Feature B.2 | |
