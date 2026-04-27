@@ -16,6 +16,7 @@
 5. [Feature C — Multimodal Input](#5-feature-c--multimodal-input)
 6. [Dependency Delta](#6-dependency-delta)
 7. [Out of Scope](#7-out-of-scope)
+8. [License & Attribution](#8-license--attribution)
 
 > **Amendment (2026-04-26):** Section 3.5 has been added to specify the GitHub MCP Server as a second built-in server alongside the kelivo fetch server.
 >
@@ -568,3 +569,91 @@ The following kelivo features are explicitly excluded from this spec because the
 | QR code provider config sharing | GitSync uses a different settings model |
 | Backup / restore chat history to S3 | GitSync already has its own sync mechanism |
 | Android background generation | GitSync has its own `flutter_background_service` setup |
+
+---
+
+## 8. License & Attribution
+
+### 8.1 Upstream license
+
+[Chevey339/kelivo](https://github.com/Chevey339/kelivo) is distributed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. The full text of the AGPL-3.0 is available in the kelivo repository at [`LICENSE`](https://github.com/Chevey339/kelivo/blob/main/LICENSE).
+
+GitSync is currently distributed under the **GNU General Public License v3.0 (GPL-3.0)** (see [`LICENSE.md`](../LICENSE.md) in this repository).
+
+### 8.2 Compatibility and licensing impact
+
+AGPL-3.0 and GPL-3.0 are compatible copyleft licences in the sense that code from each may be combined. However, per the [FSF compatibility matrix](https://www.gnu.org/licenses/license-list.html#AGPLv3.0), when AGPL-3.0-licensed code is incorporated into a GPL-3.0 project the resulting **combined work must be distributed under AGPL-3.0**. The key practical difference is the AGPL-3.0 network-use clause: if the application is made available to users over a network, the corresponding source code must also be made available under AGPL-3.0 terms.
+
+**Required action before any kelivo code is ported:** The project maintainer must decide one of:
+
+1. **Re-license GitSync as AGPL-3.0** for the combined repository — the simplest path given that GitSync is already fully open-source and the AGPL-3.0 network-use clause is not a material restriction for a local desktop Git client.
+2. **Isolate ported code in a separately-licensed sub-package** — keep the kelivo-derived files in a distinct Dart package within the monorepo, declaring that package as AGPL-3.0 while the rest of GitSync remains GPL-3.0.
+3. **Obtain a separate licence from the kelivo author** — request a written GPL-3.0 (or MIT/Apache-2.0) re-licence grant from Chevey339 for the specific files to be ported.
+
+Option 1 is recommended. This spec proceeds on the assumption that the repository licence will be updated to AGPL-3.0 before any kelivo source is committed.
+
+### 8.3 Per-file copyright and attribution headers
+
+Every Dart source file ported from kelivo **must** begin with an attribution comment that preserves the original copyright and identifies the upstream source. Use the following format:
+
+```dart
+// Ported from Chevey339/kelivo (AGPL-3.0)
+// Original source: <path/to/original/file.dart>
+// https://github.com/Chevey339/kelivo
+//
+// Modifications © <year> shelbeely/GitSync contributors.
+// This file is part of GitSync and is distributed under the AGPL-3.0 licence.
+// See LICENSE.md in the repository root for the full licence text.
+```
+
+The `<path/to/original/file.dart>` value for each file is the "Kelivo source:" path already documented in the relevant section of this spec (§3–§5). For convenience the mapping is reproduced below:
+
+| GitSync destination (proposed) | Kelivo source |
+|---|---|
+| `lib/core/providers/mcp_provider.dart` | `lib/core/providers/mcp_provider.dart` |
+| `dependencies/mcp_client/` | `dependencies/mcp_client/` |
+| `lib/core/services/mcp/kelivo_fetch/kelivo_fetch_server.dart` | `lib/core/services/mcp/kelivo_fetch/kelivo_fetch_server.dart` |
+| `lib/core/services/mcp/kelivo_fetch/kelivo_fetch_inmemory.dart` | `lib/core/services/mcp/kelivo_fetch/kelivo_fetch_inmemory.dart` |
+| `lib/core/services/mcp/mcp_tool_service.dart` | `lib/core/services/mcp/mcp_tool_service.dart` |
+| `lib/features/mcp/pages/mcp_page.dart` | `lib/features/mcp/pages/mcp_page.dart` |
+| `lib/features/mcp/widgets/mcp_server_edit_sheet.dart` | `lib/features/mcp/widgets/mcp_server_edit_sheet.dart` |
+| `lib/features/mcp/widgets/mcp_json_edit_sheet.dart` | `lib/features/mcp/widgets/mcp_json_edit_sheet.dart` |
+| `lib/features/mcp/widgets/mcp_timeout_sheet.dart` | `lib/features/mcp/widgets/mcp_timeout_sheet.dart` |
+| `lib/shared/widgets/markdown_with_highlight.dart` | `lib/shared/widgets/markdown_with_highlight.dart` |
+| `lib/shared/widgets/mermaid_bridge.dart` | `lib/shared/widgets/mermaid_bridge.dart` |
+| `lib/shared/widgets/mermaid_bridge_stub.dart` | `lib/shared/widgets/mermaid_bridge_stub.dart` |
+| `lib/shared/widgets/mermaid_bridge_web.dart` | `lib/shared/widgets/mermaid_bridge_web.dart` |
+| `lib/shared/widgets/mermaid_cache.dart` | `lib/shared/widgets/mermaid_cache.dart` |
+| `lib/shared/widgets/mermaid_image_cache.dart` | `lib/shared/widgets/mermaid_image_cache.dart` |
+| `lib/shared/widgets/plantuml_block.dart` | `lib/shared/widgets/plantuml_block.dart` |
+| `lib/features/chat/widgets/image_preview_sheet.dart` | `lib/features/chat/widgets/image_preview_sheet.dart` |
+| `lib/core/models/chat_message.dart` | `lib/core/models/chat_message.dart` (multimodal content types only) |
+
+### 8.4 Third-party asset: `mermaid.min.js`
+
+The bundled `assets/mermaid.min.js` file (§4.3) originates from the [mermaid](https://github.com/mermaid-js/mermaid) project, **not** from kelivo. Mermaid is distributed under the **MIT licence**:
+
+> Copyright © 2014–present Knut Sveidqvist and contributors  
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this software …
+
+When the file is copied into GitSync's `assets/` directory, add a comment in the first line of the file (or in a sidecar `mermaid.min.js.LICENSE.txt` file, following the convention used by webpack and other bundlers):
+
+```
+/*! mermaid.min.js — MIT Licence — https://github.com/mermaid-js/mermaid */
+```
+
+Also add an entry in the repository's third-party notices file (create `THIRD_PARTY_NOTICES.md` if it does not already exist).
+
+### 8.5 Vendored `mcp_client` dependency
+
+The `dependencies/mcp_client/` directory (§3.1) is a vendored fork of the [`mcp_client`](https://pub.dev/packages/mcp_client) pub.dev package. Before vendoring, confirm the `mcp_client` package licence (currently MIT at time of writing) and add the original package copyright to `THIRD_PARTY_NOTICES.md`.
+
+### 8.6 Summary checklist for implementers
+
+Before merging any PR that ports code from kelivo, verify:
+
+- [ ] Repository `LICENSE.md` has been updated to AGPL-3.0 (or the chosen sub-package isolation strategy has been applied)
+- [ ] Every ported Dart file carries the attribution header described in §8.3
+- [ ] `assets/mermaid.min.js` carries or is accompanied by its MIT licence notice (§8.4)
+- [ ] `THIRD_PARTY_NOTICES.md` lists kelivo (AGPL-3.0) and mermaid (MIT) and mcp_client (confirm licence)
+- [ ] No ported file has had its original copyright comment removed or replaced
