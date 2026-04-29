@@ -70,7 +70,7 @@ const String directoryNotEmpty = "Folder not empty. Please choose another.";
 const String inaccessibleDirectoryMessage =
     "This folder is inaccessible. Try creating a new folder in the same location with a different name and selecting that instead.";
 const String noFolderAccessError =
-    "No folder access! On iOS, try re-selecting the directory in settings. If the issue persists, remove and re-add the repository.";
+    "No folder access! Try re-selecting the directory in settings. If the issue persists, remove and re-add the repository.";
 const String autoRebaseFailedException =
     "Remote is further ahead than local and we could not automatically rebase for you, as it would cause non fast-forward update.";
 const String nonExistingException = "Remote ref didn't exist.";
@@ -124,12 +124,8 @@ const String discordLink = "https://discord.gg/cgvjdDyzzB";
 const String premiumDocsLink = "https://gitsync.viscouspotenti.al/wiki/premium";
 const String scheduledSyncDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options/background/scheduled-sync";
 const String autoSyncDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options/background/app-based";
-const String iosAppSyncDocsLink =
-    "https://gitsync.viscouspotenti.al/wiki/sync-options/background/app-based#sync-on-other-app-openclose-via-shortcuts";
 const String tileSyncDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options/background/quick-tile";
 const String quickSyncDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options/background/quick-sync";
-const String enhancedShcheduledSyncDocsLink =
-    "https://gitsync.viscouspotenti.al/wiki/sync-options/background/scheduled-sync#enhanced-scheduled-sync-ios-only";
 const String repositorySettingsDocsLink = "https://gitsync.viscouspotenti.al/wiki/repository-settings";
 const String syncOptionsDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options";
 const String syncOptionsBGDocsLink = "https://gitsync.viscouspotenti.al/wiki/sync-options/background";
@@ -140,7 +136,7 @@ const String githubIssueTemplate =
     "https://www.github.com/ViscousPot/GitSync/issues/new?template=BUG_REPORT.yaml&title=[Bug]:%20(%s)%%20Application%%20Error!&labels=%s,bug&logs=%s";
 const String release1708Link = "https://github.com/ViscousPot/GitSync/releases/tag/v1.708";
 const String githubAppsLink = "https://github.com/apps/gitsync-viscouspotential";
-const String playStoreLink = "https://play.google.com/store/apps/details?id=com.viscouspot.gitsync";
+const String playStoreLink = "https://play.google.com/store/apps/details?id=com.shelbeely.gitcommand";
 const String githubInstallationsLink = "https://github.com/settings/installations/%s";
 
 // Constants

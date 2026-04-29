@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:collection/collection.dart';
@@ -415,20 +413,10 @@ class _ScheduledSyncSettingsState extends State<ScheduledSyncSettings> {
             AnimatedSize(
               duration: animFast,
               child: isEnabled
-                  ? (Platform.isIOS
-                        ? Padding(
-                            padding: widget.isOnboarding
-                                ? EdgeInsets.only(bottom: spaceSM)
-                                : EdgeInsets.only(left: spaceLG + spaceXS, right: spaceMD + spaceXS, bottom: spaceSM),
-                            child: Text(
-                              t.iosDefaultSyncRate.toUpperCase(),
-                              style: TextStyle(fontSize: textMD, color: colours.tertiaryLight, fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(bottom: spaceSM),
-                            child: _buildIntervalChips(frequency, rate),
-                          ))
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: spaceSM),
+                      child: _buildIntervalChips(frequency, rate),
+                    )
                   : SizedBox.shrink(),
             ),
           ],

@@ -66,9 +66,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get optionalLabel => '(optional)';
 
   @override
-  String get ios => 'iOS';
-
-  @override
   String get android => 'Android';
 
   @override
@@ -154,21 +151,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get premiumAutoAddSubmodules => 'Auto-add submodules';
-
-  @override
-  String get premiumEnhancedSyncSubtitle => 'Automated background sync on iOS.\nAs low as once per minute.';
-
-  @override
-  String get premiumSyncPerMinute => 'Sync as often as every minute';
-
-  @override
-  String get premiumServerTriggered => 'Server push notifications';
-
-  @override
-  String get premiumWorksAppClosed => 'Works even when app is closed';
-
-  @override
-  String get premiumReliableDelivery => 'Reliable, on-schedule delivery';
 
   @override
   String get premiumGitLfsTitle => 'Git LFS';
@@ -398,13 +380,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get allRemote => 'All Remote';
 
   @override
-  String get iosClearDataTitle => 'Is this a fresh install?';
-
-  @override
-  String get iosClearDataMsg =>
-      'We detected that this might be a reinstallation, but it could also be a false alarm. On iOS, your Keychain isn’t cleared when you delete and reinstall the app, so some data may still be stored securely.\n\nIf this isn’t a fresh install, or you don’t want to reset, you can safely skip this step.';
-
-  @override
   String get clearDataConfirmTitle => 'Confirm App Data Reset';
 
   @override
@@ -492,9 +467,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingOtherSyncFeatureAndroid => 'Android intents';
-
-  @override
-  String get onboardingOtherSyncFeatureIos => 'iOS intents';
 
   @override
   String get onboardingOtherSyncDescription => 'Explore additional sync methods for your platform';
@@ -809,12 +781,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appSyncDescription => 'Automatically syncs when your selected app is opened or closed';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
-
-  @override
-  String get iosAppSyncDocsLinkText => 'Sincronizar cuando se abren/cierran otras aplicaciones';
-
-  @override
   String get accessibilityServiceDisclosureTitle => 'Divulgación del Servicio de Accesibilidad';
 
   @override
@@ -846,12 +812,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncOnAppOpened => 'Sync al abrir app(s)';
 
   @override
-  String get iosSyncOnAppClosed => 'Sync al cerrar GitHub Command Center';
-
-  @override
-  String get iosSyncOnAppOpened => 'Sync al abrir GitHub Command Center';
-
-  @override
   String get scheduledSyncSettings => 'Configuración de Sync Programada';
 
   @override
@@ -859,9 +819,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tabHome => 'Home';
-
-  @override
-  String get iosDefaultSyncRate => 'cuando iOS lo permita';
 
   @override
   String get every => 'every';
@@ -904,9 +861,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get weeks => 'week(s)';
-
-  @override
-  String get enhancedScheduledSync => 'Sync Programada Mejorada';
 
   @override
   String get quickSyncSettings => 'Quick Sync Settings';

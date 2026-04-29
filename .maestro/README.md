@@ -22,11 +22,6 @@ Setup Android
 - Medium Phone API 35
 - Medium Tablet API 35
 
-Setup iOS
-
-- iPhone 16 Pro Max
-- iPad Air 13-inch
-
 ### Environment Variables
 
 You need to set up the following environment variables to enable the tests for HTTPS and clone operations for GitHub and Gitea repositories.

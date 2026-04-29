@@ -304,9 +304,7 @@ class CustomAlertDialog extends AlertDialog {
           style: titleTextStyle ?? dialogTheme.titleTextStyle ?? defaults.titleTextStyle!,
           textAlign: icon == null ? TextAlign.start : TextAlign.center,
           child: Semantics(
-            // For iOS platform, the focus always lands on the title.
-            // Set nameRoute to false to avoid title being announce twice.
-            namesRoute: label == null && theme.platform != TargetPlatform.iOS,
+            namesRoute: label == null,
             container: true,
             child: title,
           ),

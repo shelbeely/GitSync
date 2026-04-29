@@ -48,25 +48,6 @@ import 'app_localizations_zh.dart';
 ///   # Rest of dependencies
 /// ```
 ///
-/// ## iOS Applications
-///
-/// iOS applications define key application metadata, including supported
-/// locales, in an Info.plist file that is built into the application bundle.
-/// To configure the locales supported by your app, you’ll need to edit this
-/// file.
-///
-/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
-/// Then, in the Project Navigator, open the Info.plist file under the Runner
-/// project’s Runner folder.
-///
-/// Next, select the Information Property List item, select Add Item from the
-/// Editor menu, then select Localizations from the pop-up menu.
-///
-/// Select and expand the newly-created Localizations item then, for each
-/// locale your application supports, add a new item and select the locale
-/// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the AppLocalizations.supportedLocales
-/// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
@@ -221,12 +202,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'(optional)'**
   String get optionalLabel;
-
-  /// No description provided for @ios.
-  ///
-  /// In en, this message translates to:
-  /// **'iOS'**
-  String get ios;
 
   /// No description provided for @android.
   ///
@@ -401,36 +376,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto-add submodules'**
   String get premiumAutoAddSubmodules;
-
-  /// No description provided for @premiumEnhancedSyncSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Automated background sync on iOS.\nAs low as once per minute.'**
-  String get premiumEnhancedSyncSubtitle;
-
-  /// No description provided for @premiumSyncPerMinute.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync as often as every minute'**
-  String get premiumSyncPerMinute;
-
-  /// No description provided for @premiumServerTriggered.
-  ///
-  /// In en, this message translates to:
-  /// **'Server push notifications'**
-  String get premiumServerTriggered;
-
-  /// No description provided for @premiumWorksAppClosed.
-  ///
-  /// In en, this message translates to:
-  /// **'Works even when app is closed'**
-  String get premiumWorksAppClosed;
-
-  /// No description provided for @premiumReliableDelivery.
-  ///
-  /// In en, this message translates to:
-  /// **'Reliable, on-schedule delivery'**
-  String get premiumReliableDelivery;
 
   /// No description provided for @premiumGitLfsTitle.
   ///
@@ -882,18 +827,6 @@ abstract class AppLocalizations {
   /// **'All Remote'**
   String get allRemote;
 
-  /// No description provided for @iosClearDataTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Is this a fresh install?'**
-  String get iosClearDataTitle;
-
-  /// No description provided for @iosClearDataMsg.
-  ///
-  /// In en, this message translates to:
-  /// **'We detected that this might be a reinstallation, but it could also be a false alarm. On iOS, your Keychain isn’t cleared when you delete and reinstall the app, so some data may still be stored securely.\n\nIf this isn’t a fresh install, or you don’t want to reset, you can safely skip this step.'**
-  String get iosClearDataMsg;
-
   /// No description provided for @clearDataConfirmTitle.
   ///
   /// In en, this message translates to:
@@ -1067,12 +1000,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Android intents'**
   String get onboardingOtherSyncFeatureAndroid;
-
-  /// No description provided for @onboardingOtherSyncFeatureIos.
-  ///
-  /// In en, this message translates to:
-  /// **'iOS intents'**
-  String get onboardingOtherSyncFeatureIos;
 
   /// No description provided for @onboardingOtherSyncDescription.
   ///
@@ -1698,18 +1625,6 @@ abstract class AppLocalizations {
   /// **'Automatically syncs when your selected app is opened or closed'**
   String get appSyncDescription;
 
-  /// No description provided for @appSyncIosDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatically syncs when GitHub Command Center is opened or closed'**
-  String get appSyncIosDescription;
-
-  /// No description provided for @iosAppSyncDocsLinkText.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync when other apps are opened/closed'**
-  String get iosAppSyncDocsLinkText;
-
   /// No description provided for @accessibilityServiceDisclosureTitle.
   ///
   /// In en, this message translates to:
@@ -1770,18 +1685,6 @@ abstract class AppLocalizations {
   /// **'Sync on app(s) opened'**
   String get syncOnAppOpened;
 
-  /// No description provided for @iosSyncOnAppClosed.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync on GitHub Command Center closed'**
-  String get iosSyncOnAppClosed;
-
-  /// No description provided for @iosSyncOnAppOpened.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync on GitHub Command Center opened'**
-  String get iosSyncOnAppOpened;
-
   /// No description provided for @scheduledSyncSettings.
   ///
   /// In en, this message translates to:
@@ -1799,12 +1702,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Home'**
   String get tabHome;
-
-  /// No description provided for @iosDefaultSyncRate.
-  ///
-  /// In en, this message translates to:
-  /// **'when iOS allows'**
-  String get iosDefaultSyncRate;
 
   /// No description provided for @every.
   ///
@@ -1889,12 +1786,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'week(s)'**
   String get weeks;
-
-  /// No description provided for @enhancedScheduledSync.
-  ///
-  /// In en, this message translates to:
-  /// **'Enhanced Scheduled Sync'**
-  String get enhancedScheduledSync;
 
   /// No description provided for @quickSyncSettings.
   ///

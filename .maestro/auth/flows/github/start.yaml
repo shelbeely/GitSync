@@ -1,4 +1,4 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 - runFlow: ../assert.yaml
 - runFlow:
@@ -9,8 +9,3 @@ appId: com.viscouspot.gitsync
       - assertVisible: "GITHUB"
       - tapOn: "GITHUB"
 - tapOn: "OAUTH (ALL REPOS)"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: Continue

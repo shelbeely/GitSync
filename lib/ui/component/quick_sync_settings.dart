@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/constant/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,72 +20,70 @@ class _QuickSyncSettingsState extends State<QuickSyncSettings> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (!Platform.isIOS)
-          TextButton.icon(
-            onPressed: () async {
-              await repoManager.setInt(StorageKey.repoman_tileSyncIndex, await repoManager.getInt(StorageKey.repoman_repoIndex));
-              setState(() {});
-            },
-            iconAlignment: IconAlignment.end,
-            style: ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: WidgetStatePropertyAll(
-                widget.isOnboarding
-                    ? EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceMD)
-                    : EdgeInsets.only(left: spaceMD + spaceXS, right: spaceLG, top: spaceMD, bottom: spaceMD),
-              ),
-              shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
+        TextButton.icon(
+          onPressed: () async {
+            await repoManager.setInt(StorageKey.repoman_tileSyncIndex, await repoManager.getInt(StorageKey.repoman_repoIndex));
+            setState(() {});
+          },
+          iconAlignment: IconAlignment.end,
+          style: ButtonStyle(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: WidgetStatePropertyAll(
+              widget.isOnboarding
+                  ? EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceMD)
+                  : EdgeInsets.only(left: spaceMD + spaceXS, right: spaceLG, top: spaceMD, bottom: spaceMD),
             ),
-            icon: FutureBuilder(
-              future: (() async =>
-                  await repoManager.getInt(StorageKey.repoman_tileSyncIndex) == await repoManager.getInt(StorageKey.repoman_repoIndex))(),
-              builder: (context, snapshot) => FaIcon(
-                snapshot.data == true ? FontAwesomeIcons.solidCircleCheck : FontAwesomeIcons.circle,
-                color: snapshot.data == true ? colours.primaryPositive : colours.secondaryLight,
-                size: textLG,
-              ),
-            ),
-            label: SizedBox(
-              width: double.infinity,
-              child: Text(
-                t.useForTileSync,
-                style: TextStyle(color: colours.primaryLight, fontSize: textMD),
-              ),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
+          ),
+          icon: FutureBuilder(
+            future: (() async =>
+                await repoManager.getInt(StorageKey.repoman_tileSyncIndex) == await repoManager.getInt(StorageKey.repoman_repoIndex))(),
+            builder: (context, snapshot) => FaIcon(
+              snapshot.data == true ? FontAwesomeIcons.solidCircleCheck : FontAwesomeIcons.circle,
+              color: snapshot.data == true ? colours.primaryPositive : colours.secondaryLight,
+              size: textLG,
             ),
           ),
-        if (!Platform.isIOS)
-          TextButton.icon(
-            onPressed: () async {
-              await repoManager.setInt(StorageKey.repoman_tileManualSyncIndex, await repoManager.getInt(StorageKey.repoman_repoIndex));
-              setState(() {});
-            },
-            iconAlignment: IconAlignment.end,
-            style: ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: WidgetStatePropertyAll(
-                widget.isOnboarding
-                    ? EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceMD)
-                    : EdgeInsets.only(left: spaceMD + spaceXS, right: spaceLG, top: spaceMD, bottom: spaceMD),
-              ),
-              shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
-            ),
-            icon: FutureBuilder(
-              future: (() async =>
-                  await repoManager.getInt(StorageKey.repoman_tileManualSyncIndex) == await repoManager.getInt(StorageKey.repoman_repoIndex))(),
-              builder: (context, snapshot) => FaIcon(
-                snapshot.data == true ? FontAwesomeIcons.solidCircleCheck : FontAwesomeIcons.circle,
-                color: snapshot.data == true ? colours.primaryPositive : colours.secondaryLight,
-                size: textLG,
-              ),
-            ),
-            label: SizedBox(
-              width: double.infinity,
-              child: Text(
-                t.useForTileManualSync,
-                style: TextStyle(color: colours.primaryLight, fontSize: textMD),
-              ),
+          label: SizedBox(
+            width: double.infinity,
+            child: Text(
+              t.useForTileSync,
+              style: TextStyle(color: colours.primaryLight, fontSize: textMD),
             ),
           ),
+        ),
+        TextButton.icon(
+          onPressed: () async {
+            await repoManager.setInt(StorageKey.repoman_tileManualSyncIndex, await repoManager.getInt(StorageKey.repoman_repoIndex));
+            setState(() {});
+          },
+          iconAlignment: IconAlignment.end,
+          style: ButtonStyle(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: WidgetStatePropertyAll(
+              widget.isOnboarding
+                  ? EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceMD)
+                  : EdgeInsets.only(left: spaceMD + spaceXS, right: spaceLG, top: spaceMD, bottom: spaceMD),
+            ),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
+          ),
+          icon: FutureBuilder(
+            future: (() async =>
+                await repoManager.getInt(StorageKey.repoman_tileManualSyncIndex) == await repoManager.getInt(StorageKey.repoman_repoIndex))(),
+            builder: (context, snapshot) => FaIcon(
+              snapshot.data == true ? FontAwesomeIcons.solidCircleCheck : FontAwesomeIcons.circle,
+              color: snapshot.data == true ? colours.primaryPositive : colours.secondaryLight,
+              size: textLG,
+            ),
+          ),
+          label: SizedBox(
+            width: double.infinity,
+            child: Text(
+              t.useForTileManualSync,
+              style: TextStyle(color: colours.primaryLight, fontSize: textMD),
+            ),
+          ),
+        ),
         TextButton.icon(
           onPressed: () async {
             await repoManager.setInt(StorageKey.repoman_shortcutSyncIndex, await repoManager.getInt(StorageKey.repoman_repoIndex));

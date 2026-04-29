@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:GitSync/api/manager/repo_manager.dart';
 import 'package:GitSync/type/git_provider.dart';
@@ -102,10 +100,7 @@ class GitsyncService {
   // Must point at the Receiver (registered in AndroidManifest.xml), not the
   // GlanceAppWidget class. updateWidget resolves this FQN via Class.forName
   // and queries AppWidgetManager.getAppWidgetIds for that component.
-  static const String _widgetQualifiedName = 'com.viscouspot.gitsync.widget.ForceSyncWidgetReceiver';
-  // Matches the `kind` declared in ios/ForceSyncWidget/ForceSyncWidget.swift.
-  // Used by WidgetCenter.shared.reloadTimelines(ofKind:) on iOS.
-  static const String _widgetIOSName = 'ForceSyncWidget';
+  static const String _widgetQualifiedName = 'com.shelbeely.gitcommand.widget.ForceSyncWidgetReceiver';
 
   int _syncGeneration = 0;
   Timer? _widgetRevertTimer;
@@ -113,9 +108,9 @@ class GitsyncService {
   Future<void> _updateForceSyncWidget(String status) async {
     try {
       await HomeWidget.saveWidgetData(_widgetStatusKey, status);
-      await HomeWidget.updateWidget(qualifiedAndroidName: _widgetQualifiedName, iOSName: _widgetIOSName);
+      await HomeWidget.updateWidget(qualifiedAndroidName: _widgetQualifiedName);
     } catch (e) {
-      // Widget not placed or platform doesn't support it — logged for diagnosis.
+      // Widget not placed — logged for diagnosis.
       print('ForceSyncWidget update failed: $e');
     }
   }
@@ -124,21 +119,11 @@ class GitsyncService {
     final int gen = _syncGeneration;
     await _updateForceSyncWidget(terminal);
     _widgetRevertTimer?.cancel();
-    if (Platform.isIOS) {
-      // iOS runs _sync inline in the widget-callback isolate which tears
-      // down when backgroundCallback returns — the async Timer used on
-      // Android would never fire. Await the revert inline instead.
-      await Future.delayed(const Duration(seconds: 2));
+    _widgetRevertTimer = Timer(const Duration(seconds: 2), () {
       if (_syncGeneration == gen && !isSyncing) {
-        await _updateForceSyncWidget('idle');
+        _updateForceSyncWidget('idle');
       }
-    } else {
-      _widgetRevertTimer = Timer(const Duration(seconds: 2), () {
-        if (_syncGeneration == gen && !isSyncing) {
-          _updateForceSyncWidget('idle');
-        }
-      });
-    }
+    });
   }
 
   Future<void> resetForceSyncWidget() async {
@@ -153,6 +138,7 @@ class GitsyncService {
 
     await service.configure(
       androidConfiguration: AndroidConfiguration(autoStart: true, isForegroundMode: false, onStart: onServiceStart),
+      // iosConfiguration is required by flutter_background_service.configure(); never invoked on Android-only build.
       iosConfiguration: IosConfiguration(
         autoStart: true,
         onForeground: onServiceStart,
@@ -193,21 +179,7 @@ class GitsyncService {
 
   Future<void> _displaySyncMessage(SettingsManager? settingsManager, String message) async {
     if (settingsManager == null || await settingsManager.getBool(StorageKey.setman_syncMessageEnabled)) {
-      if (Platform.isIOS) {
-        final active = await Logger.notificationsPlugin.getActiveNotifications();
-        final alreadyShowing = active.any((n) => n.id == syncStatusNotificationId);
-
-        final darwinDetails = DarwinNotificationDetails(
-          presentAlert: true,
-          presentBanner: true,
-          presentList: true,
-          presentBadge: false,
-          presentSound: !alreadyShowing,
-        );
-        await Logger.notificationsPlugin.show(syncStatusNotificationId, appName, message, NotificationDetails(iOS: darwinDetails));
-      } else {
-        await Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG, gravity: null);
-      }
+      await Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG, gravity: null);
     }
   }
 
@@ -224,16 +196,14 @@ class GitsyncService {
     final enabled = settingsManager == null || await settingsManager.getBool(StorageKey.setman_syncMessageEnabled);
     if (!enabled) return false;
 
-    if (Platform.isAndroid) {
-      final handled = await SyncProgressNotification.instance.showProgress(
-        stage: stage,
-        title: appName,
-        text: message,
-      );
-      if (handled) {
-        _progressNotificationActive = true;
-        return true;
-      }
+    final handled = await SyncProgressNotification.instance.showProgress(
+      stage: stage,
+      title: appName,
+      text: message,
+    );
+    if (handled) {
+      _progressNotificationActive = true;
+      return true;
     }
     await _displaySyncMessage(settingsManager, message);
     return false;

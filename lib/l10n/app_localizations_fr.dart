@@ -66,9 +66,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get optionalLabel => '(facultatif)';
 
   @override
-  String get ios => 'iOS';
-
-  @override
   String get android => 'Android';
 
   @override
@@ -154,21 +151,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get premiumAutoAddSubmodules => 'Auto-add submodules';
-
-  @override
-  String get premiumEnhancedSyncSubtitle => 'Automated background sync on iOS.\nAs low as once per minute.';
-
-  @override
-  String get premiumSyncPerMinute => 'Sync as often as every minute';
-
-  @override
-  String get premiumServerTriggered => 'Server push notifications';
-
-  @override
-  String get premiumWorksAppClosed => 'Works even when app is closed';
-
-  @override
-  String get premiumReliableDelivery => 'Reliable, on-schedule delivery';
 
   @override
   String get premiumGitLfsTitle => 'Git LFS';
@@ -398,13 +380,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get allRemote => 'All Remote';
 
   @override
-  String get iosClearDataTitle => 'Est-ce une nouvelle installation ?';
-
-  @override
-  String get iosClearDataMsg =>
-      'Nous avons détecté qu\'il pourrait s\'agir d\'une réinstallation, mais il pourrait aussi s\'agir d\'une fausse alerte. Sur iOS, votre Trousseau n\'est pas effacé lorsque vous supprimez et réinstallez l\'application, donc certaines données peuvent encore être stockées en toute sécurité.\n\nSi ce n\'est pas une nouvelle installation, ou si vous ne souhaitez pas réinitialiser, vous pouvez ignorer cette étape en toute sécurité.';
-
-  @override
   String get clearDataConfirmTitle => 'Confirmer la réinitialisation des données de l\'application';
 
   @override
@@ -494,9 +469,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboardingOtherSyncFeatureAndroid => 'Android intents';
-
-  @override
-  String get onboardingOtherSyncFeatureIos => 'iOS intents';
 
   @override
   String get onboardingOtherSyncDescription => 'Explore additional sync methods for your platform';
@@ -811,12 +783,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appSyncDescription => 'Automatically syncs when your selected app is opened or closed';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
-
-  @override
-  String get iosAppSyncDocsLinkText => 'Synchroniser lors de l\'ouverture/fermeture d\'autres applications';
-
-  @override
   String get accessibilityServiceDisclosureTitle => 'Avis de service d\'accessibilité';
 
   @override
@@ -848,12 +814,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncOnAppOpened => 'Synchroniser à l\'ouverture des applications';
 
   @override
-  String get iosSyncOnAppClosed => 'Synchroniser à la fermeture de GitHub Command Center';
-
-  @override
-  String get iosSyncOnAppOpened => 'Synchroniser à l\'ouverture de GitHub Command Center';
-
-  @override
   String get scheduledSyncSettings => 'Paramètres de sync planifiée';
 
   @override
@@ -861,9 +821,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tabHome => 'Home';
-
-  @override
-  String get iosDefaultSyncRate => 'quand iOS le permet';
 
   @override
   String get every => 'every';
@@ -906,9 +863,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get weeks => 'week(s)';
-
-  @override
-  String get enhancedScheduledSync => 'Synchronisation planifiée améliorée';
 
   @override
   String get quickSyncSettings => 'Quick Sync Settings';

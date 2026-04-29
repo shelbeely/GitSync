@@ -1,22 +1,13 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 - runFlow:
     when:
-      platform: Android
+      visible: "Sign in to "
     commands:
-      - runFlow:
-          when:
-            visible: "Sign in to "
-          commands:
-            - assertVisible: "Sign in to "
-      - runFlow:
-          when:
-            notVisible: "Sign in to "
-          commands:
-            - assertVisible: "Verify Session"
-
+      - assertVisible: "Sign in to "
 - runFlow:
     when:
-      platform: iOS
+      notVisible: "Sign in to "
     commands:
-      - tapOn: "‎github.com"
+      - assertVisible: "Verify Session"
+

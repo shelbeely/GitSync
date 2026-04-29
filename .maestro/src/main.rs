@@ -53,7 +53,7 @@ fn push_flow(yaml_data: &mut Vec<Value>, flow: &str) {
 fn create_yaml(input: &Input, output_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut yaml_data: Vec<Value> = Vec::new();
 
-    yaml_data.push(Value::String("appId: com.viscouspot.gitsync".to_string()));
+    yaml_data.push(Value::String("appId: com.shelbeely.gitcommand".to_string()));
     yaml_data.push(Value::String("---".to_string()));
     yaml_data.push(Value::String("".to_string()));
 

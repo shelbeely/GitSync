@@ -87,18 +87,12 @@ These packages are referenced directly from Git repositories rather than pub.dev
 ### flutter_background_service (ViscousPot fork)
 
 - **Packages:** `flutter_background_service`, `flutter_background_service_android`,
-  `flutter_background_service_ios`, `flutter_background_service_platform_interface`
+  `flutter_background_service_platform_interface`
 - **Version (resolved ref):** `fe783b40c0cba7331dda5a2e4987e1c739d0dbf9`
 - **Licence:** MIT
 - **Source:** <https://github.com/ViscousPot/flutter_background_service_with_intents>
 - **Note:** Fork of the upstream `flutter_background_service` package
   (<https://github.com/ReinBentdal/flutter_background_service>).
-
-### ios_document_picker
-
-- **Version (resolved ref):** `cc19fd549f23dd1f2ce3f4dd287cc653e84fd6b6`
-- **Licence:** MIT
-- **Source:** <https://github.com/ViscousPot/ios_document_picker>
 
 ### workmanager
 

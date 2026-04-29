@@ -19,11 +19,9 @@
   <br />
 
   <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.viscouspot.gitsync" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="height: 48px" ></a>  
+  <a href="https://play.google.com/store/apps/details?id=com.shelbeely.gitcommand" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="height: 48px" ></a>  
   &nbsp;&nbsp;
-  <a href="https://apps.apple.com/us/app/gitsync/id6744980427" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Download_on_the_App_Store_RGB_blk.svg" alt="Get it on Google Play" style="height: 48px" ></a>
-  &nbsp;&nbsp;
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/com.viscouspot.gitsync" target="_blank"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" alt="Get it on Izzy On Droid" style="height: 48px" ></a>
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/com.shelbeely.gitcommand" target="_blank"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" alt="Get it on Izzy On Droid" style="height: 48px" ></a>
   <!-- &nbsp;&nbsp; -->
   <!-- <a href="#" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg" alt="Get it on F-Droid" style="height: 48px" ></a> -->
   </p>
@@ -35,9 +33,9 @@
 
 </div>
 
-GitHub Command Center is a cross-platform GitHub client for Android and iOS that aims to simplify the process of syncing a folder between a git remote and a local directory. It works in the background to keep your files synced with a simple one-time setup and a range of options for activating manual syncs.
+GitHub Command Center is a GitHub client for Android that aims to simplify the process of syncing a folder between a git remote and a local directory. It works in the background to keep your files synced with a simple one-time setup and a range of options for activating manual syncs.
 
-- **Supports Android 5+ & iOS 13+**
+- **Supports Android 5+**
 - Authenticate with
   - **HTTP/S**
   - **SSH**
@@ -52,7 +50,6 @@ GitHub Command Center is a cross-platform GitHub client for Android and iOS that
   - On a recurring schedule
   - From a quick tile (Android)
   - From a home screen widget
-  - From an iOS shortcut or automation
   - From a custom intent (advanced)
 - Browse and edit in-app
   - File explorer with code editor and image viewer
@@ -96,7 +93,6 @@ GitSync is a Flutter app with a Rust core (via [`flutter_rust_bridge`](https://g
 - **Flutter**: version pinned in [`.fvmrc`](.fvmrc) (currently 3.35.2). The repo is set up for [FVM](https://fvm.app/); install with `dart pub global activate fvm` and then `fvm install`.
 - **Rust**: stable toolchain via [rustup](https://rustup.rs/). The Rust crate lives in [`rust/`](rust/).
 - **Android**: Android Studio with a recent SDK (compileSdk follows Flutter, minSdk 21). The Rust crate cross-compiles to `aarch64`, `armv7`, `x86_64` and `i686` targets, which you can add via `rustup target add`.
-- **iOS**: Xcode 15+ on macOS, the `aarch64-apple-ios`, `aarch64-apple-ios-sim` and `x86_64-apple-ios` Rust targets, and CocoaPods.
 
 ### 2. Clone & install
 

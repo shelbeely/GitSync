@@ -147,14 +147,7 @@ class _CloneRepoMain extends ConsumerState<CloneRepoMain> with WidgetsBindingObs
       final nestedDirName = getDirectoryNameFromCloneUrl(repoUrl);
 
       if (!directClone) {
-        if (Platform.isIOS) {
-          final bookmarkParts = selectedDirectory.split(conflictSeparator);
-          final bookmark = bookmarkParts.first;
-          final pathSuffix = selectedDirectory.contains(conflictSeparator) ? bookmarkParts.last : "";
-          selectedDirectory = "$bookmark$conflictSeparator${pathSuffix.isEmpty ? nestedDirName : "$pathSuffix/$nestedDirName"}";
-        } else {
-          selectedDirectory = "$selectedDirectory/$nestedDirName";
-        }
+        selectedDirectory = "$selectedDirectory/$nestedDirName";
         await useDirectory(selectedDirectory, (_) async {}, (selectedDirectory) async {
           final dir = Directory(selectedDirectory);
           print(await dir.exists());

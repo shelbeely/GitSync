@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:GitSync/api/helper.dart';
@@ -588,7 +587,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
   }
 
   Future<bool> showAllFilesAccessOrNext() async {
-    if (!(Platform.isIOS || await requestStoragePerm(false))) {
+    if (!await requestStoragePerm(false)) {
       await _controller.reverse();
       screenIndex.value = Screen.EnableAllFilesAccess;
       return true;
@@ -2461,7 +2460,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
                                             ),
                                           ),
                                           icon: FaIcon(
-                                            Platform.isIOS ? FontAwesomeIcons.gitAlt : FontAwesomeIcons.github,
+                                            FontAwesomeIcons.github,
                                             color: colours.primaryLight,
                                             size: textSM,
                                           ),
@@ -2524,7 +2523,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
                                             ),
                                           ),
                                           icon: FaIcon(
-                                            Platform.isIOS ? FontAwesomeIcons.gitAlt : FontAwesomeIcons.github,
+                                            FontAwesomeIcons.github,
                                             color: colours.primaryLight,
                                             size: textSM,
                                           ),
@@ -2932,8 +2931,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
 
   Widget get syncSettings {
     final syncCards = <Widget>[
-      if (Platform.isAndroid)
-        _onboardingSyncCard(
+      _onboardingSyncCard(
           index: 0,
           icon: FontAwesomeIcons.solidBell,
           title: t.enableApplicationObserver,
@@ -2983,7 +2981,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
         icon: FontAwesomeIcons.ellipsis,
         title: t.otherSyncSettings,
         subtitle: t.onboardingOtherSyncDescription,
-        features: [(FontAwesomeIcons.android, t.onboardingOtherSyncFeatureAndroid), (FontAwesomeIcons.apple, t.onboardingOtherSyncFeatureIos)],
+        features: [(FontAwesomeIcons.android, t.onboardingOtherSyncFeatureAndroid)],
         settingsBody: null,
         onTap: () => launchUrl(Uri.parse(syncOptionsDocsLink)),
       ),

@@ -6,7 +6,6 @@ import 'dart:ui';
 
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
 import 'package:GitSync/api/colour_provider.dart';
-import 'package:GitSync/api/manager/settings_manager.dart';
 import 'package:GitSync/ui/component/button_setting.dart';
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:GitSync/ui/component/group_sync_settings.dart';
@@ -47,7 +46,6 @@ import 'package:home_widget/home_widget.dart';
 import 'package:mixin_logger/mixin_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quick_actions/quick_actions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,7 +81,7 @@ import 'package:GitSync/type/showcase_feature.dart';
 import 'package:GitSync/ui/component/showcase_feature_button.dart';
 import '../ui/page/settings_main.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'ui/dialog/confirm_reinstall_clear_data.dart' as ConfirmReinstallClearDataDialog;
+
 import 'ui/dialog/set_remote_url.dart' as SetRemoteUrlDialog;
 import 'package:GitSync/l10n/app_localizations.dart';
 
@@ -159,11 +157,7 @@ Future<void> backgroundCallback(Uri? data) async {
     if (scheme == 'forcesyncwidget' && hasHomeWidget) {
       final repoIndex = await _resolveRepoIndex(data, StorageKey.repoman_widgetSyncIndex);
 
-      if (Platform.isIOS) {
-        await gitSyncService.debouncedSync(repoIndex, true, true);
-      } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
-      }
+      FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
       return;
     }
 
@@ -176,11 +170,7 @@ Future<void> backgroundCallback(Uri? data) async {
     if (scheme == 'gitsync' && data?.host == 'sync-now') {
       final shortcutSyncIndex = await repoManager.getInt(StorageKey.repoman_shortcutSyncIndex);
 
-      if (Platform.isIOS) {
-        await gitSyncService.debouncedSync(shortcutSyncIndex, true, true);
-      } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$shortcutSyncIndex"});
-      }
+      FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$shortcutSyncIndex"});
       return;
     }
   } catch (e) {
@@ -200,11 +190,7 @@ void callbackDispatcher() async {
         final int repoIndex =
             inputData?["repoIndex"] ?? int.tryParse(task.replaceAll(scheduledSyncKey, "")) ?? await repoManager.getInt(StorageKey.repoman_repoIndex);
 
-        if (Platform.isIOS) {
-          await gitSyncService.debouncedSync(repoIndex, true, true);
-        } else {
-          FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
-        }
+        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
 
         return Future.value(true);
       }
@@ -1178,8 +1164,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     networkSubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) => mounted ? setState(() {}) : null);
 
     initAsync(() async {
-      await promptClearKeychainValues();
-
       if (await repoManager.hasLegacySettings()) {
         if (!mounted) return;
 
@@ -1283,20 +1267,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
       autoRefreshTimer = Timer(Duration.zero, () async => await updateRecommendedAction());
     } else {
       autoRefreshTimer = Timer(remaining, () async => await updateRecommendedAction());
-    }
-  }
-
-  Future<void> promptClearKeychainValues() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (Platform.isIOS && (prefs.getBool('is_first_app_launch') ?? true)) {
-      await ConfirmReinstallClearDataDialog.showDialog(context, () async {
-        await uiSettingsManager.storage.deleteAll();
-        await repoManager.storage.deleteAll();
-      });
-
-      await GitManager.clearLocks();
-      await prefs.setBool('is_first_app_launch', false);
     }
   }
 
@@ -1619,14 +1589,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (Platform.isIOS) {
-      if (state == AppLifecycleState.resumed) {
-        await _triggerLifecycleSync(true);
-      } else if (state == AppLifecycleState.paused) {
-        await _triggerLifecycleSync(false);
-      }
-    }
-
     if (state == AppLifecycleState.resumed) {
       await GitManager.clearLocks();
       await reloadAll();
@@ -1634,24 +1596,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       autoRefreshTimer?.cancel();
     }
-  }
-
-  Future<void> _triggerLifecycleSync(bool isOpening) async {
-    try {
-      final repoNamesLength = (await repoManager.getStringList(StorageKey.repoman_repoNames)).length;
-
-      for (var index = 0; index < repoNamesLength; index++) {
-        final settingsManager = await SettingsManager().reinit(repoIndex: index);
-
-        final syncSetting = isOpening
-            ? await settingsManager.getBool(StorageKey.setman_syncOnAppOpened)
-            : await settingsManager.getBool(StorageKey.setman_syncOnAppClosed);
-
-        if (!syncSetting) continue;
-
-        gitSyncService.debouncedSync(index);
-      }
-    } catch (e) {}
   }
 
   Future<void> showAuthDialog([Function(BaseAlertDialog dialog, {bool cancelable})? showDialog]) async {
@@ -3819,15 +3763,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                                                                                 padding: EdgeInsets.all(spaceMD),
                                                                                 child: ExtendedText(
                                                                                   demo
-                                                                                      ? (Platform.isIOS
-                                                                                            ? "TestObsidianVault"
-                                                                                            : "/storage/emulated/0/github/ViscousTests/TestObsidianVault")
-                                                                                      : (gitDirPath?.$2 == null
-                                                                                            ? t.repoNotFound
-                                                                                            : (Platform.isIOS
-                                                                                                      ? gitDirPath?.$2.split("/").last
-                                                                                                      : gitDirPath?.$2) ??
-                                                                                                  ""),
+                                                                                      ? "/storage/emulated/0/github/ViscousTests/TestObsidianVault"
+                                                                                      : (gitDirPath?.$2 == null ? t.repoNotFound : (gitDirPath?.$2 ?? "")),
                                                                                   maxLines: 1,
                                                                                   textAlign: TextAlign.left,
                                                                                   softWrap: false,

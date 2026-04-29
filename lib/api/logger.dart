@@ -134,7 +134,6 @@ class Logger {
     await notificationsPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/launcher_icon'),
-        iOS: DarwinInitializationSettings(requestSoundPermission: false, requestBadgePermission: false, requestAlertPermission: false),
       ),
       onDidReceiveNotificationResponse: notificationClicked,
       onDidReceiveBackgroundNotificationResponse: notificationClicked,
@@ -238,7 +237,7 @@ class Logger {
 
       final url = Uri.parse('https://api.github.com/repos/ViscousPot/GitSync/issues');
 
-      final issueTitle = '[Bug]: (${Platform.isIOS ? "iOS" : "Android"}) $title';
+      final issueTitle = '[Bug]: (Android) $title';
       final issueBody =
           '''
 ### Description
@@ -289,20 +288,14 @@ $logs
     String osVersion = '';
     String deviceModel = '';
 
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      osVersion = iosInfo.systemVersion;
-      deviceModel = iosInfo.utsname.machine;
-    } else {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      osVersion = '${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt})';
-      deviceModel = androidInfo.model;
-    }
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    osVersion = '${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt})';
+    deviceModel = androidInfo.model;
 
     String appVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
 
     final entries = <(String, String)>[
-      ('Platform', Platform.isIOS ? 'iOS' : 'Android'),
+      ('Platform', 'Android'),
       ('Device Model', deviceModel),
       ('OS Version', osVersion),
       ('App Version', appVersion),
@@ -326,12 +319,10 @@ $logs
       entries.add(('Scheduled Sync', schedule));
     }
 
-    if (Platform.isAndroid) {
-      // Android 16 diagnostics — empty on older devices, so adding them is safe.
-      final recentStarts = await SyncDiagnostics.instance.getRecentStartComponents();
-      if (recentStarts.isNotEmpty) {
-        entries.add(('Recent Process Starts', recentStarts.join(' | ')));
-      }
+    // Android 16 diagnostics — empty on older devices, so adding them is safe.
+    final recentStarts = await SyncDiagnostics.instance.getRecentStartComponents();
+    if (recentStarts.isNotEmpty) {
+      entries.add(('Recent Process Starts', recentStarts.join(' | ')));
     }
 
     return entries;

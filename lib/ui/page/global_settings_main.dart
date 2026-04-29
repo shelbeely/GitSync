@@ -455,7 +455,6 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                         );
                       },
                     ),
-                    if (Platform.isAndroid) ...[
                       SizedBox(height: spaceMD),
                       FutureBuilder(
                         future: AccessibilityServiceHelper.isExcludedFromRecents(),
@@ -489,7 +488,6 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                           ),
                         ),
                       ),
-                    ],
                     SizedBox(height: spaceLG),
                     SettingsSection(
                       title: t.backupRestoreTitle,
@@ -648,7 +646,7 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                         ${await Logger.generateDeviceInfo()}
 
                         """,
-                              subject: sprintf(t.logsEmailSubjectTemplate, [Platform.isIOS ? t.ios : t.android]),
+                              subject: sprintf(t.logsEmailSubjectTemplate, [t.android]),
                               recipients: [t.logsEmailRecipient],
                               attachmentPaths: [zipFile.path],
                               isHTML: false,

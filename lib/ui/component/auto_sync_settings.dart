@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +22,7 @@ class AutoSyncSettings extends StatefulWidget {
 
 class _AutoSyncSettingsState extends State<AutoSyncSettings> {
   Future<bool> getExpanded() async {
-    return (Platform.isIOS || (Platform.isAndroid && await AccessibilityServiceHelper.isAccessibilityServiceEnabled())) &&
+    return await AccessibilityServiceHelper.isAccessibilityServiceEnabled() &&
         await uiSettingsManager.getBool(StorageKey.setman_applicationObserverExpanded);
   }
 
@@ -35,7 +33,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
         Padding(
           padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
           child: TextButton.icon(
-            onPressed: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty)
+            onPressed: ((applicationPackagesSnapshot.data ?? {}).isEmpty)
                 ? null
                 : () async {
                     uiSettingsManager.setBool(
@@ -60,14 +58,14 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                 child: FittedBox(
                   fit: BoxFit.fill,
                   child: Switch(
-                    value: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
+                    value: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
                     onChanged: (value) {
                       uiSettingsManager.setBool(StorageKey.setman_syncOnAppOpened, value);
                       setState(() {});
                     },
                     padding: EdgeInsets.zero,
                     thumbColor: WidgetStatePropertyAll(
-                      ((Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
+                      (((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
                           ? colours.primaryPositive
                           : colours.tertiaryDark,
                     ),
@@ -80,9 +78,9 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
               ),
             ),
             label: Text(
-              Platform.isIOS ? t.iosSyncOnAppOpened : t.syncOnAppOpened,
+              t.syncOnAppOpened,
               style: TextStyle(
-                color: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
+                color: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
                 fontSize: textMD,
               ),
             ),
@@ -92,7 +90,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
         Padding(
           padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
           child: TextButton.icon(
-            onPressed: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty)
+            onPressed: ((applicationPackagesSnapshot.data ?? {}).isEmpty)
                 ? null
                 : () async {
                     uiSettingsManager.setBool(
@@ -117,14 +115,14 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                 child: FittedBox(
                   fit: BoxFit.fill,
                   child: Switch(
-                    value: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
+                    value: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
                     onChanged: (value) {
                       uiSettingsManager.setBool(StorageKey.setman_syncOnAppClosed, value);
                       setState(() {});
                     },
                     padding: EdgeInsets.zero,
                     thumbColor: WidgetStatePropertyAll(
-                      ((Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
+                      (((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
                           ? colours.primaryPositive
                           : colours.tertiaryDark,
                     ),
@@ -136,40 +134,15 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
               ),
             ),
             label: Text(
-              Platform.isIOS ? t.iosSyncOnAppClosed : t.syncOnAppClosed,
+              t.syncOnAppClosed,
               style: TextStyle(
-                color: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
+                color: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
                 fontSize: textMD,
               ),
             ),
           ),
         ),
-        if (Platform.isIOS) SizedBox(height: spaceSM),
-        if (Platform.isIOS)
-          Padding(
-            padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
-            child: TextButton.icon(
-              onPressed: () async {
-                await launchUrl(Uri.parse(iosAppSyncDocsLink));
-              },
-              iconAlignment: IconAlignment.start,
-              style: ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceXS)),
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(cornerRadiusMD), side: BorderSide.none)),
-              ),
-              icon: FaIcon(FontAwesomeIcons.squareArrowUpRight, color: colours.tertiaryInfo, size: textSM),
-              label: SizedBox(
-                width: double.infinity,
-                child: Text(
-                  t.iosAppSyncDocsLinkText,
-                  style: TextStyle(color: colours.tertiaryInfo, fontSize: textSM, fontWeight: FontWeight.normal),
-                ),
-              ),
-            ),
-          ),
-        if (Platform.isAndroid) SizedBox(height: spaceMD),
-        if (Platform.isAndroid)
+        SizedBox(height: spaceMD),
           Padding(
             padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
             child: Row(
@@ -272,12 +245,6 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                     onPressed: () async {
                       final enabled = (expandedSnapshot.data ?? false);
 
-                      if (Platform.isIOS) {
-                        uiSettingsManager.setBool(StorageKey.setman_applicationObserverExpanded, !enabled);
-                        setState(() {});
-                        return;
-                      }
-
                       if (!enabled && !(accessibilityServiceEnabledSnapshot.data ?? false)) {
                         await ProminentDisclosureDialog.showDialog(context, () async {
                           await AccessibilityServiceHelper.openAccessibilitySettings();
@@ -328,7 +295,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                                 if (expandedSnapshot.data == true) ...[
                                   SizedBox(height: spaceXXXXS),
                                   Text(
-                                    Platform.isIOS ? t.appSyncIosDescription : t.appSyncDescription,
+                                    t.appSyncDescription,
                                     style: TextStyle(color: colours.secondaryLight, fontSize: textMD),
                                   ),
                                 ],

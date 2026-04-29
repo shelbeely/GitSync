@@ -95,7 +95,6 @@ class Storage<T extends StorageKey> {
   Storage({String? name, this.keyTransformer = defaultKeyTransformer})
     : storage = FlutterSecureStorage(
         aOptions: AndroidOptions(sharedPreferencesName: name, resetOnError: true),
-        iOptions: IOSOptions(accountName: name),
       );
 
   String getKeyName(StorageKey key) => keyTransformer(key.name.toString());

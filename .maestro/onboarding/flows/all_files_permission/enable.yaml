@@ -1,9 +1,5 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 - runFlow: ./assert.yaml
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "Allow access to manage all files"
-      - back
+- tapOn: "Allow access to manage all files"
+- back

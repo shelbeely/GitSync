@@ -281,13 +281,12 @@ packages:
     source: git
     version: "6.3.0"
   flutter_background_service_ios:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "packages/flutter_background_service_ios"
-      ref: HEAD
-      resolved-ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      url: "https://github.com/ViscousPot/flutter_background_service_with_intents"
-    source: git
+      name: flutter_background_service_ios
+      sha256: "6037ffd45c4d019dab0975c7feb1d31012dd697e25edc05505a4a9b0c7dc9fba"
+      url: "https://pub.dev"
+    source: hosted
     version: "5.0.3"
   flutter_background_service_platform_interface:
     dependency: "direct overridden"
@@ -536,15 +535,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.2"
-  ios_document_picker:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: cc19fd549f23dd1f2ce3f4dd287cc653e84fd6b6
-      resolved-ref: cc19fd549f23dd1f2ce3f4dd287cc653e84fd6b6
-      url: "https://github.com/ViscousPot/ios_document_picker"
-    source: git
-    version: "0.4.0"
   isolate_contactor:
     dependency: transitive
     description:
