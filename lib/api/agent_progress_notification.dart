@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:GitSync/api/sync_progress_notification.dart';
 
@@ -8,7 +6,7 @@ import 'package:GitSync/api/sync_progress_notification.dart';
 ///
 /// On Android 16+ this drives a persistent progress notification through the
 /// `com.shelbeely.gitcommand/agent_progress` method channel. On older Android
-/// versions and on iOS [isSupported] returns `false`.
+/// versions [isSupported] returns `false`.
 ///
 /// The `isSupported()` check delegates to
 /// [SyncProgressNotification.instance.isSupported] so the SDK lookup is
@@ -33,7 +31,6 @@ class AgentProgressNotification {
     required String title,
     required String text,
   }) async {
-    if (!Platform.isAndroid) return false;
     if (!await isSupported()) return false;
     try {
       await _channel.invokeMethod<void>('showProgress', {
@@ -56,7 +53,6 @@ class AgentProgressNotification {
     required String text,
     Duration autoCancel = const Duration(seconds: 3),
   }) async {
-    if (!Platform.isAndroid) return false;
     if (!await isSupported()) return false;
     try {
       await _channel.invokeMethod<void>('completeProgress', {
@@ -75,7 +71,6 @@ class AgentProgressNotification {
 
   /// Immediately removes the progress notification.
   Future<void> cancelProgress() async {
-    if (!Platform.isAndroid) return;
     if (!await isSupported()) return;
     try {
       await _channel.invokeMethod<void>('cancelProgress');

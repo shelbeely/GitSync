@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:GitSync/api/helper.dart';
@@ -2932,8 +2931,7 @@ class _OnboardingSetup extends ConsumerState<OnboardingSetup> with WidgetsBindin
 
   Widget get syncSettings {
     final syncCards = <Widget>[
-      if (Platform.isAndroid)
-        _onboardingSyncCard(
+      _onboardingSyncCard(
           index: 0,
           icon: FontAwesomeIcons.solidBell,
           title: t.enableApplicationObserver,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +7,8 @@ import 'package:flutter/services.dart';
 ///
 /// On Android 16+ this drives a persistent progress notification through the
 /// `com.shelbeely.gitcommand/sync_progress` method channel. On older Android
-/// versions and on iOS [isSupported] returns `false` so callers can fall
-/// back to the existing toast / `flutter_local_notifications` UX.
+/// versions [isSupported] returns `false` so callers can fall back to the
+/// existing toast / `flutter_local_notifications` UX.
 class SyncProgressNotification {
   SyncProgressNotification._();
   static final SyncProgressNotification instance = SyncProgressNotification._();
@@ -30,10 +29,6 @@ class SyncProgressNotification {
   }
 
   Future<bool> _resolveSupported() async {
-    if (!Platform.isAndroid) {
-      _supported = false;
-      return false;
-    }
     try {
       final info = await DeviceInfoPlugin().androidInfo;
       if (info.version.sdkInt < _android16Sdk) {

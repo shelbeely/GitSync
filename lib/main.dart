@@ -1270,10 +1270,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
     }
   }
 
-  Future<void> promptClearKeychainValues() async {
-    // No-op on Android; iOS keychain prompt removed.
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +33,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
         Padding(
           padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
           child: TextButton.icon(
-            onPressed: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty)
+            onPressed: ((applicationPackagesSnapshot.data ?? {}).isEmpty)
                 ? null
                 : () async {
                     uiSettingsManager.setBool(
@@ -60,14 +58,14 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                 child: FittedBox(
                   fit: BoxFit.fill,
                   child: Switch(
-                    value: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
+                    value: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
                     onChanged: (value) {
                       uiSettingsManager.setBool(StorageKey.setman_syncOnAppOpened, value);
                       setState(() {});
                     },
                     padding: EdgeInsets.zero,
                     thumbColor: WidgetStatePropertyAll(
-                      ((Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
+                      (((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
                           ? colours.primaryPositive
                           : colours.tertiaryDark,
                     ),
@@ -82,7 +80,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
             label: Text(
               t.syncOnAppOpened,
               style: TextStyle(
-                color: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
+                color: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
                 fontSize: textMD,
               ),
             ),
@@ -92,7 +90,7 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
         Padding(
           padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
           child: TextButton.icon(
-            onPressed: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty)
+            onPressed: ((applicationPackagesSnapshot.data ?? {}).isEmpty)
                 ? null
                 : () async {
                     uiSettingsManager.setBool(
@@ -117,14 +115,14 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
                 child: FittedBox(
                   fit: BoxFit.fill,
                   child: Switch(
-                    value: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
+                    value: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false,
                     onChanged: (value) {
                       uiSettingsManager.setBool(StorageKey.setman_syncOnAppClosed, value);
                       setState(() {});
                     },
                     padding: EdgeInsets.zero,
                     thumbColor: WidgetStatePropertyAll(
-                      ((Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
+                      (((applicationPackagesSnapshot.data ?? {}).isEmpty) ? false : snapshot.data ?? false)
                           ? colours.primaryPositive
                           : colours.tertiaryDark,
                     ),
@@ -138,14 +136,13 @@ class _AutoSyncSettingsState extends State<AutoSyncSettings> {
             label: Text(
               t.syncOnAppClosed,
               style: TextStyle(
-                color: (Platform.isAndroid && (applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
+                color: ((applicationPackagesSnapshot.data ?? {}).isEmpty) ? colours.tertiaryLight : colours.primaryLight,
                 fontSize: textMD,
               ),
             ),
           ),
         ),
-        if (Platform.isAndroid) SizedBox(height: spaceMD),
-        if (Platform.isAndroid)
+        SizedBox(height: spaceMD),
           Padding(
             padding: widget.isOnboarding ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: spaceMD + spaceXS),
             child: Row(

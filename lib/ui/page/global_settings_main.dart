@@ -455,7 +455,6 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                         );
                       },
                     ),
-                    if (Platform.isAndroid) ...[
                       SizedBox(height: spaceMD),
                       FutureBuilder(
                         future: AccessibilityServiceHelper.isExcludedFromRecents(),
@@ -489,7 +488,6 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                           ),
                         ),
                       ),
-                    ],
                     SizedBox(height: spaceLG),
                     SettingsSection(
                       title: t.backupRestoreTitle,

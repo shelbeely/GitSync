@@ -1,10 +1,6 @@
 appId: com.shelbeely.gitcommand
 ---
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - launchApp:
-          appId: com.shelbeely.gitcommand
-      - assertVisible: "AUTH.*"
-      - tapOn: "disable/enable sync messages"
+- launchApp:
+    appId: com.shelbeely.gitcommand
+- assertVisible: "AUTH.*"
+- tapOn: "disable/enable sync messages"

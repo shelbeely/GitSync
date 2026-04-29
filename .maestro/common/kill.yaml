@@ -1,10 +1,6 @@
 appId: com.shelbeely.gitcommand
 ---
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - killApp
-      - back
-      - back
-      - back
+- killApp
+- back
+- back
+- back

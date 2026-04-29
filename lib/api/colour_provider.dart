@@ -3,7 +3,7 @@ import 'package:GitSync/global.dart';
 import 'package:flutter/material.dart';
 
 /// Fixed M3 seed used as a fallback when dynamic Material You wallpaper
-/// extraction is unavailable (e.g., pre-Android 12 or iOS).
+/// extraction is unavailable (e.g., pre-Android 12).
 const Color kFallbackSeedColor = Color(0xFF4A90D9);
 
 class Colours {

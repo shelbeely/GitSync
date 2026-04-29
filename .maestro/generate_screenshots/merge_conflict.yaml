@@ -1,17 +1,8 @@
 appId: com.shelbeely.gitcommand
 ---
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - launchApp:
-          appId: com.shelbeely.gitcommand
+- launchApp:
+    appId: com.shelbeely.gitcommand
 - assertVisible: "GitSync"
 - tapOn: "more sync options"
 - assertVisible: "MERGE CONFLICT"
 - takeScreenshot: generate_screenshots/raw/screenshot_merge_conflict
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - runFlow: ../common/back.yaml

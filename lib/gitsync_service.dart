@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:flutter/foundation.dart';
@@ -102,9 +101,6 @@ class GitsyncService {
   // GlanceAppWidget class. updateWidget resolves this FQN via Class.forName
   // and queries AppWidgetManager.getAppWidgetIds for that component.
   static const String _widgetQualifiedName = 'com.shelbeely.gitcommand.widget.ForceSyncWidgetReceiver';
-  // Matches the `kind` declared in ios/ForceSyncWidget/ForceSyncWidget.swift.
-  // Used by WidgetCenter.shared.reloadTimelines(ofKind:) on iOS.
-  static const String _widgetIOSName = 'ForceSyncWidget';
 
   int _syncGeneration = 0;
   Timer? _widgetRevertTimer;
@@ -112,9 +108,9 @@ class GitsyncService {
   Future<void> _updateForceSyncWidget(String status) async {
     try {
       await HomeWidget.saveWidgetData(_widgetStatusKey, status);
-      await HomeWidget.updateWidget(qualifiedAndroidName: _widgetQualifiedName, iOSName: _widgetIOSName);
+      await HomeWidget.updateWidget(qualifiedAndroidName: _widgetQualifiedName);
     } catch (e) {
-      // Widget not placed or platform doesn't support it — logged for diagnosis.
+      // Widget not placed — logged for diagnosis.
       print('ForceSyncWidget update failed: $e');
     }
   }
@@ -142,6 +138,7 @@ class GitsyncService {
 
     await service.configure(
       androidConfiguration: AndroidConfiguration(autoStart: true, isForegroundMode: false, onStart: onServiceStart),
+      // iosConfiguration is required by flutter_background_service.configure(); never invoked on Android-only build.
       iosConfiguration: IosConfiguration(
         autoStart: true,
         onForeground: onServiceStart,
@@ -199,16 +196,14 @@ class GitsyncService {
     final enabled = settingsManager == null || await settingsManager.getBool(StorageKey.setman_syncMessageEnabled);
     if (!enabled) return false;
 
-    if (Platform.isAndroid) {
-      final handled = await SyncProgressNotification.instance.showProgress(
-        stage: stage,
-        title: appName,
-        text: message,
-      );
-      if (handled) {
-        _progressNotificationActive = true;
-        return true;
-      }
+    final handled = await SyncProgressNotification.instance.showProgress(
+      stage: stage,
+      title: appName,
+      text: message,
+    );
+    if (handled) {
+      _progressNotificationActive = true;
+      return true;
     }
     await _displaySyncMessage(settingsManager, message);
     return false;

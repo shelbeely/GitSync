@@ -1,7 +1,3 @@
 appId: com.shelbeely.gitcommand
 ---
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - assertVisible: 'Enable "All Files Access"'
+- assertVisible: 'Enable "All Files Access"'

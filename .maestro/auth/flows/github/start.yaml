@@ -9,8 +9,3 @@ appId: com.shelbeely.gitcommand
       - assertVisible: "GITHUB"
       - tapOn: "GITHUB"
 - tapOn: "OAUTH (ALL REPOS)"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: Continue

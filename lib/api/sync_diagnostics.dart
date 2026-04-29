@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 
 /// Bridge to the Android 16 (`API 36`) `JobScheduler.getPendingJobReasons`
 /// and `ApplicationStartInfo.getStartComponent` diagnostics. Returns empty
-/// lists on iOS and on pre-API-36 Android devices so callers can append the
+/// lists on pre-API-36 Android devices so callers can append the
 /// results unconditionally to bug-report payloads.
 class SyncDiagnostics {
   SyncDiagnostics._();
@@ -16,7 +15,6 @@ class SyncDiagnostics {
   /// Returns human-readable reasons that the workmanager job with [jobId] is
   /// currently pending, or an empty list if unsupported / no pending reasons.
   Future<List<String>> getPendingJobReasons(int jobId) async {
-    if (!Platform.isAndroid) return const <String>[];
     try {
       final raw = await _channel.invokeMethod<List<dynamic>>('getPendingJobReasons', {
         'jobId': jobId,
@@ -32,7 +30,6 @@ class SyncDiagnostics {
   /// Returns up to [limit] recent process start descriptors, formatted as
   /// `reason=<n> type=<n> component=<flat>` strings.
   Future<List<String>> getRecentStartComponents({int limit = 5}) async {
-    if (!Platform.isAndroid) return const <String>[];
     try {
       final raw = await _channel.invokeMethod<List<dynamic>>('getRecentStartComponents', {
         'limit': limit,

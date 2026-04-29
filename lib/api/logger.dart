@@ -134,7 +134,6 @@ class Logger {
     await notificationsPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/launcher_icon'),
-        iOS: DarwinInitializationSettings(requestSoundPermission: false, requestBadgePermission: false, requestAlertPermission: false),
       ),
       onDidReceiveNotificationResponse: notificationClicked,
       onDidReceiveBackgroundNotificationResponse: notificationClicked,
@@ -320,12 +319,10 @@ $logs
       entries.add(('Scheduled Sync', schedule));
     }
 
-    if (Platform.isAndroid) {
-      // Android 16 diagnostics — empty on older devices, so adding them is safe.
-      final recentStarts = await SyncDiagnostics.instance.getRecentStartComponents();
-      if (recentStarts.isNotEmpty) {
-        entries.add(('Recent Process Starts', recentStarts.join(' | ')));
-      }
+    // Android 16 diagnostics — empty on older devices, so adding them is safe.
+    final recentStarts = await SyncDiagnostics.instance.getRecentStartComponents();
+    if (recentStarts.isNotEmpty) {
+      entries.add(('Recent Process Starts', recentStarts.join(' | ')));
     }
 
     return entries;
