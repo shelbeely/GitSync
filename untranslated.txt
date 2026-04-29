@@ -26,6 +26,7 @@
     "hideAiFeaturesConfirmTitle",
     "hideAiFeaturesConfirmMsg"
   ],
+
   "de": [
     "previous",
     "next",
@@ -572,6 +573,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "es": [
     "previous",
     "next",
@@ -1118,6 +1120,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "fr": [
     "renameDescription",
     "selectAllDescription",
@@ -1599,6 +1602,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "ja": [
     "renameDescription",
     "selectAllDescription",
@@ -1995,6 +1999,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "ru": [
     "previous",
     "next",
@@ -2541,6 +2546,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "zh": [
     "defaultTo",
     "resolveLater",
@@ -2832,6 +2838,7 @@
     "aiSetupTitle",
     "aiSetupMsg"
   ],
+
   "zh_Hant": [
     "dismiss",
     "skip",
