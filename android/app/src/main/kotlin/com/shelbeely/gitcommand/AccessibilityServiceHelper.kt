@@ -1,4 +1,4 @@
-package com.viscouspot.gitsync
+package com.shelbeely.gitcommand
 
 import android.content.Context
 import android.content.Intent

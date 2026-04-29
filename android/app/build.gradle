@@ -13,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.viscouspot.gitsync"
+    namespace = "com.shelbeely.gitcommand"
     // Pinned to API 36 (Android 16 / BAKLAVA) so we can reference
     // `Notification.ProgressStyle`, `JobScheduler#getPendingJobReasons`,
     // `ApplicationStartInfo#getStartComponent`, and the new
@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.viscouspot.gitsync"
+        applicationId = "com.shelbeely.gitcommand"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdkVersion = flutter.minSdkVersion

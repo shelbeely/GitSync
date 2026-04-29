@@ -203,7 +203,7 @@ pub fn main(args: &[String]) {
         fs::write(&path, new_content).unwrap();
 
         let command = "flutter run; exit;";
-        let package = "com.viscouspot.gitsync";
+        let package = "com.shelbeely.gitcommand";
         let bundle_id = "com.viscouspot.git-sync";
 
         if is_android == Some(true) {

@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 /// Wrapper around the native Android 16 `Notification.ProgressStyle` helper.
 ///
 /// On Android 16+ this drives a persistent progress notification through the
-/// `com.viscouspot.gitsync/sync_progress` method channel. On older Android
+/// `com.shelbeely.gitcommand/sync_progress` method channel. On older Android
 /// versions and on iOS [isSupported] returns `false` so callers can fall
 /// back to the existing toast / `flutter_local_notifications` UX.
 class SyncProgressNotification {
   SyncProgressNotification._();
   static final SyncProgressNotification instance = SyncProgressNotification._();
 
-  static const MethodChannel _channel = MethodChannel('com.viscouspot.gitsync/sync_progress');
+  static const MethodChannel _channel = MethodChannel('com.shelbeely.gitcommand/sync_progress');
 
   // Android 16 maps to API level 36 (BAKLAVA).
   static const int _android16Sdk = 36;

@@ -1,11 +1,11 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 - runFlow:
     when:
       platform: Android
     commands:
       - launchApp:
-          appId: com.viscouspot.gitsync
+          appId: com.shelbeely.gitcommand
 - assertVisible: "GitSync"
 - tapOn: "repository settings"
 - assertVisible: "SETTINGS"

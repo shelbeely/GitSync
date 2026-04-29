@@ -19,11 +19,11 @@
   <br />
 
   <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.viscouspot.gitsync" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="height: 48px" ></a>  
+  <a href="https://play.google.com/store/apps/details?id=com.shelbeely.gitcommand" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="height: 48px" ></a>  
   &nbsp;&nbsp;
   <a href="https://apps.apple.com/us/app/gitsync/id6744980427" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Download_on_the_App_Store_RGB_blk.svg" alt="Get it on Google Play" style="height: 48px" ></a>
   &nbsp;&nbsp;
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/com.viscouspot.gitsync" target="_blank"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" alt="Get it on Izzy On Droid" style="height: 48px" ></a>
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/com.shelbeely.gitcommand" target="_blank"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" alt="Get it on Izzy On Droid" style="height: 48px" ></a>
   <!-- &nbsp;&nbsp; -->
   <!-- <a href="#" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg" alt="Get it on F-Droid" style="height: 48px" ></a> -->
   </p>

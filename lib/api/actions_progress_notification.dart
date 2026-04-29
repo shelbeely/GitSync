@@ -7,7 +7,7 @@ import 'package:GitSync/api/sync_progress_notification.dart';
 /// for GitHub Actions workflow-run progress.
 ///
 /// On Android 16+ this drives a persistent progress notification through the
-/// `com.viscouspot.gitsync/actions_progress` method channel. On older Android
+/// `com.shelbeely.gitcommand/actions_progress` method channel. On older Android
 /// versions and on iOS [isSupported] returns `false` so callers can skip the
 /// call entirely.
 ///
@@ -18,7 +18,7 @@ class ActionsProgressNotification {
   ActionsProgressNotification._();
   static final ActionsProgressNotification instance = ActionsProgressNotification._();
 
-  static const MethodChannel _channel = MethodChannel('com.viscouspot.gitsync/actions_progress');
+  static const MethodChannel _channel = MethodChannel('com.shelbeely.gitcommand/actions_progress');
 
   /// Returns `true` only on Android API 36+ where `Notification.ProgressStyle`
   /// is available. Delegates to [SyncProgressNotification] to avoid a redundant

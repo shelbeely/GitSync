@@ -1,4 +1,4 @@
-package com.viscouspot.gitsync
+package com.shelbeely.gitcommand
 
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity

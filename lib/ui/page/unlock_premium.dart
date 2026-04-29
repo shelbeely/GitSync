@@ -97,7 +97,7 @@ class _UnlockPremiumState extends ConsumerState<UnlockPremium> {
             SizedBox(
               width: double.infinity,
               child: TextButton.icon(
-                onPressed: () => launchUrl(Uri.parse("https://play.google.com/store/apps/details?id=com.viscouspot.gitsync")),
+                onPressed: () => launchUrl(Uri.parse("https://play.google.com/store/apps/details?id=com.shelbeely.gitcommand")),
                 style: ButtonStyle(
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: spaceMD, vertical: spaceSM)),

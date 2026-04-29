@@ -1,4 +1,4 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 # - pressKey: volume down
 # - clearState
@@ -7,7 +7,7 @@ appId: com.viscouspot.gitsync
       platform: Android
     commands:
       - launchApp:
-          appId: com.viscouspot.gitsync
+          appId: com.shelbeely.gitcommand
           permissions:
             all: deny
 - runFlow:

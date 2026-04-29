@@ -1,4 +1,4 @@
-package com.viscouspot.gitsync
+package com.shelbeely.gitcommand
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -17,7 +17,7 @@ import io.flutter.plugin.common.MethodChannel
 class SyncDiagnostics(private val context: Context) : MethodChannel.MethodCallHandler {
 
     companion object {
-        const val CHANNEL_NAME = "com.viscouspot.gitsync/sync_diagnostics"
+        const val CHANNEL_NAME = "com.shelbeely.gitcommand/sync_diagnostics"
         private const val ANDROID_16 = 36
     }
 

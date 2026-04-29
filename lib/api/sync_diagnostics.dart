@@ -11,7 +11,7 @@ class SyncDiagnostics {
   SyncDiagnostics._();
   static final SyncDiagnostics instance = SyncDiagnostics._();
 
-  static const MethodChannel _channel = MethodChannel('com.viscouspot.gitsync/sync_diagnostics');
+  static const MethodChannel _channel = MethodChannel('com.shelbeely.gitcommand/sync_diagnostics');
 
   /// Returns human-readable reasons that the workmanager job with [jobId] is
   /// currently pending, or an empty list if unsupported / no pending reasons.

@@ -4,7 +4,7 @@
     android:accessibilityFeedbackType="feedbackAllMask"
     android:notificationTimeout="20"
     android:canRetrieveWindowContent="false"
-    android:settingsActivity="com.viscouspot.gitsync.MainActivity"
+    android:settingsActivity="com.shelbeely.gitcommand.MainActivity"
     android:description="@string/accessibility_service_description"
     >
 </accessibility-service>

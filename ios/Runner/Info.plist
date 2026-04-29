@@ -178,7 +178,7 @@
 				<string>gitsync</string>
 			</array>
 			<key>CFBundleURLName</key>
-			<string>com.viscouspot.gitsync</string>
+			<string>com.shelbeely.gitcommand</string>
 		</dict>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>

@@ -7,7 +7,7 @@ import 'package:GitSync/api/sync_progress_notification.dart';
 /// for GitHub Copilot agent-session progress.
 ///
 /// On Android 16+ this drives a persistent progress notification through the
-/// `com.viscouspot.gitsync/agent_progress` method channel. On older Android
+/// `com.shelbeely.gitcommand/agent_progress` method channel. On older Android
 /// versions and on iOS [isSupported] returns `false`.
 ///
 /// The `isSupported()` check delegates to
@@ -17,7 +17,7 @@ class AgentProgressNotification {
   AgentProgressNotification._();
   static final AgentProgressNotification instance = AgentProgressNotification._();
 
-  static const MethodChannel _channel = MethodChannel('com.viscouspot.gitsync/agent_progress');
+  static const MethodChannel _channel = MethodChannel('com.shelbeely.gitcommand/agent_progress');
 
   /// Returns `true` only on Android API 36+ where `Notification.ProgressStyle`
   /// is available. Delegates to [SyncProgressNotification] to avoid a redundant

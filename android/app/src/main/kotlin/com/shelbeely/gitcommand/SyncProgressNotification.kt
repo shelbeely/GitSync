@@ -1,4 +1,4 @@
-package com.viscouspot.gitsync
+package com.shelbeely.gitcommand
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -29,7 +29,7 @@ import io.flutter.plugin.common.MethodChannel
  */
 object SyncProgressNotification {
 
-    const val CHANNEL_NAME = "com.viscouspot.gitsync/sync_progress"
+    const val CHANNEL_NAME = "com.shelbeely.gitcommand/sync_progress"
 
     // Must match `gitSyncSyncChannelId` in lib/constant/strings.dart.
     private const val NOTIF_CHANNEL_ID = "git_sync_sync_channel"

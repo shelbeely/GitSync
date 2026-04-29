@@ -1,4 +1,4 @@
-package com.viscouspot.gitsync
+package com.shelbeely.gitcommand
 
 import android.content.Context
 
@@ -11,7 +11,7 @@ import android.content.Context
  */
 object ActionsProgressNotification {
 
-    const val CHANNEL_NAME = "com.viscouspot.gitsync/actions_progress"
+    const val CHANNEL_NAME = "com.shelbeely.gitcommand/actions_progress"
 
     private const val NOTIF_CHANNEL_ID = "git_sync_actions_channel"
     private const val NOTIF_CHANNEL_USER_NAME = "GitSync Actions Status"

@@ -1,8 +1,9 @@
-package com.viscouspot.gitsync.widget
+package com.shelbeely.gitcommand.widget
 
 import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
+import es.antonborri.home_widget.actionStartActivity
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -43,21 +44,21 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import android.util.Log
 import androidx.compose.ui.unit.DpSize
-import com.viscouspot.gitsync.R
+import com.shelbeely.gitcommand.R
 
-class SyncAction : ActionCallback {
+class ManualSyncAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
         val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-        val repoIndex = prefs.getInt("flutter.repoman_widgetSyncIndex", -1)
+        val repoIndex = prefs.getInt("flutter.repoman_widgetManualSyncIndex", -1)
 
         val uri = if (repoIndex >= 0) {
-            "forcesyncwidget://click?homeWidget&index=$repoIndex"
+            "manualsyncwidget://click?homeWidget&index=$repoIndex"
         } else {
-            "forcesyncwidget://click?homeWidget"
+            "manualsyncwidget://click?homeWidget"
         }
 
         val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context, Uri.parse(uri))
@@ -65,94 +66,67 @@ class SyncAction : ActionCallback {
     }
 }
 
-class ForceSyncWidget : GlanceAppWidget() {
+class ManualSyncWidget : GlanceAppWidget() {
 
     override val stateDefinition: GlanceStateDefinition<*>?
         get() = HomeWidgetGlanceStateDefinition()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            GlanceContent()
+            GlanceContent(context)
         }
     }
 
     override val sizeMode: SizeMode = SizeMode.Exact
 
     @Composable
-    private fun GlanceContent() {
+    private fun GlanceContent(context: Context) {
         val size = LocalSize.current
         val width = size.width
 
-        val showChangesText = width >= 310.dp
-        val showSyncText = width >= 140.dp
-
-        val state = currentState<HomeWidgetGlanceState>()
-        val prefs = state.preferences
-        val status = prefs.getString("forceSyncWidget_status", "idle") ?: "idle"
-
-        val iconRes: Int
-        val tintColor: Color
-        val primaryLabel: String
-        when (status) {
-            "syncing" -> {
-                iconRes = R.drawable.sync_now
-                tintColor = Color.White
-                primaryLabel = "SYNCING"
-            }
-            "success" -> {
-                iconRes = R.drawable.widget_check
-                tintColor = Color(0xFF85F48E)
-                primaryLabel = "SYNCED"
-            }
-            "error" -> {
-                iconRes = R.drawable.widget_error
-                tintColor = Color(0xFFFDA4AF)
-                primaryLabel = "ERROR"
-            }
-            else -> {
-                iconRes = R.drawable.sync_now
-                tintColor = Color.White
-                primaryLabel = "SYNC"
-            }
-        }
+        val showLongText = width >= 310.dp
+        val showShortText = width >= 140.dp
 
         Row(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(Color(0xFF141414))
-                .clickable(onClick = actionRunCallback<SyncAction>()),
+                .clickable(
+                    onClick = actionStartActivity<com.shelbeely.gitcommand.MainActivity>(
+                        context,
+                        Uri.parse("manualsyncwidget://click?homeWidget")
+                    )
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = GlanceModifier
-                    .size(48.dp)
-                    .padding(end = if (showSyncText) 16.dp else 0.dp),
+                modifier = GlanceModifier.size(48.dp).padding(end = if (showShortText) 16.dp else 0.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    provider = ImageProvider(iconRes),
-                    contentDescription = primaryLabel,
-                    colorFilter = ColorFilter.tint(ColorProvider(tintColor)),
+                    provider = ImageProvider(R.drawable.manual_sync),
+                    contentDescription = "Force Sync",
+                    colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
                     contentScale = ContentScale.Fit
                 )
             }
 
-            if (showSyncText) {
+            if (showShortText && !showLongText) {
                 Text(
-                    text = primaryLabel,
+                    text = "COMMIT",
                     modifier = GlanceModifier.padding(end = 8.dp),
                     style = TextStyle(
-                        color = ColorProvider(tintColor),
+                        color = ColorProvider(Color.White),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
             }
 
-            if (showChangesText && status == "idle") {
+            if (showLongText) {
                 Text(
-                    text = "CHANGES",
+                    text = "MANUAL SYNC",
                     style = TextStyle(
                         color = ColorProvider(Color.White),
                         fontSize = 16.sp,

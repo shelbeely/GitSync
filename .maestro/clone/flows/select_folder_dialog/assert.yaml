@@ -1,4 +1,4 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 
 - assertVisible: "Select a folder to clone into"

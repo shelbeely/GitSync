@@ -102,7 +102,7 @@ class GitsyncService {
   // Must point at the Receiver (registered in AndroidManifest.xml), not the
   // GlanceAppWidget class. updateWidget resolves this FQN via Class.forName
   // and queries AppWidgetManager.getAppWidgetIds for that component.
-  static const String _widgetQualifiedName = 'com.viscouspot.gitsync.widget.ForceSyncWidgetReceiver';
+  static const String _widgetQualifiedName = 'com.shelbeely.gitcommand.widget.ForceSyncWidgetReceiver';
   // Matches the `kind` declared in ios/ForceSyncWidget/ForceSyncWidget.swift.
   // Used by WidgetCenter.shared.reloadTimelines(ofKind:) on iOS.
   static const String _widgetIOSName = 'ForceSyncWidget';

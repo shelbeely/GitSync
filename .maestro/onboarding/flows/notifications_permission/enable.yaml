@@ -1,4 +1,4 @@
-appId: com.viscouspot.gitsync
+appId: com.shelbeely.gitcommand
 ---
 - runFlow: ./assert.yaml
 # - tapOn: "All GitSync notifications"
