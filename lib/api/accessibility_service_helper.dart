@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/gitsync_service.dart';
 import 'package:GitSync/global.dart';
 import 'package:GitSync/api/manager/storage.dart';
@@ -51,23 +49,19 @@ class AccessibilityServiceHelper {
   }
 
   static Future<bool> isAccessibilityServiceEnabled() async {
-    if (Platform.isIOS) return false;
     final bool isEnabled = await _channel.invokeMethod('isAccessibilityServiceEnabled') ?? false;
     return isEnabled;
   }
 
   static Future<void> openAccessibilitySettings() async {
-    if (Platform.isIOS) return;
     await _channel.invokeMethod('openAccessibilitySettings');
   }
 
   static Future<bool> isExcludedFromRecents() async {
-    if (Platform.isIOS) return false;
     return await _channel.invokeMethod('isExcludedFromRecents') ?? false;
   }
 
   static Future<void> excludeFromRecents(bool exclude) async {
-    if (Platform.isIOS) return;
     if (exclude) {
       await _channel.invokeMethod('enableExcludeFromRecents');
     } else {

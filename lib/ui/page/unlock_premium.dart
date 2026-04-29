@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:flutter/material.dart';
@@ -235,25 +233,6 @@ class _UnlockPremiumState extends ConsumerState<UnlockPremium> {
         ],
       ),
 
-      if (Platform.isIOS)
-        _featureCard(
-          showStoreBanner: true,
-          badgeIcons: [
-            FaIcon(FontAwesomeIcons.solidBell, color: colours.tertiaryInfo, size: textSM),
-            FaIcon(FontAwesomeIcons.server, color: colours.tertiaryInfo, size: textSM),
-          ],
-          badgeLabel: "ESS",
-          tag: "ios-only",
-          title: t.enhancedScheduledSync,
-          subtitle: t.premiumEnhancedSyncSubtitle,
-          featureRows: [
-            _featureRow(FontAwesomeIcons.arrowsRotate, t.premiumSyncPerMinute),
-            _featureRow(FontAwesomeIcons.server, t.premiumServerTriggered),
-            _featureRow(FontAwesomeIcons.batteryFull, t.premiumWorksAppClosed),
-            _featureRow(FontAwesomeIcons.solidClock, t.premiumReliableDelivery),
-          ],
-        ),
-
       _featureCard(
         showStoreBanner: true,
         badgeIcons: [
@@ -318,15 +297,15 @@ class _UnlockPremiumState extends ConsumerState<UnlockPremium> {
               Padding(
                 padding: EdgeInsets.only(
                   left: spaceXL,
-                  right: Platform.isIOS ? spaceXL - spaceSM : spaceXL,
-                  top: Platform.isIOS ? spaceXL - spaceSM : spaceXL,
+                  right: spaceXL,
+                  top: spaceXL,
                   bottom: 0,
                 ),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: Platform.isIOS ? spaceSM : 0, right: Platform.isIOS ? spaceSM : 0),
+                      padding: EdgeInsets.zero,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -357,20 +336,6 @@ class _UnlockPremiumState extends ConsumerState<UnlockPremium> {
                         ],
                       ),
                     ),
-                    if (Platform.isIOS)
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                          constraints: BoxConstraints(),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          },
-                          icon: FaIcon(FontAwesomeIcons.solidCircleXmark, color: colours.premiumAccent, size: spaceSM * 2),
-                        ),
-                      ),
                   ],
                 ),
               ),

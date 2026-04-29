@@ -66,9 +66,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get optionalLabel => '(اختياري)';
 
   @override
-  String get ios => 'iOS';
-
-  @override
   String get android => 'أندرويد';
 
   @override
@@ -154,21 +151,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get premiumAutoAddSubmodules => 'إضافة الوحدات الفرعية آلياً';
-
-  @override
-  String get premiumEnhancedSyncSubtitle => 'مزامنة تلقائية في الخلفية على iOS.\nتصل إلى مرة كل دقيقة.';
-
-  @override
-  String get premiumSyncPerMinute => 'مزامنة كل دقيقة';
-
-  @override
-  String get premiumServerTriggered => 'تنبيهات دفع من الخادم';
-
-  @override
-  String get premiumWorksAppClosed => 'يعمل حتى عند إغلاق التطبيق';
-
-  @override
-  String get premiumReliableDelivery => 'توصيل موثوق ومجدول';
 
   @override
   String get premiumGitLfsTitle => 'Git LFS';
@@ -396,12 +378,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get allRemote => 'الكل بعيد';
 
   @override
-  String get iosClearDataTitle => 'هل هذا تثبيت جديد؟';
-
-  @override
-  String get iosClearDataMsg => 'يبدو أنك أعدت تثبيت التطبيق. في نظام iOS، تظل بيانات Keychain محفوظة. إذا لم تكن تريد التصفير، يمكنك التخطي.';
-
-  @override
   String get clearDataConfirmTitle => 'تأكيد مسح البيانات';
 
   @override
@@ -487,9 +463,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingOtherSyncFeatureAndroid => 'نوايا (Intents) أندرويد';
-
-  @override
-  String get onboardingOtherSyncFeatureIos => 'نوايا (Intents) iOS';
 
   @override
   String get onboardingOtherSyncDescription => 'استكشف طرق مزامنة إضافية لمنصتك';
@@ -804,12 +777,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appSyncDescription => 'مزامنة تلقائية عند فتح أو إغلاق التطبيق المختار';
 
   @override
-  String get appSyncIosDescription => 'مزامنة تلقائية عند فتح أو إغلاق GitHub Command Center';
-
-  @override
-  String get iosAppSyncDocsLinkText => 'مزامنة عند فتح/إغلاق تطبيقات أخرى';
-
-  @override
   String get accessibilityServiceDisclosureTitle => 'إفصاح خدمة الوصول';
 
   @override
@@ -841,12 +808,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncOnAppOpened => 'مزامنة عند فتح التطبيقات';
 
   @override
-  String get iosSyncOnAppClosed => 'مزامنة عند إغلاق GitHub Command Center';
-
-  @override
-  String get iosSyncOnAppOpened => 'مزامنة عند فتح GitHub Command Center';
-
-  @override
   String get scheduledSyncSettings => 'إعدادات المزامنة المجدولة';
 
   @override
@@ -854,9 +815,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tabHome => 'الرئيسية';
-
-  @override
-  String get iosDefaultSyncRate => 'عندما يسمح نظام iOS';
 
   @override
   String get every => 'كل';
@@ -899,9 +857,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weeks => 'أسبوع/أسابيع';
-
-  @override
-  String get enhancedScheduledSync => 'مزامنة مجدولة محسنة';
 
   @override
   String get quickSyncSettings => 'إعدادات المزامنة السريعة';

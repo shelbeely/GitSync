@@ -1115,37 +1115,20 @@ class GitManager {
       (dirPath) async {
         final dir = Directory(dirPath);
         try {
-          if (Platform.isIOS) {
-            final entities = dir.listSync(recursive: false);
-            for (var entity in entities) {
-              try {
-                final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
-                if (type == FileSystemEntityType.link) {
-                  await entity.delete();
-                } else {
-                  await entity.delete(recursive: true);
-                }
-              } catch (e) {
-                print('Error while processing entity ${entity.path}: $e');
+          final entities = dir.listSync(recursive: false);
+          for (var entity in entities) {
+            try {
+              final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
+              if (type == FileSystemEntityType.link) {
+                await entity.delete();
               }
+            } catch (e) {
+              print('Error while deleting symlink ${entity.path}: $e');
             }
-            print('iOS directory cleanup complete for: ${dir.path}');
-          } else {
-            final entities = dir.listSync(recursive: false);
-            for (var entity in entities) {
-              try {
-                final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
-                if (type == FileSystemEntityType.link) {
-                  await entity.delete();
-                }
-              } catch (e) {
-                print('Error while deleting symlink ${entity.path}: $e');
-              }
-            }
-
-            await dir.delete(recursive: true);
-            await dir.create();
           }
+
+          await dir.delete(recursive: true);
+          await dir.create();
         } catch (e) {
           print('Error while deleting folder contents: $e');
         }

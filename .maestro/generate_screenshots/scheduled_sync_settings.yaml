@@ -1,17 +1,7 @@
 appId: com.shelbeely.gitcommand
 ---
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - launchApp:
-          appId: com.viscouspot.git-sync
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - launchApp:
-          appId: com.shelbeely.gitcommand
+- launchApp:
+    appId: com.shelbeely.gitcommand
 - assertVisible: "GitSync"
 - runFlow:
     when:

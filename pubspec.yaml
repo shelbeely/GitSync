@@ -50,10 +50,6 @@ dependencies:
   open_file: ^3.5.11
   flutter_localizations:
     sdk: flutter
-  ios_document_picker:
-    git:
-      url: https://github.com/ViscousPot/ios_document_picker
-      ref: cc19fd549f23dd1f2ce3f4dd287cc653e84fd6b6
   workmanager:
     git:
       url: https://github.com/fluttercommunity/flutter_workmanager.git
@@ -90,10 +86,6 @@ dependency_overrides:
     git:
       url: https://github.com/ViscousPot/flutter_background_service_with_intents
       path: packages/flutter_background_service_android
-  flutter_background_service_ios:
-    git:
-      url: https://github.com/ViscousPot/flutter_background_service_with_intents
-      path: packages/flutter_background_service_ios
 
 dev_dependencies:
   flutter_test:

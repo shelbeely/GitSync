@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/api/accessibility_service_helper.dart';
 
@@ -21,7 +19,6 @@ class RepoManager extends Storage {
   }
 
   Future<bool> hasLegacySettings() async {
-    if (Platform.isIOS) return false;
     if (await getInt(StorageKey.repoman_onboardingStep) != 0) return false;
 
     return await AccessibilityServiceHelper.hasLegacySettings();

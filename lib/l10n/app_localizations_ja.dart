@@ -66,9 +66,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get optionalLabel => '(任意)';
 
   @override
-  String get ios => 'iOS';
-
-  @override
   String get android => 'Android';
 
   @override
@@ -154,21 +151,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get premiumAutoAddSubmodules => 'Auto-add submodules';
-
-  @override
-  String get premiumEnhancedSyncSubtitle => 'Automated background sync on iOS.\nAs low as once per minute.';
-
-  @override
-  String get premiumSyncPerMinute => 'Sync as often as every minute';
-
-  @override
-  String get premiumServerTriggered => 'Server push notifications';
-
-  @override
-  String get premiumWorksAppClosed => 'Works even when app is closed';
-
-  @override
-  String get premiumReliableDelivery => 'Reliable, on-schedule delivery';
 
   @override
   String get premiumGitLfsTitle => 'Git LFS';
@@ -396,13 +378,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get allRemote => 'All Remote';
 
   @override
-  String get iosClearDataTitle => '新規インストールですか？';
-
-  @override
-  String get iosClearDataMsg =>
-      '再インストールの可能性がありますが、誤検知の場合もあります。iOSではアプリを削除して再インストールしてもキーチェーンが消去されないため、一部のデータが安全に保存されたままになっている場合があります。\n\n新規インストールでない場合、またはリセットしたくない場合は、このステップをスキップして構いません。';
-
-  @override
   String get clearDataConfirmTitle => 'アプリデータのリセットを確認';
 
   @override
@@ -489,9 +464,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get onboardingOtherSyncFeatureAndroid => 'Android intents';
-
-  @override
-  String get onboardingOtherSyncFeatureIos => 'iOS intents';
 
   @override
   String get onboardingOtherSyncDescription => 'Explore additional sync methods for your platform';
@@ -806,12 +778,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appSyncDescription => '選択したアプリが開かれた、または閉じられた時に自動同期します';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
-
-  @override
-  String get iosAppSyncDocsLinkText => '他のアプリの開閉時に同期する';
-
-  @override
   String get accessibilityServiceDisclosureTitle => 'ユーザー補助サービスの開示';
 
   @override
@@ -843,12 +809,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncOnAppOpened => 'アプリが開かれた時に同期';
 
   @override
-  String get iosSyncOnAppClosed => 'GitHub Command Centerが閉じられた時に同期';
-
-  @override
-  String get iosSyncOnAppOpened => 'GitHub Command Centerが開かれた時に同期';
-
-  @override
   String get scheduledSyncSettings => 'スケジュール同期設定';
 
   @override
@@ -856,9 +816,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tabHome => 'Home';
-
-  @override
-  String get iosDefaultSyncRate => 'iOSが許可した時';
 
   @override
   String get every => 'every';
@@ -901,9 +858,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get weeks => 'week(s)';
-
-  @override
-  String get enhancedScheduledSync => '拡張スケジュール同期';
 
   @override
   String get quickSyncSettings => 'クイック同期設定';

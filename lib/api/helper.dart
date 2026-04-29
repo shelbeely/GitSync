@@ -25,8 +25,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:GitSync/api/logger.dart';
 import 'package:GitSync/constant/strings.dart';
 import 'package:GitSync/src/rust/api/git_manager.dart' as GitManagerRs;
-import 'package:ios_document_picker/ios_document_picker.dart';
-import 'package:ios_document_picker/types.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,13 +58,7 @@ Future<void> initAsync(Future<void> Function() fn) async {
 }
 
 Future<bool> requestStoragePerm([bool request = true]) async {
-  Future<void> gitManagerInit() async =>
-      await GitManagerRs.init(homepath: Platform.isAndroid ? (await getApplicationDocumentsDirectory()).path : null);
-
-  if (Platform.isIOS) {
-    await gitManagerInit();
-    return true;
-  }
+  Future<void> gitManagerInit() async => await GitManagerRs.init(homepath: (await getApplicationDocumentsDirectory()).path);
 
   AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
   if (androidInfo.version.sdkInt <= 29) {
@@ -172,20 +164,10 @@ Future<bool> hasNetworkConnection() async {
 
 Future<String?> pickDirectory() async {
   try {
-    if (Platform.isAndroid) {
-      final path = await FilePicker.platform.getDirectoryPath();
-      if (path?.startsWith("/storage/home") == true) return path!.replaceFirst("/storage/home", "/storage/emulated/0/Documents");
-      if (path == "/") return null;
-      return path;
-    }
-
-    final iosDocumentPickerPlugin = IosDocumentPicker();
-    var result = await iosDocumentPickerPlugin.pick(IosDocumentPickerType.directory, multiple: false);
-    if (result == null) {
-      return null;
-    }
-
-    return result[0].bookmark;
+    final path = await FilePicker.platform.getDirectoryPath();
+    if (path?.startsWith("/storage/home") == true) return path!.replaceFirst("/storage/home", "/storage/emulated/0/Documents");
+    if (path == "/") return null;
+    return path;
   } catch (e, st) {
     Logger.logError(LogType.SelectDirectory, e, st);
   }
@@ -445,14 +427,7 @@ Future<void> setGitDirPathGetSubmodules(BuildContext context, String dir, Widget
       await tempSettingsManager.setStringNullable(StorageKey.setman_gitCommitSigningKey, currentGitCommitSigningKey);
       await tempSettingsManager.setString(StorageKey.setman_lastSyncMethod, currentLastSyncMethod);
 
-      if (Platform.isIOS) {
-        final bookmarkParts = currentDirPath.split(conflictSeparator);
-        final bookmark = bookmarkParts.first;
-        final pathSuffix = currentDirPath.contains(conflictSeparator) ? bookmarkParts.last : "";
-        await tempSettingsManager.setGitDirPath("$bookmark$conflictSeparator${pathSuffix.isEmpty ? path : "$pathSuffix/$path"}");
-      } else {
-        await tempSettingsManager.setGitDirPath("$currentDirPath/$path");
-      }
+      await tempSettingsManager.setGitDirPath("$currentDirPath/$path");
     }
 
     await repoManager.setInt(StorageKey.repoman_repoIndex, min(repomanReponames.length, repomanReponames.indexOf(currentContainerName) + 1));
@@ -488,45 +463,7 @@ Future<T?> useDirectory<T>(
     return await useAccess(path);
   }
 
-  if (Platform.isAndroid) return await preUseAccess(bookmarkPath);
-
-  if (bookmarkPath.isEmpty) return null;
-
-  final iosDocumentPickerPlugin = IosDocumentPicker();
-  String? path;
-
-  final bookmarkParts = bookmarkPath.split(conflictSeparator);
-  final bookmark = bookmarkParts.first;
-  final pathSuffix = bookmarkPath.contains(conflictSeparator) ? bookmarkParts.last : "";
-
-  try {
-    final bookmarkAndPath = await iosDocumentPickerPlugin.resolveBookmark(bookmark, isDirectory: true);
-    if (bookmarkAndPath == null) {
-      Logger.logError(LogType.SelectDirectory, noFolderAccessError, StackTrace.fromString(""));
-      return null;
-    }
-    await setBookmarkPath(bookmarkAndPath.$1);
-    path = pathSuffix.isEmpty ? bookmarkAndPath.$2 : "${bookmarkAndPath.$2}/$pathSuffix";
-  } catch (e) {
-    Logger.logError(LogType.SelectDirectory, noFolderAccessError, StackTrace.fromString("$e"));
-    return null;
-  }
-
-  if (path.isEmpty) {
-    return null;
-  }
-
-  final hasAccess = await iosDocumentPickerPlugin.startAccessing(path);
-  if (!hasAccess) {
-    Logger.logError(LogType.SelectDirectory, noFolderAccessError, StackTrace.fromString(""));
-    return null;
-  }
-
-  final result = await preUseAccess(path);
-
-  debounce("$iosFolderAccessDebounceReference-$path", 60000, () async => await iosDocumentPickerPlugin.stopAccessing(path!));
-
-  return result;
+  return await preUseAccess(bookmarkPath);
 }
 
 Future<String> encryptMap(Map<String, dynamic> data, String password) async {

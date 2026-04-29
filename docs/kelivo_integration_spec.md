@@ -440,7 +440,7 @@ When the AI (or a diff) outputs a fenced code block tagged ` ```mermaid `, rende
 **What needs to be ported:**
 - Wire a custom generator in `buildMarkdownGenerator()` that intercepts `mermaid`-tagged blocks and returns a `MermaidBridgeWidget` instead of a plain `PreConfig` block
 - Bundle `mermaid.min.js` as a Flutter asset
-- Add `webview_flutter` dependency (already used by kelivo; needed on Android/iOS/desktop)
+- Add `webview_flutter` dependency (already used by kelivo; needed on Android/desktop)
 - Add `webview_windows` for Windows desktop support
 
 ### 4.4 PlantUML Diagrams
@@ -541,7 +541,7 @@ The following packages need to be added to GitSync's `pubspec.yaml`. All are eit
 | `flutter_highlight` | Code highlighting — Feature B.1 | |
 | `highlight` | Code highlighting — Feature B.1 | |
 | `flutter_math_fork` | LaTeX rendering — Feature B.2 | |
-| `webview_flutter` | Mermaid diagrams — Feature B.3 | Android/iOS/desktop |
+| `webview_flutter` | Mermaid diagrams — Feature B.3 | Android/desktop |
 | `webview_windows` | Mermaid diagrams — Feature B.3 | Windows only |
 | `image_picker` | Image attachment — Feature C.2 | |
 | `syncfusion_flutter_pdf` | PDF text extraction — Feature C.3 | |

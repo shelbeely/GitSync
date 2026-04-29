@@ -66,9 +66,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get optionalLabel => '（可选）';
 
   @override
-  String get ios => 'iOS';
-
-  @override
   String get android => '安卓';
 
   @override
@@ -154,21 +151,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get premiumAutoAddSubmodules => '自动添加子模块';
-
-  @override
-  String get premiumEnhancedSyncSubtitle => 'iOS 后台自动同步。\n最快可每分钟一次。';
-
-  @override
-  String get premiumSyncPerMinute => '最快每分钟同步一次';
-
-  @override
-  String get premiumServerTriggered => '服务器推送通知';
-
-  @override
-  String get premiumWorksAppClosed => '即使应用关闭也能运行';
-
-  @override
-  String get premiumReliableDelivery => '可靠、准时的同步';
 
   @override
   String get premiumGitLfsTitle => 'Git LFS';
@@ -396,12 +378,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get allRemote => 'All Remote';
 
   @override
-  String get iosClearDataTitle => '这是全新安装吗？';
-
-  @override
-  String get iosClearDataMsg => '我们检测到这可能是重新安装，但也可能是误报。在 iOS 上，删除并重新安装应用时，你的钥匙串数据不会被清除，因此某些数据可能仍然安全存储。\n\n如果这不是全新安装，或者你不想重置，可以安全地跳过此步骤。';
-
-  @override
   String get clearDataConfirmTitle => '确认重置应用数据';
 
   @override
@@ -487,9 +463,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingOtherSyncFeatureAndroid => '安卓意图';
-
-  @override
-  String get onboardingOtherSyncFeatureIos => 'iOS 意图';
 
   @override
   String get onboardingOtherSyncDescription => '探索适合你平台的其他同步方式';
@@ -804,12 +777,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appSyncDescription => '选定的应用打开或关闭时自动同步';
 
   @override
-  String get appSyncIosDescription => 'Automatically syncs when GitHub Command Center is opened or closed';
-
-  @override
-  String get iosAppSyncDocsLinkText => '其他应用打开/关闭时同步';
-
-  @override
   String get accessibilityServiceDisclosureTitle => '无障碍服务声明';
 
   @override
@@ -841,12 +808,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncOnAppOpened => '应用打开时同步';
 
   @override
-  String get iosSyncOnAppClosed => 'GitHub Command Center关闭时同步';
-
-  @override
-  String get iosSyncOnAppOpened => 'GitHub Command Center打开时同步';
-
-  @override
   String get scheduledSyncSettings => '计划同步设置';
 
   @override
@@ -854,9 +815,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tabHome => 'Home';
-
-  @override
-  String get iosDefaultSyncRate => '当 iOS 允许时';
 
   @override
   String get every => 'every';
@@ -899,9 +857,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get weeks => '周';
-
-  @override
-  String get enhancedScheduledSync => '增强计划同步';
 
   @override
   String get quickSyncSettings => '快速同步设置';
@@ -2348,7 +2303,4 @@ class AppLocalizationsZh extends AppLocalizations {
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
-
-  @override
-  String get iosAppSyncDocsLinkText => '其他應用程式開啟/關閉時同步';
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:GitSync/api/helper.dart';
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
 import 'package:GitSync/constant/strings.dart';
@@ -26,9 +24,7 @@ import '../../../type/git_provider.dart';
 class GitProviderManager {
   // ignore: non_constant_identifier_names
   static Map<GitProvider, Widget> get GitProviderIconsMap => {
-    GitProvider.GITHUB: Platform.isIOS
-        ? FaIcon(FontAwesomeIcons.gitAlt, size: textLG, color: colours.primaryLight)
-        : FaIcon(FontAwesomeIcons.github, size: textMD, color: colours.primaryLight),
+    GitProvider.GITHUB: FaIcon(FontAwesomeIcons.github, size: textMD, color: colours.primaryLight),
     GitProvider.HTTPS: FaIcon(FontAwesomeIcons.lock, size: textMD, color: colours.primaryLight),
     GitProvider.SSH: FaIcon(FontAwesomeIcons.terminal, size: textMD, color: colours.primaryLight),
   };

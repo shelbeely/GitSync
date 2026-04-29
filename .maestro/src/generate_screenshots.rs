@@ -19,14 +19,12 @@ use std::{
 
 enum PlatformConstraint {
     AndroidOnly,
-    IOSOnly,
     All,
 }
 
 struct ScreenshotConfig<'a> {
     platform: PlatformConstraint,
     yaml_name: &'a str,
-    crop_ios: Option<(u32, u32, u32, u32)>,
     crop_android: Option<(u32, u32, u32, u32)>,
     triangle_size: Option<u32>,
     adjust: bool,
@@ -37,11 +35,6 @@ fn generate_screenshot(config: ScreenshotConfig) {
     match config.platform {
         PlatformConstraint::AndroidOnly => {
             if config.is_android != Some(true) {
-                return;
-            }
-        }
-        PlatformConstraint::IOSOnly => {
-            if config.is_android != Some(false) {
                 return;
             }
         }
@@ -67,7 +60,6 @@ fn generate_screenshot(config: ScreenshotConfig) {
 
     let cropped = match config.is_android {
         Some(true) => config.crop_android.map(|(x, y, w, h)| img.crop(x, y, w, h)),
-        Some(false) => config.crop_ios.map(|(x, y, w, h)| img.crop(x, y, w, h)),
         _ => None,
     }
     .unwrap_or(img);
@@ -102,7 +94,6 @@ fn is_android() -> Option<bool> {
             match platform {
                 "android" => return Some(true),
                 "android-x64" => return Some(true),
-                "ios" => return Some(false),
                 _ => {}
             }
         }
@@ -204,7 +195,6 @@ pub fn main(args: &[String]) {
 
         let command = "flutter run; exit;";
         let package = "com.shelbeely.gitcommand";
-        let bundle_id = "com.viscouspot.git-sync";
 
         if is_android == Some(true) {
             let local_props_path = Path::new("../android/local.properties");
@@ -225,14 +215,6 @@ pub fn main(args: &[String]) {
                 .ok();
         }
 
-        if is_android == Some(false) {
-            Command::new("xcrun")
-                .args(&["simctl", "terminate", "booted", bundle_id])
-                .stdout(Stdio::null())
-                .stderr(Stdio::null())
-                .status()
-                .ok();
-        }
 
         #[cfg(target_os = "windows")]
         Command::new("cmd")
@@ -288,30 +270,6 @@ pub fn main(args: &[String]) {
             }
         }
 
-        if is_android == Some(false) {
-            loop {
-                let output = Command::new("xcrun")
-                    .args(&["simctl", "spawn", "booted", "launchctl", "list"])
-                    .stdout(Stdio::piped())
-                    .stderr(Stdio::null())
-                    .output()
-                    .unwrap();
-                if String::from_utf8_lossy(&output.stdout).contains(bundle_id) {
-                    break;
-                }
-                thread::sleep(Duration::from_secs(2));
-            }
-
-            Command::new("xcrun")
-                .arg("simctl")
-                .arg("status_bar")
-                .arg("booted")
-                .arg("override")
-                .arg("--time")
-                .arg("2025-05-25T23:00:00.123Z")
-                .spawn()
-                .unwrap();
-        }
 
         thread::sleep(Duration::from_secs(5));
     }
@@ -319,7 +277,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::All,
         yaml_name: "homepage",
-        crop_ios: None,
         crop_android: Some((0, 54, 1080, 2309)),
         triangle_size: None,
         adjust: adjust,
@@ -329,7 +286,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::AndroidOnly,
         yaml_name: "auth",
-        crop_ios: None,
         crop_android: Some((96, 720, 909, 1048)),
         triangle_size: Some(40),
         adjust: adjust,
@@ -339,7 +295,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::AndroidOnly,
         yaml_name: "auto_sync_settings",
-        crop_ios: None,
         crop_android: Some((39, 926, 1002, 796)),
         triangle_size: Some(40),
         adjust: adjust,
@@ -349,7 +304,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::AndroidOnly,
         yaml_name: "select_apps",
-        crop_ios: None,
         crop_android: Some((79, 560, 922, 1291)),
         triangle_size: None,
         adjust: adjust,
@@ -359,7 +313,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::AndroidOnly,
         yaml_name: "scheduled_sync_settings",
-        crop_ios: None,
         crop_android: Some((39, 1473, 1002, 441)),
         triangle_size: Some(40),
         adjust: adjust,
@@ -369,7 +322,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::AndroidOnly,
         yaml_name: "quick_sync_settings",
-        crop_ios: None,
         crop_android: Some((39, 963, 1002, 1115)),
         triangle_size: Some(40),
         adjust: adjust,
@@ -462,22 +414,11 @@ pub fn main(args: &[String]) {
             fs::remove_file("generate_screenshots/screenshot_settings_top.png").unwrap();
             fs::remove_file("generate_screenshots/screenshot_settings_bottom.png").unwrap();
         }
-    } else if is_android == Some(false) {
-        generate_screenshot(ScreenshotConfig {
-            platform: PlatformConstraint::IOSOnly,
-            yaml_name: "settings",
-            crop_ios: None,
-            crop_android: None,
-            triangle_size: None,
-            adjust: adjust,
-            is_android: is_android,
-        });
     }
 
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::All,
         yaml_name: "manual_sync",
-        crop_ios: None,
         crop_android: Some((0, 54, 1080, 2309)),
         triangle_size: None,
         adjust: adjust,
@@ -487,7 +428,6 @@ pub fn main(args: &[String]) {
     generate_screenshot(ScreenshotConfig {
         platform: PlatformConstraint::All,
         yaml_name: "merge_conflict",
-        crop_ios: None,
         crop_android: Some((0, 54, 1080, 2309)),
         triangle_size: None,
         adjust: adjust,
