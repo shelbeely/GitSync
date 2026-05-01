@@ -175,6 +175,10 @@ class AndroidEnvironment {
       rustFlags = '$rustFlags\x1f';
     }
     rustFlags = '$rustFlags-L\x1f$workaroundDir';
+    // Required for Android 15+ (API 35+) which enforces 16 KB memory page
+    // alignment. Shared libraries not aligned to 16 KB are rejected at install
+    // time on affected devices (e.g. Pixel 9 / 10 series running Android 15+).
+    rustFlags = '$rustFlags\x1f-C\x1flink-arg=-Wl,-z,max-page-size=16384';
     return rustFlags;
   }
 }

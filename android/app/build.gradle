@@ -21,6 +21,26 @@ android {
     compileSdk = 36
     ndkVersion = "29.0.13113456"
 
+    // keystorePropertiesFile and keystoreProperties are defined at the top of
+    // this file (loaded from android/keystore.properties when present).
+    if (keystorePropertiesFile.exists()) {
+        def requiredKeys = ['keyAlias', 'keyPassword', 'storeFile', 'storePassword']
+        def missingKeys = requiredKeys.findAll { !keystoreProperties.containsKey(it) }
+        if (!missingKeys.isEmpty()) {
+            throw new GradleException(
+                "keystore.properties is missing required keys: ${missingKeys.join(', ')}"
+            )
+        }
+        signingConfigs {
+            release {
+                keyAlias = keystoreProperties['keyAlias']
+                keyPassword = keystoreProperties['keyPassword']
+                storeFile = file(keystoreProperties['storeFile'])
+                storePassword = keystoreProperties['storePassword']
+            }
+        }
+    }
+
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_17
@@ -61,6 +81,9 @@ android {
         release {
             shrinkResources true
             minifyEnabled true
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
